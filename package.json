@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "ganache-cli": "^6.9.1",
     "truffle": "^5.1.20"
   }
 }
