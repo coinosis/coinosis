@@ -21,6 +21,7 @@
     "webpack-dev-server": "^3.10.3"
   },
   "dependencies": {
+    "@truffle/hdwallet-provider": "^1.0.34",
     "react": "^16.13.1",
     "react-dom": "^16.13.1"
   }

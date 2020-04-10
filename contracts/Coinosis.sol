@@ -22,7 +22,7 @@ contract Coinosis {
         }
         require(msg.value >= totalAmount, INSUFFICIENT_VALUE);
         for (uint i = 0; i < recipients.length; i++) {
-            recipients[i].transfer(amounts[i]);
+            recipients[i].transfer(amounts[i]); // TODO: change this to .call.value()()
             emit Paid(recipients[i], amounts[i]);
         }
     }
