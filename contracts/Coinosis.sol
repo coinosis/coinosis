@@ -1,13 +1,16 @@
 pragma solidity 0.5.16;
 
 contract Coinosis {
+    
     string constant DIFFERENT_LENGTHS =
         "The number of recipients differs from the number of amounts \
 (different-lengths)";
     string constant INSUFFICIENT_VALUE =
         "The ether value sent is less than the total intended amount to send \
 (insufficient-value).";
+    
     event Paid(address recipient, uint amount);
+    
     function distribute(
         address payable[] memory recipients,
         uint[] memory amounts
