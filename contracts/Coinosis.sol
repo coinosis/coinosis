@@ -22,6 +22,25 @@ contract Coinosis {
         coinosis.transfer(msg.value);
         emit Received(msg.sender, name, msg.value);
     }
+
+    function assess(
+        address payable[] memory recipients,
+        uint[] memory claps,
+        uint registrationPriceUSDWei,
+        uint ETHPriceUSDWei
+    ) public payable {
+        uint totalPriceUSDWei = registrationPriceUSDWei * recipients.length;
+        uint totalPriceWei = totalPriceUSDWei * 1 ether / ETHPriceUSDWei;
+        uint totalClaps = 0;
+        for (uint i = 0; i < claps.length; i++) {
+            totalClaps += claps[i];
+        }
+        uint[] memory amounts = new uint[](claps.length);
+        for (uint i = 0; i < claps.length; i++) {
+            amounts[i] = claps[i] * totalPriceWei / totalClaps;
+        }
+        distribute(recipients, amounts);
+    }
     
     function distribute(
         address payable[] memory recipients,
