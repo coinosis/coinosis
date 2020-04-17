@@ -8,7 +8,7 @@ contract('Coinosis', async accounts => {
     it('should transfer one wei to the coinosis account', async () => {
       const initialBalance = await web3.eth.getBalance(coinosisAccount);
       const instance = await Coinosis.deployed();
-      await instance.receive('foo', {value: 1});
+      await instance.receive('foo', {value: 1, from: accounts[1]});
       const finalBalance = await web3.eth.getBalance(coinosisAccount);
       assert.equal(finalBalance, (BigInt(initialBalance) + 1n).toString());
     });

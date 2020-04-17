@@ -17,3 +17,16 @@
 
 8. `npx webpack-dev-server`
 9. On a browser window, head to `http://localhost:9000`
+
+# Run the `distribute` contract function from the command line
+
+```bash
+truffle console --network mainnet
+instance = await Coinosis.deployed()
+toWei = web3.utils.toWei
+recipients = ['
+amounts = [toWei('
+totalAmounts = toWei('
+gasPrice = toWei('10', 'gwei')
+result = await instance.distribute(recipients, amounts, {value: totalAmounts, gasPrice})
+```
