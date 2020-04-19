@@ -1,60 +1,94 @@
 pragma solidity 0.5.16;
+pragma experimental ABIEncoderV2;
 
 contract Coinosis {
 
-    address payable constant coinosis =
-        0xe1fF19182deb2058016Ae0627c1E4660A895196a;
-    string constant ZERO_VALUE = "The ether value sent is zero (zero-value)";
-    string constant EMPTY_NAME = "The name provided is empty (empty-name)";
-    string constant DIFFERENT_LENGTHS =
-        "The number of recipients differs from the number of amounts \
-(different-lengths)";
+    string constant NOT_OWNER = "The sender account is not the owner \
+(not-owner)";
+    string constant INVALID_ETH_PRICE = "The provided ETH price is invalid \
+(invalid-eth-price)";
+    string constant NAMES_DIFFER_ADDRESSES =
+        "The amount of names differs from the amount of addresses \
+(names-differ-addresses)";
+    string constant ADDRESSES_DIFFER_CLAPS =
+        "The amount of addresses differs from the amount of claps \
+(addresses-differ-claps)";
     string constant INSUFFICIENT_VALUE =
-        "The ether value sent is less than the total intended amount to send \
-(insufficient-value).";
+        "The ether value in this contract is less than the total reward value \
+to send (insufficient-value)";
+    address private owner;
 
-    event Received(address sender, string name, uint amount);
-    event Paid(address recipient, uint amount);
+    event Assessment(
+        uint registrationPriceUSDWei,
+        uint ETHPriceUSDWei,
+        string[] names,
+        address payable[] addresses,
+        uint[] claps,
+        uint registrationPriceWei,
+        uint totalPriceWei,
+        uint totalClaps,
+        uint[] rewards
+    );
+    event Transfer(
+        string name,
+        address addr,
+        uint registrationPriceUSDWei,
+        uint registrationPriceWei,
+        uint claps,
+        uint reward
+    );
 
-    function receive(string memory name) public payable {
-        require(msg.value > 0, ZERO_VALUE);
-        require(bytes(name).length > 0, EMPTY_NAME);
-        coinosis.transfer(msg.value);
-        emit Received(msg.sender, name, msg.value);
+    constructor () public {
+        owner = msg.sender;
     }
 
+    function () external payable {}
+
     function assess(
-        address payable[] memory recipients,
-        uint[] memory claps,
         uint registrationPriceUSDWei,
-        uint ETHPriceUSDWei
-    ) public payable {
-        uint totalPriceUSDWei = registrationPriceUSDWei * recipients.length;
-        uint totalPriceWei = totalPriceUSDWei * 1 ether / ETHPriceUSDWei;
+        uint ETHPriceUSDWei,
+        string[] memory names,
+        address payable[] memory addresses,
+        uint[] memory claps
+    ) public { // TODO: use SafeMath
+        require(msg.sender == owner, NOT_OWNER);
+        require(ETHPriceUSDWei > 0, INVALID_ETH_PRICE);
+        require(names.length == addresses.length, NAMES_DIFFER_ADDRESSES);
+        require(addresses.length == claps.length, ADDRESSES_DIFFER_CLAPS);
+        uint registrationPriceWei =
+            registrationPriceUSDWei * 1 ether / ETHPriceUSDWei;
+        uint totalPriceWei = registrationPriceWei * addresses.length;
+        require(address(this).balance >= totalPriceWei, INSUFFICIENT_VALUE);
         uint totalClaps = 0;
         for (uint i = 0; i < claps.length; i++) {
             totalClaps += claps[i];
         }
-        uint[] memory amounts = new uint[](claps.length);
+        uint[] memory rewards = new uint[](claps.length);
         for (uint i = 0; i < claps.length; i++) {
-            amounts[i] = claps[i] * totalPriceWei / totalClaps;
+            rewards[i] = claps[i] * totalPriceWei / totalClaps;
         }
-        distribute(recipients, amounts);
-    }
-    
-    function distribute(
-        address payable[] memory recipients,
-        uint[] memory amounts
-    ) public payable {
-        require(recipients.length == amounts.length, DIFFERENT_LENGTHS);
-        uint totalAmount = 0;
-        for (uint i = 0; i < amounts.length; i++) {
-            totalAmount += amounts[i];
-        }
-        require(msg.value >= totalAmount, INSUFFICIENT_VALUE);
-        for (uint i = 0; i < recipients.length; i++) {
-            recipients[i].transfer(amounts[i]);
-            emit Paid(recipients[i], amounts[i]);
+        emit Assessment(
+            registrationPriceUSDWei,
+            ETHPriceUSDWei,
+            names,
+            addresses,
+            claps,
+            registrationPriceWei,
+            totalPriceWei,
+            totalClaps,
+            rewards
+        );
+        for (uint i = 0; i < addresses.length; i++) {
+            if (rewards[i] > 0 && addresses[i].send(rewards[i])) {
+                emit Transfer(
+                    names[i],
+                    addresses[i],
+                    registrationPriceUSDWei,
+                    registrationPriceWei,
+                    claps[i],
+                    rewards[i]
+                );
+            }
         }
     }
 }
