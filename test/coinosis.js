@@ -30,7 +30,7 @@ contract('Coinosis', async accounts => {
     }
   }
 
-  const registrationPriceUSDWei = web3.utils.toWei('5');
+  const registrationFeeUSDWei = web3.utils.toWei('5');
   const ETHPriceUSDWei = web3.utils.toWei('187.79');
   const names = [
     'Alejandra Arias',
@@ -46,7 +46,7 @@ contract('Coinosis', async accounts => {
   const addresses = accounts.slice(1);
   const claps = [8, 10, 4, 7, 3, 6, 4, 7, 4];
 
-  const registrationPriceWei = 26625485915117950n;
+  const registrationFeeWei = 26625485915117950n;
   const totalPriceWei = 239629373236061550n;
   const totalClaps = 53;
   const rewards = [
@@ -70,7 +70,7 @@ contract('Coinosis', async accounts => {
     });
     const initialBalances = await getBalances(addresses);
     await instance.assess(
-      registrationPriceUSDWei,
+      registrationFeeUSDWei,
       ETHPriceUSDWei,
       names,
       addresses,
@@ -88,19 +88,19 @@ contract('Coinosis', async accounts => {
       value: web3.utils.toWei('1')
     });
     const result = await instance.assess(
-      registrationPriceUSDWei,
+      registrationFeeUSDWei,
       ETHPriceUSDWei,
       names,
       addresses,
       claps
     );
     truffleAssert.eventEmitted(result, 'Assessment', event => {
-      return event.registrationPriceUSDWei == registrationPriceUSDWei &&
+      return event.registrationFeeUSDWei == registrationFeeUSDWei &&
         event.ETHPriceUSDWei == ETHPriceUSDWei &&
         areEqual(event.names, names) &&
         areEqual(event.addresses, addresses) &&
         areEqual(event.claps, claps) &&
-        event.registrationPriceWei == registrationPriceWei &&
+        event.registrationFeeWei == registrationFeeWei &&
         event.totalPriceWei == totalPriceWei &&
         event.totalClaps == totalClaps &&
         areEqual(event.rewards, rewards);
@@ -115,7 +115,7 @@ contract('Coinosis', async accounts => {
       value: web3.utils.toWei('1')
     });
     const result = await instance.assess(
-      registrationPriceUSDWei,
+      registrationFeeUSDWei,
       ETHPriceUSDWei,
       names,
       addresses,
@@ -126,8 +126,8 @@ contract('Coinosis', async accounts => {
       eventsEmitted++;
       return event.name == names[i] &&
         event.addr == addresses[i] &&
-        event.registrationPriceUSDWei == registrationPriceUSDWei &&
-        event.registrationPriceWei == registrationPriceWei &&
+        event.registrationFeeUSDWei == registrationFeeUSDWei &&
+        event.registrationFeeWei == registrationFeeWei &&
         event.claps == claps[i] &&
         event.reward == rewards[i]
     });
@@ -138,7 +138,7 @@ contract('Coinosis', async accounts => {
     const instance = await Coinosis.new({from: accounts[1]});
     truffleAssert.reverts(
       instance.assess(
-        registrationPriceUSDWei,
+        registrationFeeUSDWei,
         ETHPriceUSDWei,
         names,
         addresses,
@@ -152,7 +152,7 @@ contract('Coinosis', async accounts => {
     const instance = await Coinosis.new();
     truffleAssert.reverts(
       instance.assess(
-        registrationPriceUSDWei,
+        registrationFeeUSDWei,
         ETHPriceUSDWei,
         names,
         addresses,
@@ -171,7 +171,7 @@ contract('Coinosis', async accounts => {
     });
     const newClaps = [0, 0, 0, 0, 0, 0, 0, 5, 10];
     const result = await instance.assess(
-      registrationPriceUSDWei,
+      registrationFeeUSDWei,
       ETHPriceUSDWei,
       names,
       addresses,
@@ -186,8 +186,8 @@ contract('Coinosis', async accounts => {
       eventsEmitted++;
       return event.name == names[7 + i] &&
         event.addr == addresses[7 + i] &&
-        event.registrationPriceUSDWei == registrationPriceUSDWei &&
-        event.registrationPriceWei == registrationPriceWei &&
+        event.registrationFeeUSDWei == registrationFeeUSDWei &&
+        event.registrationFeeWei == registrationFeeWei &&
         event.claps == newClaps[7 + i] &&
         event.reward == newRewards[i];
     });
@@ -205,7 +205,7 @@ contract('Coinosis', async accounts => {
     newAddresses.push(accounts[0]);
     truffleAssert.reverts(
       instance.assess(
-        registrationPriceUSDWei,
+        registrationFeeUSDWei,
         ETHPriceUSDWei,
         names,
         newAddresses,
@@ -226,7 +226,7 @@ contract('Coinosis', async accounts => {
     newClaps.push(8);
     truffleAssert.reverts(
       instance.assess(
-        registrationPriceUSDWei,
+        registrationFeeUSDWei,
         ETHPriceUSDWei,
         names,
         addresses,
@@ -245,7 +245,7 @@ contract('Coinosis', async accounts => {
     });
     truffleAssert.reverts(
       instance.assess(
-        registrationPriceUSDWei,
+        registrationFeeUSDWei,
         0,
         names,
         addresses,
@@ -282,7 +282,7 @@ contract('Coinosis', async accounts => {
          value: web3.utils.toWei('1')
        });
        const result = await instance.assess(
-         registrationPriceUSDWei,
+         registrationFeeUSDWei,
          ETHPriceUSDWei,
          [],
          [],

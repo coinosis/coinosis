@@ -24,12 +24,12 @@ to send (insufficient-value)";
     address private owner;
 
     event Assessment(
-        uint registrationPriceUSDWei,
+        uint registrationFeeUSDWei,
         uint ETHPriceUSDWei,
         string[] names,
         address payable[] addresses,
         uint[] claps,
-        uint registrationPriceWei,
+        uint registrationFeeWei,
         uint totalPriceWei,
         uint totalClaps,
         uint[] rewards
@@ -37,8 +37,8 @@ to send (insufficient-value)";
     event Transfer(
         string name,
         address addr,
-        uint registrationPriceUSDWei,
-        uint registrationPriceWei,
+        uint registrationFeeUSDWei,
+        uint registrationFeeWei,
         uint claps,
         uint reward
     );
@@ -50,7 +50,7 @@ to send (insufficient-value)";
     function () external payable {}
 
     function assess(
-        uint registrationPriceUSDWei,
+        uint registrationFeeUSDWei,
         uint ETHPriceUSDWei,
         string[] memory names,
         address payable[] memory addresses,
@@ -60,9 +60,9 @@ to send (insufficient-value)";
         require(ETHPriceUSDWei > 0, INVALID_ETH_PRICE);
         require(names.length == addresses.length, NAMES_DIFFER_ADDRESSES);
         require(addresses.length == claps.length, ADDRESSES_DIFFER_CLAPS);
-        uint registrationPriceWei =
-            registrationPriceUSDWei.mul(1 ether).div(ETHPriceUSDWei);
-        uint totalPriceWei = registrationPriceWei.mul(addresses.length);
+        uint registrationFeeWei =
+            registrationFeeUSDWei.mul(1 ether).div(ETHPriceUSDWei);
+        uint totalPriceWei = registrationFeeWei.mul(addresses.length);
         require(address(this).balance >= totalPriceWei, INSUFFICIENT_VALUE);
         uint totalClaps = 0;
         for (uint i = 0; i < claps.length; i = i.add(1)) {
@@ -73,12 +73,12 @@ to send (insufficient-value)";
             rewards[i] = claps[i].mul(totalPriceWei).div(totalClaps);
         }
         emit Assessment(
-            registrationPriceUSDWei,
+            registrationFeeUSDWei,
             ETHPriceUSDWei,
             names,
             addresses,
             claps,
-            registrationPriceWei,
+            registrationFeeWei,
             totalPriceWei,
             totalClaps,
             rewards
@@ -88,8 +88,8 @@ to send (insufficient-value)";
                 emit Transfer(
                     names[i],
                     addresses[i],
-                    registrationPriceUSDWei,
-                    registrationPriceWei,
+                    registrationFeeUSDWei,
+                    registrationFeeWei,
                     claps[i],
                     rewards[i]
                 );
