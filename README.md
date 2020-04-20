@@ -18,15 +18,21 @@
 8. `npx webpack-dev-server`
 9. On a browser window, head to `http://localhost:9000`
 
-# Run the `distribute` contract function from the command line
+# Interact with the deployed contract from the command line
 
 ```bash
 truffle console --network mainnet
+
+gasPrice = web3.utils.toWei('7.5', 'gwei') // ethgasstation.info
+
 instance = await Coinosis.deployed()
-toWei = web3.utils.toWei
-recipients = ['
-amounts = [toWei('
-totalAmounts = toWei('
-gasPrice = toWei('10', 'gwei')
-result = await instance.distribute(recipients, amounts, {value: totalAmounts, gasPrice})
+
+result = await web3.eth.sendTransaction({from: accounts[0], to: instance.address, value: web3.utils.toWei('1'), gasPrice})
+
+registrationPriceUSDWei = web3.utils.toWei('5.00')
+ETHPriceUSDWei = web3.utils.toWei('187.79')
+names = ['Alejandra Arias', 'Valentina Jaramillo', 'Laura Acosta']
+addresses = ['0x3eBe044eAE12599b396CF779eE8124c5900B13a2', '0xB6E0fDeFB8D65D50cc5eEd77F79e46E10d749DE4', '0xEB13677C9B17746b7C1ac717A3113087e075E191']
+claps = [8, 10, 4]
+result = await instance.assess(registrationPriceUSDWei, ETHPriceUSDWei, names, addresses, claps, {gasPrice})
 ```
