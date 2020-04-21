@@ -30,7 +30,7 @@ to send (insufficient-value)";
         address payable[] addresses,
         uint[] claps,
         uint registrationFeeWei,
-        uint totalPriceWei,
+        uint totalFeesWei,
         uint totalClaps,
         uint[] rewards
     );
@@ -62,15 +62,15 @@ to send (insufficient-value)";
         require(addresses.length == claps.length, ADDRESSES_DIFFER_CLAPS);
         uint registrationFeeWei =
             registrationFeeUSDWei.mul(1 ether).div(ETHPriceUSDWei);
-        uint totalPriceWei = registrationFeeWei.mul(addresses.length);
-        require(address(this).balance >= totalPriceWei, INSUFFICIENT_VALUE);
+        uint totalFeesWei = registrationFeeWei.mul(addresses.length);
+        require(address(this).balance >= totalFeesWei, INSUFFICIENT_VALUE);
         uint totalClaps = 0;
         for (uint i = 0; i < claps.length; i = i.add(1)) {
             totalClaps = totalClaps.add(claps[i]);
         }
         uint[] memory rewards = new uint[](claps.length);
         for (uint i = 0; i < claps.length; i = i.add(1)) {
-            rewards[i] = claps[i].mul(totalPriceWei).div(totalClaps);
+            rewards[i] = claps[i].mul(totalFeesWei).div(totalClaps);
         }
         emit Assessment(
             registrationFeeUSDWei,
@@ -79,7 +79,7 @@ to send (insufficient-value)";
             addresses,
             claps,
             registrationFeeWei,
-            totalPriceWei,
+            totalFeesWei,
             totalClaps,
             rewards
         );

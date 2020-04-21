@@ -47,7 +47,7 @@ contract('Coinosis', async accounts => {
   const claps = [8, 10, 4, 7, 3, 6, 4, 7, 4];
 
   const registrationFeeWei = 26625485915117950n;
-  const totalPriceWei = 239629373236061550n;
+  const totalFeesWei = 239629373236061550n;
   const totalClaps = 53;
   const rewards = [
     36170471431858347n,
@@ -101,7 +101,7 @@ contract('Coinosis', async accounts => {
         areEqual(event.addresses, addresses) &&
         areEqual(event.claps, claps) &&
         event.registrationFeeWei == registrationFeeWei &&
-        event.totalPriceWei == totalPriceWei &&
+        event.totalFeesWei == totalFeesWei &&
         event.totalClaps == totalClaps &&
         areEqual(event.rewards, rewards);
     });
@@ -255,7 +255,7 @@ contract('Coinosis', async accounts => {
     );
   });
 
-  it('zero registration price: should not fail nor emit transfer events',
+  it('zero registration fee: should not fail nor emit transfer events',
      async () => {
        const instance = await Coinosis.new();
        await web3.eth.sendTransaction({
