@@ -94,8 +94,11 @@ contract('Coinosis', async accounts => {
       addresses,
       claps
     );
+    const currentTime = new Date().getTime() / 1000;
     truffleAssert.eventEmitted(result, 'Assessment', event => {
-      return event.registrationFeeUSDWei == registrationFeeUSDWei &&
+      return event.date <= currentTime &&
+        event.date > currentTime - 10 &&
+        event.registrationFeeUSDWei == registrationFeeUSDWei &&
         event.ETHPriceUSDWei == ETHPriceUSDWei &&
         areEqual(event.names, names) &&
         areEqual(event.addresses, addresses) &&

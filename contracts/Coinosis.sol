@@ -24,6 +24,7 @@ to send (insufficient-value)";
     address private owner;
 
     event Assessment(
+        uint date,
         uint registrationFeeUSDWei,
         uint ETHPriceUSDWei,
         string[] names,
@@ -73,6 +74,7 @@ to send (insufficient-value)";
             rewards[i] = claps[i].mul(totalFeesWei).div(totalClaps);
         }
         emit Assessment(
+            now,
             registrationFeeUSDWei,
             ETHPriceUSDWei,
             names,
