@@ -6,6 +6,7 @@ import React, {
   useState
 } from 'react';
 import Web3 from 'web3';
+import styled, { createGlobalStyle } from 'styled-components';
 import contractJson from '../build/contracts/Coinosis.json';
 
 const Web3Context = createContext();
@@ -41,13 +42,20 @@ const Coinosis = () => {
     <Web3Context.Provider value={web3}>
       <ContractContext.Provider value={contract}>
         <CurrencyContext.Provider value={[currencyType, setCurrencyType]}>
-          <ContractInfo />
-          <Assessments />
+          <GlobalStyle/>
+          <ContractInfo/>
+          <Assessments/>
         </CurrencyContext.Provider>
       </ContractContext.Provider>
     </Web3Context.Provider>
   );
 }
+
+const GlobalStyle = createGlobalStyle`
+  body {
+    background: #f0f0f0;
+  }
+`
 
 const ContractInfo = () => {
 
@@ -66,6 +74,8 @@ const ContractInfo = () => {
         display: flex;
         justify-content: center;
         margin-top: 50px;
+        font-family: arial;
+        font-size: 34px;
       `}
     >
       <div>
@@ -100,7 +110,11 @@ const Assessments = () => {
   }, []);
 
   return (
-    <div>
+    <div
+      css={`
+        font-family: arial;
+      `}
+    >
       {assessments.map(assessment => {
         return (
           <Assessment key={assessment.id} { ...assessment } />
@@ -150,8 +164,11 @@ const Assessment = ({
     <div
       css={`
         margin: 20px;
-        background: #E0F0E0;
+        background: #f8f8f8;
         padding: 10px;
+        border-radius: 4px;
+        border: 1px solid #e8e8e8;
+        box-shadow: 1px 1px #e8e8e8;
       `}
     >
       <Header
@@ -163,16 +180,30 @@ const Assessment = ({
         ETHPriceUSDWei={ETHPriceUSDWei}
         totalFeesWei={totalFeesWei}
       />
-      <div>
+      <div
+        css={`
+          margin-top: 15px;
+        `}
+      >
         <table>
           <thead>
-            <tr>
+            <tr
+              css={`
+                background: #d0d0d0;
+              `}
+            >
               <th>participante</th>
               <th>aplausos</th>
               <th>porcentaje</th>
               <th>recompensa</th>
               <th>balance</th>
-              <th>estado</th>
+              <th
+                css={`
+                  padding: 10px 20px;
+                `}
+              >
+                estado
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -197,28 +228,37 @@ const Assessment = ({
             })}
           </tbody>
           <tfoot>
-            <tr>
-              <th>total</th>
+            <tr
+              css={`
+                background: #d0d0d0;
+              `}
+            >
+              <th
+                css={`
+                  padding: 10px 20px;
+                `}
+              >total</th>
               <th>
                 {totalClaps}
               </th>
               <th>
-                100%
+                100 %
               </th>
-              <td>
+              <th>
                 <Amount
                   eth={totalFeesWei}
                   rate={ETHPriceUSDWei}
                   css={`font-weight: bold`}
                 />
-              </td>
-              <td>
+              </th>
+              <th>
                 <Amount
                   eth={totalBalance}
                   rate={ETHPriceUSDWei}
                   css={`font-weight: bold`}
                 />
-              </td>
+              </th>
+              <th/>
             </tr>
           </tfoot>
         </table>
@@ -241,24 +281,25 @@ const Header = ({
       <div
         css={`
           display: flex;
+          align-items: flex-end;
         `}
       >
-        <div>
-          distribución
-        </div>
         <div
           css={`
-            margin-left: 5px;
+            font-size: 24px;
+            display: flex;
           `}
         >
-          <Hash type="tx" value={id} />
-        </div>
-        <div
-          css={`
+          <div>
+            distribución
+          </div>
+          <div
+            css={`
             margin-left: 5px;
           `}
-        >
-          hecha el
+          >
+            <Hash type="tx" value={id} />
+          </div>
         </div>
         <div
           css={`
@@ -359,7 +400,12 @@ const Participant = ({
 
   return (
     <tr>
-      <td>
+      <td
+        css={`
+          padding: 10px 30px;
+          text-align: center;
+        `}
+      >
         <ToolTip value={address} show={showAddress} />
         <Link
           type="address"
@@ -370,8 +416,18 @@ const Participant = ({
           {name}
         </Link>
       </td>
-      <td>{claps}</td>
-      <td>
+      <td
+        css={`
+          text-align: center;
+          padding: 0 30px;
+        `}
+      >{claps}</td>
+      <td
+        css={`
+          text-align: center;
+          padding: 0 30px;
+        `}
+      >
         <ToolTip value={fraction} show={showFraction} />
         <div
           onMouseOver={() => setShowFraction(true)}
@@ -380,16 +436,28 @@ const Participant = ({
           {percentage}
         </div>
       </td>
-      <td>
+      <td
+        css={`
+          padding: 0 30px;
+        `}
+      >
         <Amount eth={reward} rate={rate} />
       </td>
-      <td>
+      <td
+        css={`
+          padding: 0 30px;
+        `}
+      >
         <Amount
           eth={balance}
           rate={ETHPriceUSDWei}
         />
       </td>
-      <td>
+      <td
+        css={`
+          padding: 0 30px;
+        `}
+      >
         <ToolTip value={tx} show={showTx} />
         <Link
           type="tx"
@@ -441,6 +509,13 @@ const Amount = ({ usd: usdWei, eth: wei, rate: rateWei, ...props }) => {
         onClick={switchCurrencyType}
         onMouseOver={() => setDisplayRate(true)}
         onMouseOut={() => setDisplayRate(false)}
+        css={`
+          background: ${currencyType === 'eth' ? '#97b9ca' : '#97cab3'};
+          border: none;
+          border-radius: 4px;
+          outline: none;
+          cursor: pointer;
+        `}
         { ...props }
       >
         {currency}
@@ -456,10 +531,13 @@ const ToolTip = ({ value, show }) => {
         css={`
           display: ${show ? 'block' : 'none'};
           position: absolute;
-          bottom: 10px;
+          bottom: 7px;
           background: black;
-          color: white;
+          color: #f0f0f0;
           padding: 5px;
+          border-radius: 4px;
+          font-size: 13px;
+          font-weight: normal;
         `}
       >
         {value}
@@ -504,7 +582,17 @@ const Link = ({ type, value, children, ...props }) => {
   }, [value]);
   
   return (
-    <a href={href} target="_blank" {...props} >
+    <a
+      href={href}
+      target="_blank"
+      {...props}
+      css={`
+        color: black;
+        &:visited {
+          color: black;
+        }
+      `}
+    >
       {children}
     </a>
   );
