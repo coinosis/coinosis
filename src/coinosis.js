@@ -61,14 +61,22 @@ const ContractInfo = () => {
   }, [contract]);
 
   return (
-    <div>
+    <div
+      css={`
+        display: flex;
+        justify-content: center;
+        margin-top: 50px;
+      `}
+    >
       <div>
         contrato
       </div>
-      <div>
-        <Link type="address" data={address}>
-          {address}
-        </Link>
+      <div
+        css={`
+          margin-left: 5px;
+        `}
+      >
+        <Hash type="address" value={address} />
       </div>
     </div>
   );
@@ -134,7 +142,13 @@ const Assessment = ({
   }, []);
 
   return (
-    <div>
+    <div
+      css={`
+        margin: 20px;
+        background: #E0F0E0;
+        padding: 10px;
+      `}
+    >
       <Header
         id={id}
         timestamp={timestamp}
@@ -197,14 +211,20 @@ const Header = ({
 }) => {
   return (
     <div>
-      <div>
+      <div
+        css={`
+          display: flex;
+        `}
+      >
         <div>
           distribución
         </div>
-        <div>
-          <Link type="tx" data={id}>
-            {id}
-          </Link>
+        <div
+          css={`
+            margin-left: 5px;
+          `}
+        >
+          <Hash type="tx" value={id} />
         </div>
       </div>
       <div>
@@ -252,14 +272,18 @@ const Participant = ({
 }) => {
 
   const [percentage, setPercentage] = useState(percentagePlaceholder);
+  const [fraction, setFraction] = useState('');
   const [balance, setBalance] = useState('');
   const [status, setStatus] = useState('');
   const [tx, setTx] = useState('');
-
+  const [showAddress, setShowAddress] = useState(false);
+  const [showFraction, setShowFraction] = useState(false);
+  const [showTx, setShowTx] = useState(false);
 
   useEffect(() => {
     const percentage = 100 * +claps / +totalClaps;
     setPercentage(percentage.toFixed(1) + ' %');
+    setFraction(claps + ' / ' + totalClaps);
     const balance = reward - registrationFeeWei;
     setBalance(String(balance));
   }, []);
@@ -274,12 +298,26 @@ const Participant = ({
   return (
     <tr>
       <td>
-        <Link type="address" data={address}>
+        <ToolTip value={address} show={showAddress} />
+        <Link
+          type="address"
+          value={address}
+          onMouseOver={() => setShowAddress(true)}
+          onMouseOut={() => setShowAddress(false)}
+        >
           {name}
         </Link>
       </td>
       <td>{claps}</td>
-      <td>{percentage}</td>
+      <td>
+        <ToolTip value={fraction} show={showFraction} />
+        <div
+          onMouseOver={() => setShowFraction(true)}
+          onMouseOut={() => setShowFraction(false)}
+        >
+          {percentage}
+        </div>
+      </td>
       <td>
         <Amount eth={reward} rate={rate} />
       </td>
@@ -290,7 +328,13 @@ const Participant = ({
         />
       </td>
       <td>
-        <Link type="tx" data={tx}>
+        <ToolTip value={tx} show={showTx} />
+        <Link
+          type="tx"
+          value={tx}
+          onMouseOver={() => setShowTx(true)}
+          onMouseOut={() => setShowTx(false)}
+        >
           {status}
         </Link>
       </td>
@@ -328,35 +372,13 @@ const Amount = ({ usd: usdWei, eth: wei, rate: rateWei }) => {
     setCurrencyType(currencyType => currencyType === ETH ? USD : ETH);
   }, []);
 
-  const showRate = useCallback(() => {
-    setDisplayRate(true);
-  }, []);
-
-  const hideRate = useCallback(() => {
-    setDisplayRate(false);
-  }, []);
-
   return (
-    <div css="position: relative">
-      <div
-        css={`
-          display: ${displayRate ? 'block' : 'none'};
-          position: absolute;
-          bottom: 30px;
-          background: black;
-          color: white;
-          width: 150px;
-          left: -30px;
-          text-algin: center;
-        `}
-        show={displayRate}
-      >
-        {rate}
-      </div>
+    <div>
+      <ToolTip value={rate} show={displayRate} />
       <button
         onClick={switchCurrencyType}
-        onMouseOver={showRate}
-        onMouseOut={hideRate}
+        onMouseOver={() => setDisplayRate(true)}
+        onMouseOut={() => setDisplayRate(false)}
       >
         {currency}
       </button>
@@ -364,17 +386,62 @@ const Amount = ({ usd: usdWei, eth: wei, rate: rateWei }) => {
   );
 }
 
-const Link = ({ type, data, children }) => {
+const ToolTip = ({ value, show }) => {
+  return (
+    <div css="position: relative">
+      <div
+        css={`
+          display: ${show ? 'block' : 'none'};
+          position: absolute;
+          bottom: 10px;
+          background: black;
+          color: white;
+          padding: 5px;
+        `}
+      >
+        {value}
+      </div>
+    </div>
+  );
+}
+
+const Hash = ({ type, value }) => {
+
+  const [short, setShort] = useState();
+  const [showFull, setShowFull] = useState(false);
+
+  useEffect(() => {
+    const length = value.length;
+    const short = value.substring(0, 6) + '...' + value.substring(length - 4);
+    setShort(short);
+  }, [value]);
+
+  return (
+    <div>
+      <ToolTip value={value} show={showFull} />
+      <Link
+        type={type}
+        value={value}
+        onMouseOver={() => setShowFull(true)}
+        onMouseOut={() => setShowFull(false)}
+      >
+        {short}
+      </Link>
+    </div>
+  );
+}
+
+const Link = ({ type, value, children, ...props }) => {
   
   const [href, setHref] = useState('');
 
   useEffect(() => {
-    let href = `https://etherscan.io/${type}/${data}`;
+    let href = `https://etherscan.io/${type}/${value}`;
     setHref(href);
-  }, [data]);
+  }, [value]);
   
   return (
-    <a href={href} target="_blank">
+    <a href={href} target="_blank" {...props} >
       {children}
     </a>
   );
