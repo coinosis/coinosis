@@ -6,7 +6,6 @@ import React, {
   useState
 } from 'react';
 import Web3 from 'web3';
-import styled from 'styled-components';
 import contractJson from '../build/contracts/Coinosis.json';
 
 const Web3Context = createContext();
@@ -338,12 +337,22 @@ const Amount = ({ usd: usdWei, eth: wei, rate: rateWei }) => {
   }, []);
 
   return (
-    <ToolTipContainer>
-      <ToolTip
+    <div css="position: relative">
+      <div
+        css={`
+          display: ${displayRate ? 'block' : 'none'};
+          position: absolute;
+          bottom: 30px;
+          background: black;
+          color: white;
+          width: 150px;
+          left: -30px;
+          text-algin: center;
+        `}
         show={displayRate}
       >
         {rate}
-      </ToolTip>
+      </div>
       <button
         onClick={switchCurrencyType}
         onMouseOver={showRate}
@@ -351,24 +360,9 @@ const Amount = ({ usd: usdWei, eth: wei, rate: rateWei }) => {
       >
         {currency}
       </button>
-    </ToolTipContainer>
+    </div>
   );
 }
-
-const ToolTipContainer = styled.div`
-  position: relative;
-`
-
-const ToolTip = styled.div`
-  display: ${({ show }) => show ? 'block' : 'none'};
-  position: absolute;
-  bottom: 30px;
-  background: black;
-  color: white;
-  width: 150px;
-  left: -30px;
-  text-algin: center;
-`
 
 const Link = ({ type, data, children }) => {
   
