@@ -122,11 +122,12 @@ const Assessment = ({
   registrationFeeWei,
   totalFeesWei,
   totalClaps,
-  rewards
+  rewards,
 }) => {
 
   const contract = useContext(ContractContext);
   const [transfers, setTransfers] = useState([]);
+  const [totalBalance, setTotalBalance] = useState(ethPlaceholder);
 
   useEffect(() => {
     contract.events.Transfer(
@@ -138,7 +139,11 @@ const Assessment = ({
         }
         event.returnValues.transactionHash = event.transactionHash;
         setTransfers(transfers => [ ...transfers, event.returnValues ]);
-      });
+      }
+    );
+    const totalBalance = rewards.reduce((a, b) => BigInt(a) + BigInt(b))
+      - BigInt(totalFeesWei);
+    setTotalBalance(String(totalBalance));
   }, []);
 
   return (
@@ -157,7 +162,6 @@ const Assessment = ({
         registrationFeeWei={registrationFeeWei}
         ETHPriceUSDWei={ETHPriceUSDWei}
         totalFeesWei={totalFeesWei}
-        totalClaps={totalClaps}
       />
       <div>
         <table>
@@ -191,8 +195,32 @@ const Assessment = ({
                 />
               );
             })}
-
           </tbody>
+          <tfoot>
+            <tr>
+              <th>total</th>
+              <th>
+                {totalClaps}
+              </th>
+              <th>
+                100%
+              </th>
+              <td>
+                <Amount
+                  eth={totalFeesWei}
+                  rate={ETHPriceUSDWei}
+                  css={`font-weight: bold`}
+                />
+              </td>
+              <td>
+                <Amount
+                  eth={totalBalance}
+                  rate={ETHPriceUSDWei}
+                  css={`font-weight: bold`}
+                />
+              </td>
+            </tr>
+          </tfoot>
         </table>
       </div>
     </div>
@@ -207,7 +235,6 @@ const Header = ({
   registrationFeeWei,
   ETHPriceUSDWei,
   totalFeesWei,
-  totalClaps
 }) => {
   return (
     <div>
@@ -226,34 +253,69 @@ const Header = ({
         >
           <Hash type="tx" value={id} />
         </div>
-      </div>
-      <div>
-        <DateTime timestamp={timestamp} />
-      </div>
-      <div>
-        <div>
-          <div>participantes</div>
-          <div>{addresses.length}</div>
+        <div
+          css={`
+            margin-left: 5px;
+          `}
+        >
+          hecha el
+        </div>
+        <div
+          css={`
+            margin-left: 5px;
+          `}
+        >
+          <DateTime timestamp={timestamp} />
+        </div>
+        <div
+          css={`
+            margin-left: 5px;
+          `}
+        >
+          ({addresses.length}
+        </div>
+        <div
+          css={`
+            margin-left: 5px;
+          `}
+        >
+          participantes)
         </div>
       </div>
-      <div>
-        <div>aporte por persona</div>
-        <Amount
-          usd={registrationFeeUSDWei}
-          eth={registrationFeeWei}
-          rate={ETHPriceUSDWei}
-        />
-      </div>
-      <div>
-        <div>aporte total</div>
-        <Amount
-          eth={totalFeesWei}
-          rate={ETHPriceUSDWei}
-        />
-      </div>
-      <div>
-        <div>total aplausos</div>
-        <div>{totalClaps}</div>
+      <div
+        css={`
+          display: flex;
+        `}
+      >
+        <div>aporte por persona:</div>
+        <div
+          css={`
+            margin-left: 5px;
+          `}
+        >
+          <Amount
+            usd={registrationFeeUSDWei}
+            eth={registrationFeeWei}
+            rate={ETHPriceUSDWei}
+          />
+        </div>
+        <div
+          css={`
+            margin-left: 5px;
+          `}
+        >
+          aporte total:
+        </div>
+        <div
+          css={`
+            margin-left: 5px;
+          `}
+        >
+          <Amount
+            eth={totalFeesWei}
+            rate={ETHPriceUSDWei}
+          />
+        </div>
       </div>
     </div>
   )
@@ -342,7 +404,7 @@ const Participant = ({
   );
 }
 
-const Amount = ({ usd: usdWei, eth: wei, rate: rateWei }) => {
+const Amount = ({ usd: usdWei, eth: wei, rate: rateWei, ...props }) => {
 
   const web3 = useContext(Web3Context);
   const [currencyType, setCurrencyType] = useContext(CurrencyContext);
@@ -356,7 +418,7 @@ const Amount = ({ usd: usdWei, eth: wei, rate: rateWei }) => {
   useEffect(() => {
     if(!usdWei) {
       usdWei = String(Math.round(web3.utils.fromWei(
-        String(BigInt(wei * rateWei))
+        String(BigInt(wei) * BigInt(rateWei))
       )));
     }
     setUSD(Number(web3.utils.fromWei(usdWei)).toFixed(2) + ' USD');
@@ -379,6 +441,7 @@ const Amount = ({ usd: usdWei, eth: wei, rate: rateWei }) => {
         onClick={switchCurrencyType}
         onMouseOver={() => setDisplayRate(true)}
         onMouseOut={() => setDisplayRate(false)}
+        { ...props }
       >
         {currency}
       </button>
@@ -452,7 +515,8 @@ const DateTime = ({ timestamp }) => {
   const [date, setDate] = useState(datePlaceholder);
 
   useEffect(() => {
-    setDate(new Date(timestamp * 1000).toLocaleString());
+    const date = new Date(timestamp * 1000);
+    setDate(date.toLocaleString());
   }, [ timestamp ]);
 
   return (
