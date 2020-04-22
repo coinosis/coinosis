@@ -1,19 +1,30 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState
+} from 'react';
 import Web3 from 'web3';
+import styled from 'styled-components';
 import contractJson from '../build/contracts/Coinosis.json';
 
 const Web3Context = createContext();
 const ContractContext = createContext();
+const CurrencyContext = createContext([]);
 
 const usdPlaceholder = ' '.repeat(4);
 const ethPlaceholder = ' '.repeat(5);
 const datePlaceholder = ' '.repeat(21);
 const percentagePlaceholder = ' '.repeat(4);
+const ETH = 'eth';
+const USD = 'usd';
 
 const Coinosis = () => {
 
   const [web3, setWeb3] = useState();
   const [contract, setContract] = useState();
+  const [currencyType, setCurrencyType] = useState(ETH);
 
   useEffect(() => {
     const web3 = new Web3(Web3.givenProvider);
@@ -30,8 +41,10 @@ const Coinosis = () => {
   return (
     <Web3Context.Provider value={web3}>
       <ContractContext.Provider value={contract}>
-        <ContractInfo />
-        <Assessments />
+        <CurrencyContext.Provider value={[currencyType, setCurrencyType]}>
+          <ContractInfo />
+          <Assessments />
+        </CurrencyContext.Provider>
       </ContractContext.Provider>
     </Web3Context.Provider>
   );
@@ -289,9 +302,13 @@ const Participant = ({
 const Amount = ({ usd: usdWei, eth: wei, rate: rateWei }) => {
 
   const web3 = useContext(Web3Context);
+  const [currencyType, setCurrencyType] = useContext(CurrencyContext);
+
   const [usd, setUSD] = useState(usdPlaceholder);
   const [eth, setETH] = useState(ethPlaceholder);
+  const [currency, setCurrency] = useState(ethPlaceholder);
   const [rate, setRate] = useState(usdPlaceholder);
+  const [displayRate, setDisplayRate] = useState(false);
   
   useEffect(() => {
     if(!usdWei) {
@@ -302,14 +319,56 @@ const Amount = ({ usd: usdWei, eth: wei, rate: rateWei }) => {
     setUSD(Number(web3.utils.fromWei(usdWei)).toFixed(2) + ' USD');
     setETH(Number(web3.utils.fromWei(wei)).toFixed(3) + ' ETH');
     setRate(Number(web3.utils.fromWei(rateWei)).toFixed(2) + ' USD/ETH');
-  }, [usdWei, wei, rateWei]);
+  }, [ usdWei, wei, rateWei ]);
+
+  useEffect(() => {
+    setCurrency(currencyType === ETH ? eth : usd);
+  }, [ currencyType, eth, usd ]);
+
+  const switchCurrencyType = useCallback(() => {
+    setCurrencyType(currencyType => currencyType === ETH ? USD : ETH);
+  }, []);
+
+  const showRate = useCallback(() => {
+    setDisplayRate(true);
+  }, []);
+
+  const hideRate = useCallback(() => {
+    setDisplayRate(false);
+  }, []);
 
   return (
-    <div>
-      {usd} ({eth} @ {rate})
-    </div>
+    <ToolTipContainer>
+      <ToolTip
+        show={displayRate}
+      >
+        {rate}
+      </ToolTip>
+      <button
+        onClick={switchCurrencyType}
+        onMouseOver={showRate}
+        onMouseOut={hideRate}
+      >
+        {currency}
+      </button>
+    </ToolTipContainer>
   );
 }
+
+const ToolTipContainer = styled.div`
+  position: relative;
+`
+
+const ToolTip = styled.div`
+  display: ${({ show }) => show ? 'block' : 'none'};
+  position: absolute;
+  bottom: 30px;
+  background: black;
+  color: white;
+  width: 150px;
+  left: -30px;
+  text-algin: center;
+`
 
 const Link = ({ type, data, children }) => {
   
