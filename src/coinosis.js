@@ -2,7 +2,6 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import Web3 from 'web3';
 import contractJson from '../build/contracts/Coinosis.json';
 
-const contractAddress = '0xEE84c6766F1C60D4abF2171CC433B7c13e3084d3';
 const Web3Context = createContext();
 const ContractContext = createContext();
 
@@ -19,11 +18,14 @@ const Coinosis = () => {
   useEffect(() => {
     const web3 = new Web3(Web3.givenProvider);
     setWeb3(web3);
+    const networkIds = Object.keys(contractJson.networks);
+    const latestNetworkId = networkIds[networkIds.length -1];
+    const contractAddress = contractJson.networks[latestNetworkId].address;
     const contract = new web3.eth.Contract(contractJson.abi, contractAddress);
     setContract(contract);
   }, []);
 
-  if(!web3) return <Loading/>
+  if (!contract) return <Loading/>
 
   return (
     <Web3Context.Provider value={web3}>
@@ -35,34 +37,45 @@ const Coinosis = () => {
   );
 }
 
-const ContractInfo = ({}) => {
+const ContractInfo = () => {
+
+  const contract = useContext(ContractContext);
+  const [address, setAddress] = useState('');
+
+  useEffect(() => {
+    if (contract) {
+      setAddress(contract._address);
+    }
+  }, [contract]);
+
   return (
     <div>
       <div>
         contrato
       </div>
       <div>
-        <Link type="address" data={contractAddress}>
-          {contractAddress}
+        <Link type="address" data={address}>
+          {address}
         </Link>
       </div>
     </div>
   );
 }
 
-const Assessments = ({}) => {
+const Assessments = () => {
   
   const contract = useContext(ContractContext);
   const [assessments, setAssessments] = useState([]);
 
   useEffect(() => {
+    if (!contract) return;
     contract.events.Assessment({fromBlock: 0}, (error, event) => {
       if (error) {
         console.error(error);
         return;
       }
       event.returnValues.id = event.transactionHash;
-      setAssessments(assessments => [ ...assessments, event.returnValues ]);
+      setAssessments(assessments => [ event.returnValues, ...assessments ]);
     });
   }, []);
 
@@ -329,7 +342,7 @@ const DateTime = ({ timestamp }) => {
   );
 }
 
-const Loading = ({}) => {
+const Loading = () => {
   return <div>loading...</div>
 }
 
