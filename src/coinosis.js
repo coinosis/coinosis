@@ -28,11 +28,11 @@ const Coinosis = () => {
   useEffect(() => {
     const web3 = new Web3(Web3.givenProvider);
     setWeb3(web3);
-    const networkIds = Object.keys(contractJson.networks);
-    const latestNetworkId = networkIds[networkIds.length -1];
-    const contractAddress = contractJson.networks[latestNetworkId].address;
-    const contract = new web3.eth.Contract(contractJson.abi, contractAddress);
-    setContract(contract);
+    web3.eth.net.getId().then(networkId => {
+      const contractAddress = contractJson.networks[networkId].address;
+      const contract = new web3.eth.Contract(contractJson.abi, contractAddress);
+      setContract(contract);
+    });
   }, []);
 
   if (!contract) return <Loading/>
