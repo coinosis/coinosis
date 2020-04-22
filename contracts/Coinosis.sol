@@ -24,7 +24,7 @@ to send (insufficient-value)";
     address private owner;
 
     event Assessment(
-        uint date,
+        uint timestamp,
         uint registrationFeeUSDWei,
         uint ETHPriceUSDWei,
         string[] names,
