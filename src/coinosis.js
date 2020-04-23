@@ -155,8 +155,8 @@ const Assessment = ({
         setTransfers(transfers => [ ...transfers, event.returnValues ]);
       }
     );
-    const totalBalance = rewards.reduce((a, b) => BigInt(a) + BigInt(b))
-      - BigInt(totalFeesWei);
+    const totalRewards = rewards.reduce((a, b) => BigInt(a) + BigInt(b))
+    const totalBalance = BigInt(totalRewards) - BigInt(totalFeesWei);
     setTotalBalance(String(totalBalance));
   }, []);
 
