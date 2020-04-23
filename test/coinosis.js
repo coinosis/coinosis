@@ -297,4 +297,56 @@ contract('Coinosis', async accounts => {
        truffleAssert.eventNotEmitted(result, 'Transfer');
      });
 
+  it('decommission: send all remaining funds to owner',
+     async () => {
+       const value = web3.utils.toWei('1');
+       const instance = await Coinosis.new();
+       await web3.eth.sendTransaction({
+         from: accounts[0],
+         to: instance.address,
+         value,
+       });
+       await instance.assess(
+         registrationFeeUSDWei,
+         ETHPriceUSDWei,
+         names,
+         addresses,
+         claps
+       );
+       const initialBalance = await web3.eth.getBalance(accounts[0]);
+       const gasPrice = web3.utils.toWei('10', 'gwei');
+       const result = await instance.decommission({ gasPrice });
+       const txFee = result.receipt.gasUsed * gasPrice;
+       const finalBalance = await web3.eth.getBalance(accounts[0]);
+       const actualBalance = BigInt(finalBalance) - BigInt(initialBalance)
+         + BigInt(txFee);
+       const expectedBalance = BigInt(value) - totalFeesWei;
+       assert.ok(actualBalance + 10n > expectedBalance);
+       assert.ok(expectedBalance + 10n > actualBalance);
+       const contractBalance = await web3.eth.getBalance(instance.address);
+       assert.equal(contractBalance, '0');
+       const decommissionProof = await instance.assess(0, 0, [], [], []);
+       assert.equal(decommissionProof.logs.length, 0);
+     });
+
+  it('decommission: only the owner can do it',
+     async () => {
+       const value = web3.utils.toWei('1');
+       const instance = await Coinosis.new({from: accounts[1]});
+       await web3.eth.sendTransaction({
+         from: accounts[0],
+         to: instance.address,
+         value,
+       });
+       await instance.assess(
+         registrationFeeUSDWei,
+         ETHPriceUSDWei,
+         names,
+         addresses,
+         claps,
+         {from: accounts[1]}
+       );
+       truffleAssert.reverts(instance.decommission(), 'only-owner');
+     });
+
 });

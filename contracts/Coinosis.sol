@@ -21,7 +21,7 @@ contract Coinosis {
         "The ether value in this contract is less than the total reward value \
 to send (insufficient-value)";
 
-    address private owner;
+    address payable private owner;
 
     event Assessment(
         uint timestamp,
@@ -49,6 +49,11 @@ to send (insufficient-value)";
     }
 
     function () external payable {}
+
+    function decommission() public {
+        require(msg.sender == owner, NOT_OWNER);
+        selfdestruct(owner);
+    }
 
     function assess(
         uint registrationFeeUSDWei,
