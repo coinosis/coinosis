@@ -242,7 +242,7 @@ const Assessment = ({
                 {totalClaps}
               </th>
               <th>
-                100 %
+                100.0 %
               </th>
               <th>
                 <Amount
@@ -410,6 +410,7 @@ const Participant = ({
         <Link
           type="address"
           value={address}
+          internal
           onMouseOver={() => setShowAddress(true)}
           onMouseOut={() => setShowAddress(false)}
         >
@@ -462,6 +463,7 @@ const Participant = ({
         <Link
           type="tx"
           value={tx}
+          internal
           onMouseOver={() => setShowTx(true)}
           onMouseOut={() => setShowTx(false)}
         >
@@ -572,12 +574,18 @@ const Hash = ({ type, value }) => {
   );
 }
 
-const Link = ({ type, value, children, ...props }) => {
+const Link = ({ type, value, internal=false, children, ...props }) => {
   
   const [href, setHref] = useState('');
 
   useEffect(() => {
     let href = `https://etherscan.io/${type}/${value}`;
+    if (internal) {
+      href += '#internal';
+      if (type === 'address') {
+        href += 'tx';
+      }
+    }
     setHref(href);
   }, [value]);
   
