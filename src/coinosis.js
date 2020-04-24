@@ -23,12 +23,35 @@ const USD = 'usd';
 const Coinosis = () => {
 
   const [web3, setWeb3] = useState();
-  const [contract, setContract] = useState();
-  const [currencyType, setCurrencyType] = useState(ETH);
 
   useEffect(() => {
     const web3 = new Web3(Web3.givenProvider);
     setWeb3(web3);
+  }, []);
+
+  return (
+    <Web3Context.Provider value={web3}>
+      <GlobalStyle/>
+      <Contract/>
+    </Web3Context.Provider>
+  );
+}
+
+const GlobalStyle = createGlobalStyle`
+  body {
+    background: #f0f0f0;
+  }
+`
+
+const Contract = () => {
+
+  const web3 = useContext(Web3Context);
+
+  const [contract, setContract] = useState();
+  const [currencyType, setCurrencyType] = useState(ETH);
+
+  useEffect(() => {
+    if (!web3) return;
     web3.eth.net.getId().then(networkId => {
       const deployment = contractJson.networks[networkId];
       if (!deployment) {
@@ -39,29 +62,20 @@ const Coinosis = () => {
       const contract = new web3.eth.Contract(contractJson.abi, contractAddress);
       setContract(contract);
     });
-  }, []);
+  }, [web3]);
 
   if (contract === undefined) return <Loading/>
   if (contract === null) return <NoContract/>
 
   return (
-    <Web3Context.Provider value={web3}>
-      <ContractContext.Provider value={contract}>
-        <CurrencyContext.Provider value={[currencyType, setCurrencyType]}>
-          <GlobalStyle/>
-          <ContractInfo/>
-          <Assessments/>
-        </CurrencyContext.Provider>
-      </ContractContext.Provider>
-    </Web3Context.Provider>
+    <ContractContext.Provider value={contract}>
+      <CurrencyContext.Provider value={[currencyType, setCurrencyType]}>
+        <ContractInfo/>
+        <Assessments/>
+      </CurrencyContext.Provider>
+    </ContractContext.Provider>
   );
 }
-
-const GlobalStyle = createGlobalStyle`
-  body {
-    background: #f0f0f0;
-  }
-`
 
 const ContractInfo = () => {
 
