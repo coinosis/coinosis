@@ -3,13 +3,11 @@ import React, {
   useCallback,
   useContext,
   useEffect,
-  useState
+  useState,
 } from 'react';
-import Web3 from 'web3';
-import styled, { createGlobalStyle } from 'styled-components';
 import contractJson from '../build/contracts/Coinosis.json';
+import { Web3Context } from './coinosis';
 
-const Web3Context = createContext();
 const ContractContext = createContext();
 const CurrencyContext = createContext([]);
 
@@ -631,4 +629,4 @@ const NoContract = () => {
   )
 }
 
-export default Coinosis
+export default Contract

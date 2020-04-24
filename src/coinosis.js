@@ -1,24 +1,9 @@
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState
-} from 'react';
+import React, { createContext, useEffect, useState } from 'react';
 import Web3 from 'web3';
-import styled, { createGlobalStyle } from 'styled-components';
-import contractJson from '../build/contracts/Coinosis.json';
+import { createGlobalStyle } from 'styled-components';
+import Contract from './contract';
 
-const Web3Context = createContext();
-const ContractContext = createContext();
-const CurrencyContext = createContext([]);
-
-const usdPlaceholder = ' '.repeat(4);
-const ethPlaceholder = ' '.repeat(5);
-const datePlaceholder = ' '.repeat(21);
-const percentagePlaceholder = ' '.repeat(4);
-const ETH = 'eth';
-const USD = 'usd';
+export const Web3Context = createContext();
 
 const Coinosis = () => {
 
