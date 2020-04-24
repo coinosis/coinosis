@@ -30,13 +30,19 @@ const Coinosis = () => {
     const web3 = new Web3(Web3.givenProvider);
     setWeb3(web3);
     web3.eth.net.getId().then(networkId => {
-      const contractAddress = contractJson.networks[networkId].address;
+      const deployment = contractJson.networks[networkId];
+      if (!deployment) {
+        setContract(null);
+        return;
+      }
+      const contractAddress = deployment.address;
       const contract = new web3.eth.Contract(contractJson.abi, contractAddress);
       setContract(contract);
     });
   }, []);
 
-  if (!contract) return <Loading/>
+  if (contract === undefined) return <Loading/>
+  if (contract === null) return <NoContract/>
 
   return (
     <Web3Context.Provider value={web3}>
@@ -623,7 +629,15 @@ const DateTime = ({ timestamp }) => {
 }
 
 const Loading = () => {
-  return <div>loading...</div>
+  return <div>por favor espera...</div>
+}
+
+const NoContract = () => {
+  return (
+    <div>
+      ningún contrato ha sido desplegado en esta red.
+    </div>
+  )
 }
 
 export default Coinosis
