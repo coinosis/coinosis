@@ -21,6 +21,7 @@ contract Coinosis {
         "The ether value in this contract is less than the total reward value \
 to send (insufficient-value)";
 
+    string public version = "1.1.0";
     address payable private owner;
 
     event Assessment(
@@ -43,6 +44,7 @@ to send (insufficient-value)";
         uint claps,
         uint reward
     );
+    event RewardedAmount(uint rewardedAmount);
 
     constructor () public {
         owner = msg.sender;
@@ -90,6 +92,7 @@ to send (insufficient-value)";
             totalClaps,
             rewards
         );
+        uint rewardedAmount = 0;
         for (uint i = 0; i < addresses.length; i = i.add(1)) {
             if (rewards[i] > 0 && addresses[i].send(rewards[i])) {
                 emit Transfer(
@@ -100,7 +103,9 @@ to send (insufficient-value)";
                     claps[i],
                     rewards[i]
                 );
+                rewardedAmount += rewards[i];
             }
         }
+        emit RewardedAmount(rewardedAmount);
     }
 }

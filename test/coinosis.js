@@ -60,6 +60,7 @@ contract('Coinosis', async accounts => {
     31649162502876053n,
     18085235715929173n
   ];
+  const rewardedAmount = 239629373236061545n;
 
   it('should send rewards according to claps', async () => {
     const instance = await Coinosis.new();
@@ -135,6 +136,26 @@ contract('Coinosis', async accounts => {
         event.reward == rewards[i]
     });
     assert.equal(eventsEmitted, addresses.length)
+  });
+
+  it('should emit a RewardedAmount event', async () => {
+    const instance = await Coinosis.new();
+    await web3.eth.sendTransaction({
+      from: accounts[0],
+      to: instance.address,
+      value: web3.utils.toWei('1')
+    });
+    const result = await instance.assess(
+      registrationFeeUSDWei,
+      ETHPriceUSDWei,
+      names,
+      addresses,
+      claps
+    );
+    const expected = totalFeesWei;
+    truffleAssert.eventEmitted(result, 'RewardedAmount', event => {
+      return BigInt(event.rewardedAmount) === rewardedAmount;
+    });
   });
 
   it('should revert with a \'not-owner\' error', async () => {
@@ -320,9 +341,9 @@ contract('Coinosis', async accounts => {
        const finalBalance = await web3.eth.getBalance(accounts[0]);
        const actualBalance = BigInt(finalBalance) - BigInt(initialBalance)
          + BigInt(txFee);
-       const expectedBalance = BigInt(value) - totalFeesWei;
-       assert.ok(actualBalance + 10n > expectedBalance);
-       assert.ok(expectedBalance + 10n > actualBalance);
+       const expectedBalance = BigInt(value) - rewardedAmount;
+       assert.equal(actualBalance, expectedBalance);
+       assert.equal(expectedBalance, actualBalance);
        const contractBalance = await web3.eth.getBalance(instance.address);
        assert.equal(contractBalance, '0');
        const decommissionProof = await instance.assess(0, 0, [], [], []);
@@ -346,7 +367,13 @@ contract('Coinosis', async accounts => {
          claps,
          {from: accounts[1]}
        );
-       truffleAssert.reverts(instance.decommission(), 'only-owner');
+       truffleAssert.reverts(instance.decommission(), 'not-owner');
      });
+
+  it('version: should show the version number', async () => {
+    const instance = await Coinosis.new();
+    const version = await instance.version();
+    assert.ok(version.length >= 5);
+  });
 
 });
