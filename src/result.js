@@ -8,6 +8,7 @@ import React, {
 } from 'react';
 import contractJson from '../build/contracts/Coinosis.json';
 import { Web3Context } from './coinosis';
+import { Loading } from './helpers';
 
 const ContractContext = createContext();
 const CurrencyContext = createContext([]);
@@ -622,10 +623,6 @@ const DateTime = ({ timestamp }) => {
       {date}
     </div>
   );
-}
-
-const Loading = () => {
-  return <div>por favor espera...</div>
 }
 
 const NoContract = () => {
