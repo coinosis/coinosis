@@ -18,7 +18,7 @@ const percentagePlaceholder = ' '.repeat(4);
 const ETH = 'eth';
 const USD = 'usd';
 
-const Contract = () => {
+const Result = () => {
 
   const web3 = useContext(Web3Context);
 
@@ -629,4 +629,4 @@ const NoContract = () => {
   )
 }
 
-export default Contract
+export default Result
