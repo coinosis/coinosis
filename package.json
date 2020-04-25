@@ -1,13 +1,10 @@
 {
   "name": "coinosis",
   "private": true,
-  "version": "0.1.0",
-  "description": "",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC",
+  "version": "1.1.0",
+  "description": "Knowledge-sharing dapp",
+  "author": "@e18r",
+  "license": "GPL-3.0-or-later",
   "devDependencies": {
     "@babel/core": "^7.9.0",
     "@babel/preset-env": "^7.9.0",
