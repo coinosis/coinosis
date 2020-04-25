@@ -1,6 +1,7 @@
 import React, { createContext, useCallback, useEffect, useState } from 'react';
 import Web3 from 'web3';
 import styled, { createGlobalStyle } from 'styled-components';
+import InstallMetamask from './installMetamask';
 import Registration from './registration';
 import Result from './result';
 
@@ -17,6 +18,10 @@ const Coinosis = () => {
   const [ActiveElement, setActiveElement] = useState(() => Result);
 
   useEffect(() => {
+    if (!Web3.givenProvider) {
+      setWeb3(null);
+      return;
+    }
     const web3 = new Web3(Web3.givenProvider);
     setWeb3(web3);
   }, []);
@@ -32,6 +37,8 @@ const Coinosis = () => {
       setActiveElement(() => Result);
     }
   }, [selectedTab]);
+
+  if (web3 === null) return <InstallMetamask/>
 
   return (
     <Web3Context.Provider value={web3}>
