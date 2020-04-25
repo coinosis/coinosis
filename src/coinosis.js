@@ -130,6 +130,7 @@ const StyledTab = styled.div`
   background: ${({ isSelected }) => isSelected ? '#e0e0e0' : '#f8f8f8'};
   border: 1px solid #e0e0e0;
   cursor: pointer;
+  user-select: none;
 `
 
 const Assessment = () => {

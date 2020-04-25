@@ -3,6 +3,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from 'react';
 import contractJson from '../build/contracts/Coinosis.json';
@@ -88,7 +89,8 @@ const ContractInfo = () => {
 }
 
 const Assessments = () => {
-  
+
+  const isMounted = useRef(true);
   const contract = useContext(ContractContext);
   const [assessments, setAssessments] = useState([]);
 
@@ -100,8 +102,13 @@ const Assessments = () => {
         return;
       }
       event.returnValues.id = event.transactionHash;
-      setAssessments(assessments => [ event.returnValues, ...assessments ]);
+      if (isMounted.current) {
+        setAssessments(assessments => [ event.returnValues, ...assessments ]);
+      }
     });
+    return () => {
+      isMounted.current = false;
+    }
   }, []);
 
   return (
@@ -134,6 +141,7 @@ const Assessment = ({
   rewards,
 }) => {
 
+  const isMounted = useRef(true);
   const contract = useContext(ContractContext);
   const [transfers, setTransfers] = useState([]);
   const [totalBalance, setTotalBalance] = useState(ethPlaceholder);
@@ -147,12 +155,17 @@ const Assessment = ({
           return;
         }
         event.returnValues.transactionHash = event.transactionHash;
-        setTransfers(transfers => [ ...transfers, event.returnValues ]);
+        if (isMounted.current) {
+          setTransfers(transfers => [ ...transfers, event.returnValues ]);
+        }
       }
     );
     const totalRewards = rewards.reduce((a, b) => BigInt(a) + BigInt(b))
     const totalBalance = BigInt(totalRewards) - BigInt(totalFeesWei);
     setTotalBalance(String(totalBalance));
+    return () => {
+      isMounted.current = false;
+    }
   }, []);
 
   return (
