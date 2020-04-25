@@ -69,7 +69,6 @@ const ContractInfo = () => {
       css={`
         display: flex;
         justify-content: center;
-        font-family: arial;
         font-size: 34px;
       `}
     >
@@ -111,11 +110,7 @@ const Assessments = () => {
   }, []);
 
   return (
-    <div
-      css={`
-        font-family: arial;
-      `}
-    >
+    <div>
       {assessments.map(assessment => {
         return (
           <Assessment key={assessment.id} { ...assessment } />
