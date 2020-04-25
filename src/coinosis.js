@@ -72,6 +72,7 @@ const Tabs = ({ selectedTab, setSelectedTab }) => {
       css={`
         display: flex;
         justify-content: center;
+        margin-bottom: 50px;
       `}
     >
       <Tab
