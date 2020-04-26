@@ -8,7 +8,7 @@ import React, {
 } from 'react';
 import contractJson from '../build/contracts/Coinosis.json';
 import { Web3Context } from './coinosis';
-import { Loading } from './helpers';
+import { Loading, ToolTip, Hash, Link } from './helpers';
 
 const ContractContext = createContext();
 const CurrencyContext = createContext([]);
@@ -382,9 +382,7 @@ const Participant = ({
   const [balance, setBalance] = useState('');
   const [status, setStatus] = useState('');
   const [tx, setTx] = useState('');
-  const [showAddress, setShowAddress] = useState(false);
   const [showFraction, setShowFraction] = useState(false);
-  const [showTx, setShowTx] = useState(false);
 
   useEffect(() => {
     const percentage = 100 * +claps / +totalClaps;
@@ -409,13 +407,10 @@ const Participant = ({
           text-align: center;
         `}
       >
-        <ToolTip value={address} show={showAddress} />
         <Link
           type="address"
           value={address}
           internal
-          onMouseOver={() => setShowAddress(true)}
-          onMouseOut={() => setShowAddress(false)}
         >
           {name}
         </Link>
@@ -462,13 +457,10 @@ const Participant = ({
           padding: 0 30px;
         `}
       >
-        <ToolTip value={tx} show={showTx} />
         <Link
           type="tx"
           value={tx}
           internal
-          onMouseOver={() => setShowTx(true)}
-          onMouseOut={() => setShowTx(false)}
         >
           {status}
         </Link>

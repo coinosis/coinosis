@@ -1,17 +1,18 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 export const Loading = () => {
   return <div>por favor espera...</div>
 }
 
-const ToolTip = ({ value, show }) => {
+export const ToolTip = ({ value, show, position="top" }) => {
+
   return (
     <div css="position: relative">
       <div
         css={`
           display: ${show ? 'block' : 'none'};
           position: absolute;
-          bottom: 7px;
+          ${ position === 'bottom' ? 'top: 25px; right: 0;' : 'bottom: 7px'};
           background: black;
           color: #f0f0f0;
           padding: 5px;
@@ -26,7 +27,7 @@ const ToolTip = ({ value, show }) => {
   );
 }
 
-const Hash = ({ type, value }) => {
+export const Hash = ({ type, value, toolTipPosition="top" }) => {
 
   const [short, setShort] = useState();
   const [showFull, setShowFull] = useState(false);
@@ -39,12 +40,12 @@ const Hash = ({ type, value }) => {
 
   return (
     <div>
-      <ToolTip value={value} show={showFull} />
       <Link
         type={type}
         value={value}
         onMouseOver={() => setShowFull(true)}
         onMouseOut={() => setShowFull(false)}
+        toolTipPosition={toolTipPosition}
       >
         {short}
       </Link>
@@ -52,9 +53,17 @@ const Hash = ({ type, value }) => {
   );
 }
 
-const Link = ({ type, value, internal=false, children, ...props }) => {
+export const Link = ({
+  type,
+  value,
+  internal=false,
+  children,
+  toolTipPosition="top",
+  ...props
+}) => {
 
   const [href, setHref] = useState('');
+  const [showToolTip, setShowToolTip] = useState(false);
 
   useEffect(() => {
     let href = `https://etherscan.io/${type}/${value}`;
@@ -68,6 +77,12 @@ const Link = ({ type, value, internal=false, children, ...props }) => {
   }, [value]);
 
   return (
+    <div>
+      <ToolTip
+        value={value}
+        show={showToolTip}
+        position={toolTipPosition}
+      />
     <a
       href={href}
       target="_blank"
@@ -77,9 +92,13 @@ const Link = ({ type, value, internal=false, children, ...props }) => {
         &:visited {
           color: black;
         }
+        white-space: nowrap;
       `}
+      onMouseOver={() => setShowToolTip(true)}
+      onMouseOut={() => setShowToolTip(false)}
     >
       {children}
     </a>
+    </div>
   );
 }
