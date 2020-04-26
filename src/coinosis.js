@@ -2,6 +2,7 @@ import React, { createContext, useCallback, useEffect, useState } from 'react';
 import Web3 from 'web3';
 import styled, { createGlobalStyle } from 'styled-components';
 import InstallMetamask from './installMetamask';
+import Account from './account';
 import Registration from './registration';
 import Result from './result';
 
@@ -10,10 +11,13 @@ const ASSESSMENT = Symbol('ASSESSMENT');
 const RESULT = Symbol('RESULT');
 
 export const Web3Context = createContext();
+export const AccountContext = createContext();
 
 const Coinosis = () => {
 
   const [web3, setWeb3] = useState();
+  const [account, setAccount] = useState();
+  const [name, setName] = useState();
   const [selectedTab, setSelectedTab] = useState(REGISTRATION);
   const [ActiveElement, setActiveElement] = useState(() => Result);
 
@@ -42,13 +46,20 @@ const Coinosis = () => {
 
   return (
     <Web3Context.Provider value={web3}>
-      <GlobalStyle/>
-      <Header/>
-      <Tabs
-        selectedTab={selectedTab}
-        setSelectedTab={setSelectedTab}
-      />
-      <ActiveElement/>
+      <AccountContext.Provider value={[account, setAccount]}>
+        <GlobalStyle/>
+        <Header
+          account={account}
+          setAccount={setAccount}
+          name={name}
+          setName={setName}
+        />
+        <Tabs
+          selectedTab={selectedTab}
+          setSelectedTab={setSelectedTab}
+        />
+        <ActiveElement name={name} setName={setName} />
+      </AccountContext.Provider>
     </Web3Context.Provider>
   );
 }
@@ -60,15 +71,47 @@ const GlobalStyle = createGlobalStyle`
   }
 `
 
-const Header = () => {
+const Header = ({ account, setAccount, name, setName }) => {
+
   return (
-    <div
-      css={`
-        font-size: 34px;
-        text-align: center;
-      `}
-    >
-      coinosis
+    <div>
+      <div
+        css={`
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        `}
+      >
+        <div
+          css={`
+            font-size: 34px;
+          `}
+        >
+          coinosis
+        </div>
+      </div>
+      <div
+        css={`
+          position: relative;
+          display: flex;
+          justify-content: flex-end;
+        `}
+      >
+        <div
+          css={`
+            position: absolute;
+            bottom: 20px;
+            display: flex;
+          `}
+        >
+          <Account
+            account={account}
+            setAccount={setAccount}
+            name={name}
+            setName={setName}
+          />
+        </div>
+      </div>
     </div>
   );
 }

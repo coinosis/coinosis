@@ -1,8 +1,8 @@
 import React, { useCallback, useContext, useEffect } from 'react';
 import { Web3Context } from './coinosis.js';
-import { Loading } from './helpers.js';
+import { Loading, Hash, Link } from './helpers.js';
 
-const Account = ({ account, setAccount }) => {
+const Account = ({ account, setAccount, name, setName }) => {
 
   const web3 = useContext(Web3Context);
 
@@ -24,10 +24,45 @@ const Account = ({ account, setAccount }) => {
     }
   }, [web3]);
 
+  useEffect(() => {
+    if(!account) return;
+    fetch(`http://localhost:3000/user/${account}`)
+      .then(response => {
+        if (!response.ok) {
+          throw Error(response.statusText);
+        }
+        else {
+          return response.json();
+        }
+      }).then(data => {
+        setName(data.name);
+      }).catch(err => {
+        setName('');
+      });
+  }, [account]);
+
   if (account === undefined) return <Loading />
   if (account === null) return <Login />
 
-  return <div>{account}</div>
+  if (!name) {
+    return (
+      <Hash
+        type="address"
+        value={account}
+        toolTipPosition="bottom"
+      />
+    );
+  }
+
+  return (
+    <Link
+      type="address"
+      value={account}
+      toolTipPosition="bottom"
+    >
+      {name}
+    </Link>
+  );
 
 }
 
