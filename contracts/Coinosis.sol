@@ -21,7 +21,7 @@ contract Coinosis {
         "The ether value in this contract is less than the total reward value \
 to send (insufficient-value)";
 
-    string public version = "1.1.0";
+    string public version = "1.2.0";
     address payable private owner;
 
     event Assessment(
@@ -38,7 +38,7 @@ to send (insufficient-value)";
     );
     event Transfer(
         string name,
-        address addr,
+        address indexed addr,
         uint registrationFeeUSDWei,
         uint registrationFeeWei,
         uint claps,
