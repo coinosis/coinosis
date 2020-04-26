@@ -101,6 +101,7 @@ const Assessments = () => {
         return;
       }
       event.returnValues.id = event.transactionHash;
+      event.returnValues.blockNumber = event.blockNumber;
       if (isMounted.current) {
         setAssessments(assessments => [ event.returnValues, ...assessments ]);
       }
@@ -124,6 +125,7 @@ const Assessments = () => {
 
 const Assessment = ({
   id,
+  blockNumber,
   timestamp,
   registrationFeeUSDWei,
   ETHPriceUSDWei,
@@ -136,31 +138,12 @@ const Assessment = ({
   rewards,
 }) => {
 
-  const isMounted = useRef(true);
-  const contract = useContext(ContractContext);
-  const [transfers, setTransfers] = useState([]);
   const [totalBalance, setTotalBalance] = useState(ethPlaceholder);
 
   useEffect(() => {
-    contract.events.Transfer(
-      { fromBlock: 0, filter: {transactionHash: id} },
-      (error, event) => {
-        if (error) {
-          console.error(error);
-          return;
-        }
-        event.returnValues.transactionHash = event.transactionHash;
-        if (isMounted.current) {
-          setTransfers(transfers => [ ...transfers, event.returnValues ]);
-        }
-      }
-    );
     const totalRewards = rewards.reduce((a, b) => BigInt(a) + BigInt(b))
     const totalBalance = BigInt(totalRewards) - BigInt(totalFeesWei);
     setTotalBalance(String(totalBalance));
-    return () => {
-      isMounted.current = false;
-    }
   }, []);
 
   return (
@@ -211,12 +194,10 @@ const Assessment = ({
           </thead>
           <tbody>
             {addresses.map((address, i) => {
-              const transferFilter = transfers.filter(transfer => (
-                transfer.addr === address
-              ));
               return (
                 <Participant
                   key={address}
+                  blockNumber={blockNumber}
                   name={names[i]}
                   address={addresses[i]}
                   claps={claps[i]}
@@ -225,7 +206,6 @@ const Assessment = ({
                   rate={ETHPriceUSDWei}
                   registrationFeeWei={registrationFeeWei}
                   ETHPriceUSDWei={ETHPriceUSDWei}
-                  transferFilter={transferFilter}
                 />
               );
             })}
@@ -366,6 +346,7 @@ const Header = ({
 }
 
 const Participant = ({
+  blockNumber,
   name,
   address,
   claps,
@@ -374,13 +355,13 @@ const Participant = ({
   rate,
   registrationFeeWei,
   ETHPriceUSDWei,
-  transferFilter,
 }) => {
 
+  const isMounted = useRef(true);
+  const contract = useContext(ContractContext);
   const [percentage, setPercentage] = useState(percentagePlaceholder);
   const [fraction, setFraction] = useState('');
   const [balance, setBalance] = useState('');
-  const [status, setStatus] = useState('');
   const [tx, setTx] = useState('');
   const [showFraction, setShowFraction] = useState(false);
 
@@ -393,11 +374,23 @@ const Participant = ({
   }, []);
 
   useEffect(() => {
-    if (transferFilter.length) {
-      setStatus('enviada');
-      setTx(transferFilter[0].transactionHash);
+    contract.events.Transfer(
+      { fromBlock: blockNumber, filter: {addr: address} },
+      (error, event) => {
+        if (error) {
+          console.error(error);
+          return;
+        }
+        if (event.returnValues.addr !== address) return;
+        if (isMounted.current) {
+          setTx(event.transactionHash);
+        }
+      }
+    );
+    return () => {
+      isMounted.current = false;
     }
-  }, [ transferFilter ]);
+  }, []);
 
   return (
     <tr>
@@ -457,15 +450,24 @@ const Participant = ({
           padding: 0 30px;
         `}
       >
-        <Link
-          type="tx"
-          value={tx}
-          internal
-        >
-          {status}
-        </Link>
+        <Status tx={tx} />
       </td>
     </tr>
+  );
+}
+
+const Status = ({tx}) => {
+
+  if (!tx) return <div/>
+
+  return (
+    <Link
+      type="tx"
+      value={tx}
+      internal
+    >
+      enviada
+    </Link>
   );
 }
 

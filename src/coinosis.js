@@ -19,7 +19,7 @@ const Coinosis = () => {
   const [account, setAccount] = useState();
   const [name, setName] = useState();
   const [selectedTab, setSelectedTab] = useState(REGISTRATION);
-  const [ActiveElement, setActiveElement] = useState(() => Result);
+  const [ActiveElement, setActiveElement] = useState(() => Registration);
 
   useEffect(() => {
     if (!Web3.givenProvider) {
