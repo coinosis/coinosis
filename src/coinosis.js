@@ -4,6 +4,7 @@ import styled, { createGlobalStyle } from 'styled-components';
 import InstallMetamask from './installMetamask';
 import Account from './account';
 import Registration from './registration';
+import Assessment from './assessment';
 import Result from './result';
 
 const REGISTRATION = Symbol('REGISTRATION');
@@ -41,6 +42,12 @@ const Coinosis = () => {
       setActiveElement(() => Result);
     }
   }, [selectedTab]);
+
+  useEffect(() => {
+    if (name) {
+      setSelectedTab(ASSESSMENT);
+    }
+  }, [name]);
 
   if (web3 === null) return <InstallMetamask/>
 
@@ -184,9 +191,5 @@ const StyledTab = styled.div`
   cursor: pointer;
   user-select: none;
 `
-
-const Assessment = () => {
-  return <div>assessment</div>
-}
 
 export default Coinosis
