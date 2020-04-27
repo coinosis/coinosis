@@ -43,11 +43,11 @@ const Coinosis = () => {
     }
   }, [selectedTab]);
 
-  useEffect(() => {
-    if (name) {
-      setSelectedTab(ASSESSMENT);
-    }
-  }, [name]);
+  // useEffect(() => {
+  //   if (name) {
+  //     setSelectedTab(ASSESSMENT);
+  //   }
+  // }, [name]);
 
   if (web3 === null) return <InstallMetamask/>
 

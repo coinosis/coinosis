@@ -9,7 +9,7 @@ const Registration = ({ name, setName }) => {
   const [unsavedName, setUnsavedName] = useState('');
 
   const register = useCallback(() => {
-    fetch('http://localhost:3000/users', {
+    fetch('https://coinosis.herokuapp.com/users', {
       method: 'post',
       headers: {
         'Content-Type': 'application/json',
