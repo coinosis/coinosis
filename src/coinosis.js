@@ -170,7 +170,6 @@ const Tabs = ({ selectedTab, setSelectedTab }) => {
         id={ASSESSMENT}
         selectedTab={selectedTab}
         setSelectedTab={setSelectedTab}
-        disabled
       />
       <Tab
         id={RESULT}
