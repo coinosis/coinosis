@@ -170,6 +170,7 @@ const Tabs = ({ selectedTab, setSelectedTab }) => {
         id={ASSESSMENT}
         selectedTab={selectedTab}
         setSelectedTab={setSelectedTab}
+        disabled
       />
       <Tab
         id={RESULT}
@@ -180,7 +181,7 @@ const Tabs = ({ selectedTab, setSelectedTab }) => {
   );
 }
 
-const Tab = ({ id, selectedTab, setSelectedTab }) => {
+const Tab = ({ id, selectedTab, setSelectedTab, disabled=false }) => {
 
   const [name, setName] = useState('');
   const [isSelected, setIsSelected] = useState(false);
@@ -198,6 +199,7 @@ const Tab = ({ id, selectedTab, setSelectedTab }) => {
   }, [selectedTab]);
 
   const select = useCallback(() => {
+    if (disabled) return;
     setSelectedTab(id);
   }, []);
 
@@ -205,6 +207,7 @@ const Tab = ({ id, selectedTab, setSelectedTab }) => {
     <StyledTab
       isSelected={isSelected}
       onClick={select}
+      disabled={disabled}
     >
       {name}
     </StyledTab>
@@ -216,8 +219,9 @@ const StyledTab = styled.div`
   padding: 10px;
   background: ${({ isSelected }) => isSelected ? '#e0e0e0' : '#f8f8f8'};
   border: 1px solid #e0e0e0;
-  cursor: pointer;
+  cursor: ${({ disabled }) => disabled ? 'not-allowed' : 'pointer'};
   user-select: none;
+  color: ${({ disabled }) => disabled ? '#505050' : 'black'};
 `
 
 export default Coinosis
