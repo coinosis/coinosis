@@ -2,7 +2,7 @@
 
 ### Clone & install the repo
 
-1. On a terminal window, `git clone https://github.com/coinosis/coinosis.git`
+1. On a terminal window, `git clone https://github.com/coinosis/coinosis.git -b dev`
 2. `cd coinosis`
 3. `npm i`
 
@@ -21,12 +21,13 @@
 ## Interact with the deployed contract from the command line
 
 ```bash
+git clone https://github.com/coinosis/coinosis.git -b master
+cd coinosis
+npm i
 truffle console --network mainnet
 
 gasPrice = web3.utils.toWei('7.5', 'gwei') // ethgasstation.info
-
 instance = await Coinosis.deployed()
-
 result = await web3.eth.sendTransaction({from: accounts[0], to: instance.address, value: web3.utils.toWei('1'), gasPrice})
 
 registrationPriceUSDWei = web3.utils.toWei('5.00')
