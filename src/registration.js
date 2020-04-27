@@ -1,12 +1,13 @@
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { AccountContext } from './coinosis';
-import { Link } from './helpers';
+import { Link, Loading } from './helpers';
 import Account from './account';
 
 const Registration = ({ name, setName }) => {
 
   const [account, setAccount] = useContext(AccountContext);
   const [unsavedName, setUnsavedName] = useState('');
+  const [message, setMessage] = useState('');
 
   const register = useCallback(() => {
     fetch('https://coinosis.herokuapp.com/users', {
@@ -17,16 +18,22 @@ const Registration = ({ name, setName }) => {
       body: JSON.stringify({address: account, name: unsavedName}),
     }).then(response => {
       if (!response.ok) {
-        throw Error(response.statusText);
+        throw Error(response.status);
       } else {
         return response.json();
       }
     }).then(data => {
       setName(data.name);
-    }).catch(err => {
-        setName('');
-      });
+    }).catch(statusCode => {
+      if(statusCode.toString().includes('400')) {
+        setMessage('ese nombre ya existe en nuestra base de datos');
+      }
+    });
   }, [account, unsavedName]);
+
+  useEffect(() => {
+    if (message) setMessage('');
+  }, [unsavedName]);
 
   if (!account) {
     return (
@@ -39,14 +46,16 @@ const Registration = ({ name, setName }) => {
     );
   }
 
-  if (!name) {
+  if (name === undefined) return <Loading/>
+
+  if (name === null) {
     return (
       <div
         css={`
           display: flex;
         `}
       >
-        <div>¿cómo te llamas?</div>
+        <div>nombre y apellido:</div>
         <div
           css={`
             margin: 0 5px;
@@ -60,9 +69,17 @@ const Registration = ({ name, setName }) => {
         <div>
           <button
             onClick={register}
+            disabled={unsavedName === ''}
           >
             regístrate
           </button>
+        </div>
+        <div
+          css={`
+            margin-left: 5px;
+          `}
+        >
+          {message}
         </div>
       </div>
     );

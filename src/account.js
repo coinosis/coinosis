@@ -37,7 +37,7 @@ const Account = ({ account, setAccount, name, setName }) => {
       }).then(data => {
         setName(data.name);
       }).catch(err => {
-        setName('');
+        setName(null);
       });
   }, [account]);
 
