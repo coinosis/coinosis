@@ -81,20 +81,25 @@ const GlobalStyle = createGlobalStyle`
 const Header = ({ account, setAccount, name, setName }) => {
 
   return (
-    <div>
+    <div
+      css={`
+        margin-bottom: 20px;
+      `}
+    >
       <div
         css={`
           display: flex;
           justify-content: center;
           align-items: center;
+          margin-bottom: 10px;
         `}
       >
         <div
           css={`
-            font-size: 34px;
+            font-size: 18px;
           `}
         >
-          coinosis
+          coinosis y CKWeb presentan
         </div>
       </div>
       <div
@@ -107,7 +112,8 @@ const Header = ({ account, setAccount, name, setName }) => {
         <div
           css={`
             position: absolute;
-            bottom: 20px;
+            bottom: 0px;
+            right: 15px;
             display: flex;
           `}
         >
@@ -117,6 +123,28 @@ const Header = ({ account, setAccount, name, setName }) => {
             name={name}
             setName={setName}
           />
+        </div>
+      </div>
+      <div
+        css={`
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        `}
+      >
+        <div
+          css={`
+            font-size: 34px;
+          `}
+        >
+          La música en la cadena de bloques
+        </div>
+        <div
+          css={`
+            font-size: 24px;
+          `}
+        >
+          Blockchain en las Artes 2 de 4
         </div>
       </div>
     </div>

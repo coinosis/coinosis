@@ -74,11 +74,11 @@ const Login = () => {
   }, [web3]);
 
   return (
-    <div
+    <button
       onClick={login}
     >
       inicia sesión con Metamask
-    </div>
+    </button>
   );
 
 }
