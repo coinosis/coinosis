@@ -146,6 +146,14 @@ const Header = ({ account, setAccount, name, setName }) => {
         >
           Blockchain en las Artes 2 de 4
         </div>
+        <div
+          css={`
+            font-size: 20px;
+            margin-top: 20px;
+          `}
+        >
+          Jueves 30 de abril, 4:00pm COL
+        </div>
       </div>
     </div>
   );
