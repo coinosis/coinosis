@@ -70,7 +70,7 @@ const ContractInfo = () => {
       css={`
         display: flex;
         justify-content: center;
-        font-size: 34px;
+        font-size: 24px;
       `}
     >
       <div>
@@ -95,7 +95,8 @@ const Assessments = () => {
 
   useEffect(() => {
     if (!contract) return;
-    contract.events.Assessment({fromBlock: 0}, (error, event) => {
+    contract.events.Assessment({fromBlock: 9931712}, (error, event) => {
+      console.log(event);
       if (error) {
         console.error(error);
         return;
