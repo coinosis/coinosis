@@ -35,4 +35,4 @@ jobs:
         target_branch: master
         build_dir: dist
       env:
-        GITHUB_PAT: ${{ secrets.GITHUB_PAT }}
+        GITHUB_PAT: ${{ secrets.PAT }}
