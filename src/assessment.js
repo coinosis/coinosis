@@ -1,4 +1,10 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, {
+  createRef,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 import { AccountContext } from './coinosis';
 import { environment, Link, Loading } from './helpers';
 import settings from './settings.json';
@@ -102,6 +108,7 @@ const Claps = ({ clapsLeft, clapsError }) => {
     <div
       css={`
         display: flex;
+        color: ${clapsError ? '#a04040' : 'black'};
       `}
     >
       <div
@@ -111,11 +118,7 @@ const Claps = ({ clapsLeft, clapsError }) => {
       >
         aplausos restantes:
       </div>
-      <div
-        css={`
-          color: ${clapsError ? '#a04040' : 'black'};
-        `}
-      >
+      <div>
         {clapsLeft}
       </div>
     </div>
@@ -135,12 +138,14 @@ const Users = ({ users, assessment, attemptAssessment }) => {
 
   return (
     <div>
-      {users.map(user => {
+      {users.map((user, i) => {
         const { address, name } = user;
         const claps = assessment[address] || '';
+        const hasFocus = i === 0;
          return (
            <User
              key={address}
+             hasFocus={hasFocus}
              name={name}
              address={address}
              claps={claps}
@@ -152,7 +157,15 @@ const Users = ({ users, assessment, attemptAssessment }) => {
   );
 }
 
-const User = ({ name, address, claps, setClaps }) => {
+const User = ({ name, address, claps, setClaps, hasFocus }) => {
+
+  const clapInput = createRef();
+
+  useEffect(() => {
+    if (hasFocus) {
+      clapInput.current.focus();
+    }
+  }, [hasFocus]);
 
   return (
     <div
@@ -170,6 +183,7 @@ const User = ({ name, address, claps, setClaps }) => {
       </div>
       <div>
         <input
+          ref={clapInput}
           type="number"
           value={claps}
           min={0}
