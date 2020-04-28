@@ -1,7 +1,15 @@
-import React, { createContext, useCallback, useEffect, useState } from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState
+} from 'react';
 import Web3 from 'web3';
 import styled, { createGlobalStyle } from 'styled-components';
 import InstallMetamask from './installMetamask';
+import { environment } from './helpers';
+import settings from './settings.json';
 import Account from './account';
 import Registration from './registration';
 import Assessment from './assessment';
@@ -13,6 +21,7 @@ const RESULT = Symbol('RESULT');
 
 export const Web3Context = createContext();
 export const AccountContext = createContext();
+export const BackendContext = createContext();
 
 const Coinosis = () => {
 
@@ -21,6 +30,7 @@ const Coinosis = () => {
   const [name, setName] = useState();
   const [selectedTab, setSelectedTab] = useState(REGISTRATION);
   const [ActiveElement, setActiveElement] = useState(() => Registration);
+  const [backendOnline, setBackendOnline] = useState();
 
   useEffect(() => {
     if (!Web3.givenProvider) {
@@ -29,6 +39,15 @@ const Coinosis = () => {
     }
     const web3 = new Web3(Web3.givenProvider);
     setWeb3(web3);
+  }, []);
+
+  useEffect(() => {
+    fetch(settings[environment].backend)
+      .then(response => {
+        setBackendOnline(true);
+      }).catch(err => {
+        setBackendOnline(false);
+      });
   }, []);
 
   useEffect(() => {
@@ -43,29 +62,34 @@ const Coinosis = () => {
     }
   }, [selectedTab]);
 
-  // useEffect(() => {
-  //   if (name) {
-  //     setSelectedTab(ASSESSMENT);
-  //   }
-  // }, [name]);
+  useEffect(() => {
+    if (!backendOnline) {
+      setSelectedTab(RESULT);
+    }
+    else if (name) {
+      setSelectedTab(ASSESSMENT);
+    }
+  }, [name, backendOnline]);
 
   if (web3 === null) return <InstallMetamask/>
 
   return (
     <Web3Context.Provider value={web3}>
       <AccountContext.Provider value={[account, setAccount]}>
-        <GlobalStyle/>
-        <Header
-          account={account}
-          setAccount={setAccount}
-          name={name}
-          setName={setName}
-        />
-        <Tabs
-          selectedTab={selectedTab}
-          setSelectedTab={setSelectedTab}
-        />
-        <ActiveElement name={name} setName={setName} />
+        <BackendContext.Provider value={backendOnline}>
+          <GlobalStyle/>
+          <Header
+            account={account}
+            setAccount={setAccount}
+            name={name}
+            setName={setName}
+          />
+          <Tabs
+            selectedTab={selectedTab}
+            setSelectedTab={setSelectedTab}
+          />
+          <ActiveElement name={name} setName={setName} />
+        </BackendContext.Provider>
       </AccountContext.Provider>
     </Web3Context.Provider>
   );
@@ -161,6 +185,8 @@ const Header = ({ account, setAccount, name, setName }) => {
 
 const Tabs = ({ selectedTab, setSelectedTab }) => {
 
+  const backendOnline = useContext(BackendContext);
+
   return (
     <div
       css={`
@@ -173,11 +199,13 @@ const Tabs = ({ selectedTab, setSelectedTab }) => {
         id={REGISTRATION}
         selectedTab={selectedTab}
         setSelectedTab={setSelectedTab}
+        disabled={!backendOnline}
       />
       <Tab
         id={ASSESSMENT}
         selectedTab={selectedTab}
         setSelectedTab={setSelectedTab}
+        disabled={!backendOnline}
       />
       <Tab
         id={RESULT}
@@ -208,7 +236,7 @@ const Tab = ({ id, selectedTab, setSelectedTab, disabled=false }) => {
   const select = useCallback(() => {
     if (disabled) return;
     setSelectedTab(id);
-  }, []);
+  }, [disabled]);
 
   return (
     <StyledTab
