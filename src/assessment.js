@@ -2,10 +2,11 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { AccountContext } from './coinosis';
 import { environment, Link, Loading } from './helpers';
 import settings from './settings.json';
+import Account from './account';
 
 const Assessment = () => {
 
-  const [account] = useContext(AccountContext);
+  const [account, setAccount, name, setName] = useContext(AccountContext);
   const [users, setUsers] = useState();
   const [totalClaps, setTotalClaps] = useState();
   const [clapsLeft, setClapsLeft] = useState();
@@ -25,7 +26,7 @@ const Assessment = () => {
       }).catch(error => {
         console.log(error);
       });
-  }, []);
+  }, [account]);
 
   useEffect(() => {
     if (users) {
@@ -61,6 +62,17 @@ const Assessment = () => {
       setAssessment(newAssessment);
     }
   }, [assessment]);
+
+  if (account === null) {
+    return (
+      <Account
+        account={account}
+        setAccount={setAccount}
+        name={name}
+        setName={setName}
+      />
+    );
+  }
 
   if (users === undefined) return <Loading/>
 

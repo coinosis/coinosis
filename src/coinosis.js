@@ -75,7 +75,7 @@ const Coinosis = () => {
 
   return (
     <Web3Context.Provider value={web3}>
-      <AccountContext.Provider value={[account, setAccount]}>
+      <AccountContext.Provider value={[account, setAccount, name, setName]}>
         <BackendContext.Provider value={backendOnline}>
           <GlobalStyle/>
           <Header
@@ -88,7 +88,7 @@ const Coinosis = () => {
             selectedTab={selectedTab}
             setSelectedTab={setSelectedTab}
           />
-          <ActiveElement name={name} setName={setName} />
+          <ActiveElement/>
         </BackendContext.Provider>
       </AccountContext.Provider>
     </Web3Context.Provider>

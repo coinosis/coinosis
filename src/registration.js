@@ -4,9 +4,9 @@ import { environment, Link, Loading } from './helpers';
 import Account from './account';
 import settings from './settings.json';
 
-const Registration = ({ name, setName }) => {
+const Registration = () => {
 
-  const [account, setAccount] = useContext(AccountContext);
+  const [account, setAccount, name, setName] = useContext(AccountContext);
   const [unsavedName, setUnsavedName] = useState('');
   const [message, setMessage] = useState('');
 
