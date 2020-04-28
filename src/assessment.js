@@ -18,7 +18,7 @@ const Assessment = ({ setSelectedTab }) => {
   const [clapsLeft, setClapsLeft] = useState();
   const [assessment, setAssessment] = useState({});
   const [clapsError, setClapsError] = useState(false);
-  const [sent, setSent] = useState(false);
+  const [sent, setSent] = useState();
 
   useEffect(() => {
     fetch(`${settings[environment].backend}/users`)
@@ -37,6 +37,7 @@ const Assessment = ({ setSelectedTab }) => {
   }, [account]);
 
   useEffect(() => {
+    if (!name) return;
     fetch(`${settings[environment].backend}/assessment/${account}`)
       .then(response => {
         if (!response.ok) {
@@ -48,9 +49,11 @@ const Assessment = ({ setSelectedTab }) => {
         setAssessment(data.assessment);
         setSent(true);
       }).catch(error => {
-        console.error(error);
+        if (!error.toString().includes('404')) {
+          console.error(error);
+        }
       });
-  }, [account]);
+  }, [name, account]);
 
   useEffect(() => {
     if (users) {
@@ -122,13 +125,14 @@ const Assessment = ({ setSelectedTab }) => {
     );
   }
 
-  if (users === undefined) return <Loading/>
+  if (users === undefined || sent === undefined) return <Loading/>
 
   return (
     <div>
       <Claps
         clapsLeft={clapsLeft}
         clapsError={clapsError}
+        sent={sent}
       />
       <Users
         users={users}
@@ -149,7 +153,9 @@ const Assessment = ({ setSelectedTab }) => {
   );
 }
 
-const Claps = ({ clapsLeft, clapsError }) => {
+const Claps = ({ clapsLeft, clapsError, sent }) => {
+
+  if (sent) return <div>gracias por tu tiempo!</div>
 
   return (
     <div
