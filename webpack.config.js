@@ -3,6 +3,9 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   mode: 'development',
+  output: {
+    path: path.resolve(__dirname, "docs")
+  },
   devtool: 'inline-source-map',
   module: {
     rules: [
