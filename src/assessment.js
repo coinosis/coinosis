@@ -6,7 +6,7 @@ import React, {
   useState,
 } from 'react';
 import { REGISTRATION, AccountContext } from './coinosis';
-import { environment, Link, Loading } from './helpers';
+import { environment, Link, Loading, post } from './helpers';
 import settings from './settings.json';
 import Account from './account';
 
@@ -18,6 +18,7 @@ const Assessment = ({ setSelectedTab }) => {
   const [clapsLeft, setClapsLeft] = useState();
   const [assessment, setAssessment] = useState({});
   const [clapsError, setClapsError] = useState(false);
+  const [sent, setSent] = useState(false);
 
   useEffect(() => {
     fetch(`${settings[environment].backend}/users`)
@@ -31,7 +32,23 @@ const Assessment = ({ setSelectedTab }) => {
         const users = data.filter(user => user.address !== account);
         setUsers(users);
       }).catch(error => {
-        console.log(error);
+        console.error(error);
+      });
+  }, [account]);
+
+  useEffect(() => {
+    fetch(`${settings[environment].backend}/assessment/${account}`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(response.statusText);
+        } else {
+          return response.json();
+        }
+      }).then(data => {
+        setAssessment(data.assessment);
+        setSent(true);
+      }).catch(error => {
+        console.error(error);
       });
   }, [account]);
 
@@ -73,7 +90,18 @@ const Assessment = ({ setSelectedTab }) => {
     setAssessment(newAssessment);
   }, [assessment]);
 
-  if (account === null) {
+  const send = useCallback(() => {
+    const object = { sender: account, assessment };
+    post('assessments', object, (error, data) => {
+      if(error) {
+        console.error(error);
+        return;
+      }
+      setAssessment(data.assessment);
+      setSent(true);
+    });
+  }, [account, assessment]);
+
   if (account === null) return <Account />
 
   if (name === null) {
@@ -107,7 +135,16 @@ const Assessment = ({ setSelectedTab }) => {
         assessment={assessment}
         attemptAssessment={attemptAssessment}
         clapsError={clapsError}
+        disabled={sent}
       />
+      <div>
+        <button
+          onClick={send}
+          disabled={sent}
+        >
+          {sent ? 'enviado' : 'enviar'}
+        </button>
+      </div>
     </div>
   );
 }
@@ -135,7 +172,7 @@ const Claps = ({ clapsLeft, clapsError }) => {
   );
 }
 
-const Users = ({ users, assessment, attemptAssessment }) => {
+const Users = ({ users, assessment, attemptAssessment, disabled }) => {
 
   const setClaps = useCallback((address, value) => {
     const claps = Math.abs(Math.floor(Number(value)))
@@ -160,6 +197,7 @@ const Users = ({ users, assessment, attemptAssessment }) => {
              address={address}
              claps={claps}
              setClaps={value => setClaps(address, value)}
+             disabled={disabled}
            />
          );
       })}
@@ -167,7 +205,7 @@ const Users = ({ users, assessment, attemptAssessment }) => {
   );
 }
 
-const User = ({ name, address, claps, setClaps, hasFocus }) => {
+const User = ({ name, address, claps, setClaps, hasFocus, disabled }) => {
 
   const clapInput = createRef();
 
@@ -199,6 +237,7 @@ const User = ({ name, address, claps, setClaps, hasFocus }) => {
           min={0}
           step={1}
           onChange={e => setClaps(e.target.value)}
+          disabled={disabled}
         />
       </div>
     </div>
