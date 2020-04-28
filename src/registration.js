@@ -1,4 +1,10 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, {
+  createRef,
+  useCallback,
+  useContext,
+  useEffect,
+  useState
+} from 'react';
 import { AccountContext } from './coinosis';
 import { environment, Link, Loading } from './helpers';
 import Account from './account';
@@ -9,6 +15,13 @@ const Registration = () => {
   const [account, setAccount, name, setName] = useContext(AccountContext);
   const [unsavedName, setUnsavedName] = useState('');
   const [message, setMessage] = useState('');
+  const nameInput = createRef();
+
+  useEffect(() => {
+    if (nameInput.current) {
+      nameInput.current.focus();
+    }
+  }, [nameInput]);
 
   const register = useCallback(() => {
     fetch(`${settings[environment].backend}/users`, {
@@ -63,6 +76,7 @@ const Registration = () => {
           `}
         >
           <input
+            ref={nameInput}
             value={unsavedName}
             onChange={e => setUnsavedName(e.target.value)}
           />
