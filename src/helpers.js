@@ -85,22 +85,23 @@ export const Link = ({
         show={showToolTip}
         position={toolTipPosition}
       />
-    <a
-      href={href}
-      target="_blank"
-      {...props}
-      css={`
-        color: black;
-        &:visited {
+      <a
+        href={href}
+        target="_blank"
+        {...props}
+        css={`
           color: black;
-        }
-        white-space: nowrap;
-      `}
-      onMouseOver={() => setShowToolTip(true)}
-      onMouseOut={() => setShowToolTip(false)}
-    >
-      {children}
-    </a>
+          &:visited {
+            color: black;
+          }
+          white-space: nowrap;
+        `}
+        onMouseOver={() => setShowToolTip(true)}
+        onMouseOut={() => setShowToolTip(false)}
+        tabIndex={-1}
+      >
+        {children}
+      </a>
     </div>
   );
 }

@@ -11,6 +11,7 @@ const Assessment = () => {
   const [totalClaps, setTotalClaps] = useState();
   const [clapsLeft, setClapsLeft] = useState();
   const [assessment, setAssessment] = useState({});
+  const [clapsError, setClapsError] = useState(false);
 
   useEffect(() => {
     fetch(`${settings[environment].backend}/users`)
@@ -58,9 +59,12 @@ const Assessment = () => {
   const attemptAssessment = useCallback(assessmentFn => {
     const newAssessment = assessmentFn(assessment);
     const clapsLeft = computeClapsLeft(newAssessment);
-    if (clapsLeft >= 0) {
-      setAssessment(newAssessment);
+    if (clapsLeft < 0) {
+      setClapsError(true);
+      return;
     }
+    setClapsError(false);
+    setAssessment(newAssessment);
   }, [assessment]);
 
   if (account === null) {
@@ -80,17 +84,19 @@ const Assessment = () => {
     <div>
       <Claps
         clapsLeft={clapsLeft}
+        clapsError={clapsError}
       />
       <Users
         users={users}
         assessment={assessment}
         attemptAssessment={attemptAssessment}
+        clapsError={clapsError}
       />
     </div>
   );
 }
 
-const Claps = ({ clapsLeft }) => {
+const Claps = ({ clapsLeft, clapsError }) => {
 
   return (
     <div
@@ -105,7 +111,11 @@ const Claps = ({ clapsLeft }) => {
       >
         aplausos restantes:
       </div>
-      <div>
+      <div
+        css={`
+          color: ${clapsError ? '#a04040' : 'black'};
+        `}
+      >
         {clapsLeft}
       </div>
     </div>
