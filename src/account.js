@@ -1,11 +1,12 @@
 import React, { useCallback, useContext, useEffect } from 'react';
-import { Web3Context } from './coinosis.js';
+import { Web3Context, AccountContext } from './coinosis.js';
 import { environment, Loading, Hash, Link } from './helpers.js';
 import settings from './settings.json';
 
-const Account = ({ account, setAccount, name, setName }) => {
+const Account = () => {
 
   const web3 = useContext(Web3Context);
+  const [account, setAccount, name, setName] = useContext(AccountContext);
 
   const updateAccounts = useCallback(() => {
     web3.eth.getAccounts().then(accounts => {

@@ -49,16 +49,7 @@ const Registration = () => {
     if (message) setMessage('');
   }, [unsavedName]);
 
-  if (!account) {
-    return (
-      <Account
-        account={account}
-        setAccount={setAccount}
-        name={name}
-        setName={setName}
-      />
-    );
-  }
+  if (account === null) return <Account />
 
   if (name === undefined) return <Loading/>
 

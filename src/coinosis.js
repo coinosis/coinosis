@@ -15,7 +15,7 @@ import Registration from './registration';
 import Assessment from './assessment';
 import Result from './result';
 
-const REGISTRATION = Symbol('REGISTRATION');
+export const REGISTRATION = Symbol('REGISTRATION');
 const ASSESSMENT = Symbol('ASSESSMENT');
 const RESULT = Symbol('RESULT');
 
@@ -62,33 +62,34 @@ const Coinosis = () => {
     }
   }, [selectedTab]);
 
+  const preSetName = useCallback(newName => {
+    if (newName && name === undefined) {
+      setSelectedTab(ASSESSMENT);
+    }
+    setName(newName);
+  }, [name]);
+
   useEffect(() => {
     if (backendOnline === false) {
       setSelectedTab(RESULT);
     }
-    else if (name) {
-      setSelectedTab(ASSESSMENT);
-    }
-  }, [name, backendOnline]);
+  }, [backendOnline]);
 
   if (web3 === null) return <InstallMetamask/>
 
   return (
     <Web3Context.Provider value={web3}>
-      <AccountContext.Provider value={[account, setAccount, name, setName]}>
+      <AccountContext.Provider value={[account, setAccount, name, preSetName]}>
         <BackendContext.Provider value={backendOnline}>
           <GlobalStyle/>
-          <Header
-            account={account}
-            setAccount={setAccount}
-            name={name}
-            setName={setName}
-          />
+          <Header/>
           <Tabs
             selectedTab={selectedTab}
             setSelectedTab={setSelectedTab}
           />
-          <ActiveElement/>
+          <ActiveElement
+            setSelectedTab={setSelectedTab}
+          />
         </BackendContext.Provider>
       </AccountContext.Provider>
     </Web3Context.Provider>
@@ -102,7 +103,7 @@ const GlobalStyle = createGlobalStyle`
   }
 `
 
-const Header = ({ account, setAccount, name, setName }) => {
+const Header = () => {
 
   return (
     <div
@@ -141,12 +142,7 @@ const Header = ({ account, setAccount, name, setName }) => {
             display: flex;
           `}
         >
-          <Account
-            account={account}
-            setAccount={setAccount}
-            name={name}
-            setName={setName}
-          />
+          <Account/>
         </div>
       </div>
       <div

@@ -5,12 +5,12 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-import { AccountContext } from './coinosis';
+import { REGISTRATION, AccountContext } from './coinosis';
 import { environment, Link, Loading } from './helpers';
 import settings from './settings.json';
 import Account from './account';
 
-const Assessment = () => {
+const Assessment = ({ setSelectedTab }) => {
 
   const [account, setAccount, name, setName] = useContext(AccountContext);
   const [users, setUsers] = useState();
@@ -74,13 +74,23 @@ const Assessment = () => {
   }, [assessment]);
 
   if (account === null) {
+  if (account === null) return <Account />
+
+  if (name === null) {
     return (
-      <Account
-        account={account}
-        setAccount={setAccount}
-        name={name}
-        setName={setName}
-      />
+      <div>
+        <span
+          onClick={() => setSelectedTab(REGISTRATION)}
+          css={`
+            margin-right: 5px;
+            text-decoration: underline;
+            cursor: pointer;
+          `}
+        >
+          regístrate
+        </span>
+        para poder aplaudir.
+      </div>
     );
   }
 
