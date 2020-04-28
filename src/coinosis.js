@@ -152,7 +152,7 @@ const Header = ({ account, setAccount, name, setName }) => {
             margin-top: 20px;
           `}
         >
-          Jueves 30 de abril, 4:00pm COL
+          jueves 30 de abril, 4:00pm COL
         </div>
       </div>
     </div>
