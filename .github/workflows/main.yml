@@ -27,3 +27,12 @@ jobs:
     # Runs a set of commands using the runners shell
     - name: build the front-end
       run: webpack -p
+      
+    - name: GitHub Pages
+      uses: crazy-max/ghaction-github-pages@v1.4.1
+      with:
+        repo: coinosis.github.io
+        target_branch: master
+        build_dir: dist
+      env:
+        GITHUB_PAT: ${{ secrets.GITHUB_PAT }}
