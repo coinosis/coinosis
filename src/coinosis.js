@@ -63,7 +63,7 @@ const Coinosis = () => {
   }, [selectedTab]);
 
   useEffect(() => {
-    if (!backendOnline) {
+    if (backendOnline === false) {
       setSelectedTab(RESULT);
     }
     else if (name) {
@@ -199,13 +199,13 @@ const Tabs = ({ selectedTab, setSelectedTab }) => {
         id={REGISTRATION}
         selectedTab={selectedTab}
         setSelectedTab={setSelectedTab}
-        disabled={!backendOnline}
+        disabled={backendOnline === false}
       />
       <Tab
         id={ASSESSMENT}
         selectedTab={selectedTab}
         setSelectedTab={setSelectedTab}
-        disabled={!backendOnline}
+        disabled={backendOnline === false}
       />
       <Tab
         id={RESULT}
