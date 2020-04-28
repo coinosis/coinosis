@@ -95,8 +95,7 @@ const Assessments = () => {
 
   useEffect(() => {
     if (!contract) return;
-    contract.events.Assessment({fromBlock: 9931712}, (error, event) => {
-      console.log(event);
+    contract.events.Assessment({fromBlock: 0}, (error, event) => {
       if (error) {
         console.error(error);
         return;
