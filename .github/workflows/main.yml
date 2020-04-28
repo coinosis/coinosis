@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build-front-end:
+    runs-on: ubuntu-latest
+    steps:
+    
+    - uses: actions/checkout@v2
+
+    - name: install dependencies
+      run: npm i
+
+    - name: build the front-end
+      run: webpack -p
+
+    - name: GitHub Pages
+      uses: crazy-max/ghaction-github-pages@v1.4.1
+      with:
+        repo: coinosis/coinosis.github.io
+        target_branch: master
+        build_dir: dist
+      env:
+        GITHUB_PAT: ${{ secrets.PAT }}
