@@ -114,7 +114,7 @@ export const post = (endpoint, object, callback) => {
     body: JSON.stringify(object),
   }).then(response => {
     if (!response.ok) {
-      throw Error(response.status);
+      throw new Error(response.status);
     } else {
       return response.json();
     }

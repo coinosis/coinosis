@@ -31,7 +31,7 @@ const Account = () => {
     fetch(`${settings[environment].backend}/user/${account}`)
       .then(response => {
         if (!response.ok) {
-          throw Error(response.statusText);
+          throw new Error(response.statusText);
         }
         else {
           return response.json();
