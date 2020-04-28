@@ -26,7 +26,7 @@ const Account = ({ account, setAccount, name, setName }) => {
 
   useEffect(() => {
     if(!account) return;
-    fetch(`http://localhost:3000/user/${account}`)
+    fetch(`https://coinosis.herokuapp.com/user/${account}`)
       .then(response => {
         if (!response.ok) {
           throw Error(response.statusText);
@@ -37,7 +37,7 @@ const Account = ({ account, setAccount, name, setName }) => {
       }).then(data => {
         setName(data.name);
       }).catch(err => {
-        setName('');
+        setName(null);
       });
   }, [account]);
 

@@ -40,10 +40,12 @@ result = await instance.assess(registrationPriceUSDWei, ETHPriceUSDWei, names, a
 
 ## Flatten the contract in order to verify it on Etherscan
 
-1. `truffle-flattener contracts/Coinosis.sol > build/contracts/Coinosis.sol`
-2. Copy the contents of `build/contracts/Coinosis.sol` into the Etherscan source verifier
+1. Make sure you're in the `master` branch and it is synced with GitHub
+2. `truffle-flattener contracts/Coinosis.sol > build/contracts/Coinosis.sol`
+3. Copy the contents of `build/contracts/Coinosis.sol` into the Etherscan source verifier
 
 ## Build the front-end for production
 
-1. `webpack -p`
-2. Copy the contents of the `dist/` folder to your webserver
+1. Make sure you're in the `master` branch and it is synced with GitHub
+2. `webpack -p`
+3. Copy the contents of the `dist/` folder to your webserver
