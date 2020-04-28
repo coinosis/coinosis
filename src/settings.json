@@ -1,0 +1,8 @@
+{
+  "production": {
+    "backend": "https://coinosis.herokuapp.com"
+  },
+  "development": {
+    "backend": "http://localhost:3000"
+  }
+}

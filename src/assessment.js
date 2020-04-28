@@ -1,6 +1,7 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { AccountContext } from './coinosis';
-import { Link, Loading } from './helpers';
+import { environment, Link, Loading } from './helpers';
+import settings from './settings.json';
 
 const Assessment = () => {
 
@@ -11,7 +12,7 @@ const Assessment = () => {
   const [assessment, setAssessment] = useState({});
 
   useEffect(() => {
-    fetch('http://localhost:3000/users')
+    fetch(`${settings[environment].backend}/users`)
       .then(response => {
         if (!response.ok) {
           throw new Error(response.statusText);

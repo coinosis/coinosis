@@ -1,7 +1,8 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { AccountContext } from './coinosis';
-import { Link, Loading } from './helpers';
+import { environment, Link, Loading } from './helpers';
 import Account from './account';
+import settings from './settings.json';
 
 const Registration = ({ name, setName }) => {
 
@@ -10,7 +11,7 @@ const Registration = ({ name, setName }) => {
   const [message, setMessage] = useState('');
 
   const register = useCallback(() => {
-    fetch('https://coinosis.herokuapp.com/users', {
+    fetch(`${settings[environment].backend}/users`, {
       method: 'post',
       headers: {
         'Content-Type': 'application/json',

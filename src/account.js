@@ -1,6 +1,7 @@
 import React, { useCallback, useContext, useEffect } from 'react';
 import { Web3Context } from './coinosis.js';
-import { Loading, Hash, Link } from './helpers.js';
+import { environment, Loading, Hash, Link } from './helpers.js';
+import settings from './settings.json';
 
 const Account = ({ account, setAccount, name, setName }) => {
 
@@ -26,7 +27,7 @@ const Account = ({ account, setAccount, name, setName }) => {
 
   useEffect(() => {
     if(!account) return;
-    fetch(`https://coinosis.herokuapp.com/user/${account}`)
+    fetch(`${settings[environment].backend}/user/${account}`)
       .then(response => {
         if (!response.ok) {
           throw Error(response.statusText);

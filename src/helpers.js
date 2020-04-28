@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
+export const environment = process.env.NODE_ENV || 'development';
+
 export const Loading = () => {
   return <div>por favor espera...</div>
 }
