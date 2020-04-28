@@ -31,7 +31,7 @@ jobs:
     - name: GitHub Pages
       uses: crazy-max/ghaction-github-pages@v1.4.1
       with:
-        repo: coinosis.github.io
+        repo: coinosis/coinosis.github.io
         target_branch: master
         build_dir: dist
       env:
