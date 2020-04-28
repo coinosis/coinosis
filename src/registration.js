@@ -6,7 +6,7 @@ import React, {
   useState
 } from 'react';
 import { AccountContext } from './coinosis';
-import { environment, Link, Loading } from './helpers';
+import { environment, Link, Loading, post } from './helpers';
 import Account from './account';
 import settings from './settings.json';
 
@@ -24,24 +24,18 @@ const Registration = () => {
   }, [nameInput]);
 
   const register = useCallback(() => {
-    fetch(`${settings[environment].backend}/users`, {
-      method: 'post',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({address: account, name: unsavedName}),
-    }).then(response => {
-      if (!response.ok) {
-        throw Error(response.status);
-      } else {
-        return response.json();
+    const object = {
+      address: account,
+      name: unsavedName
+    };
+    post('users', object, (error, data) => {
+      if (error) {
+        if (error.toString().includes('400')) {
+          setMessage('ese nombre ya existe en nuestra base de datos');
+        }
+        return;
       }
-    }).then(data => {
       setName(data.name);
-    }).catch(statusCode => {
-      if(statusCode.toString().includes('400')) {
-        setMessage('ese nombre ya existe en nuestra base de datos');
-      }
     });
   }, [account, unsavedName]);
 

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import settings from './settings.json';
 
 export const environment = process.env.NODE_ENV || 'development';
 
@@ -104,4 +105,22 @@ export const Link = ({
       </a>
     </div>
   );
+}
+
+export const post = (endpoint, object, callback) => {
+  fetch(`${settings[environment].backend}/${endpoint}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(object),
+  }).then(response => {
+    if (!response.ok) {
+      throw Error(response.status);
+    } else {
+      return response.json();
+    }
+  }).then(data => {
+    callback(null, data);
+  }).catch(err => {
+    callback(err, null);
+  });
 }
