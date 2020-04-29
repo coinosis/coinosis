@@ -28,7 +28,8 @@ const Assessment = ({ setSelectedTab, sent, setSent }) => {
           return response.json();
         }
       }).then(data => {
-        const users = data.filter(user => user.address !== account);
+        const users = data.filter(user => user.address !== account)
+              .sort((a, b) => a.name.localeCompare(b.name));
         setUsers(users);
       }).catch(error => {
         console.error(error);
