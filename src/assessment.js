@@ -109,7 +109,18 @@ const Assessment = ({ setSelectedTab, sent, setSent }) => {
     });
   }, [account, assessment]);
 
-  if (account === null) return <Account />
+  if (account === null) {
+    return (
+      <div
+        css={`
+          display: flex;
+          justify-content: center;
+        `}
+      >
+        <Account />
+      </div>
+    );
+  }
 
   if (name === null) {
     return (

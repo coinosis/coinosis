@@ -43,7 +43,18 @@ const Registration = () => {
     if (message) setMessage('');
   }, [unsavedName]);
 
-  if (account === null) return <Account />
+  if (account === null) {
+    return (
+      <div
+        css={`
+          display: flex;
+          justify-content: center;
+        `}
+      >
+        <Account />
+      </div>
+    );
+  }
 
   if (name === undefined) return <Loading/>
 
@@ -52,35 +63,42 @@ const Registration = () => {
       <div
         css={`
           display: flex;
-          justify-content: center;
+          flex-direction: column;
+          align-items: center;
         `}
       >
-        <div>nombre y apellido:</div>
         <div
           css={`
-            margin: 0 5px;
+            display: flex;
           `}
         >
-          <input
-            ref={nameInput}
-            value={unsavedName}
-            onChange={e => setUnsavedName(e.target.value)}
-          />
+          <div>
+            nombre y apellido:
+          </div>
+          <div
+            css={`
+              margin: 0 5px;
+            `}
+          >
+            <input
+              ref={nameInput}
+              value={unsavedName}
+              onChange={e => setUnsavedName(e.target.value)}
+            />
+          </div>
+          <div>
+            <button
+              onClick={register}
+              disabled={unsavedName === ''}
+            >
+              regístrate
+            </button>
+          </div>
         </div>
         <div>
-          <button
-            onClick={register}
-            disabled={unsavedName === ''}
-          >
-            regístrate
-          </button>
-        </div>
-        <div
-          css={`
-            margin-left: 5px;
-          `}
-        >
-          {message}
+          <div>
+            {message}
+          </div>
         </div>
       </div>
     );
