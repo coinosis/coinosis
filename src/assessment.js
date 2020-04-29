@@ -131,7 +131,13 @@ const Assessment = ({ setSelectedTab, sent, setSent }) => {
   if (users === undefined || sent === undefined) return <Loading/>
 
   return (
-    <div>
+    <div
+      css={`
+        display: flex;
+        justify-content: center;
+      `}
+    >
+    <table>
       <Claps
         clapsLeft={clapsLeft}
         clapsError={clapsError}
@@ -144,40 +150,66 @@ const Assessment = ({ setSelectedTab, sent, setSent }) => {
         clapsError={clapsError}
         disabled={sent}
       />
-      <div>
-        <button
-          onClick={send}
-          disabled={sent}
-        >
-          {sent ? 'enviado' : 'enviar'}
-        </button>
-      </div>
+      <tfoot>
+        <tr>
+          <td/>
+          <td>
+            <button
+              onClick={send}
+              disabled={sent}
+            >
+              {sent ? 'enviado' : 'enviar'}
+            </button>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
     </div>
   );
 }
 
 const Claps = ({ clapsLeft, clapsError, sent }) => {
 
-  if (sent) return <div>gracias por tu tiempo!</div>
+  if (sent) {
+    return (
+      <thead>
+        <tr>
+          <td
+            colSpan={2}
+            css={`
+              text-align: center;
+            `}
+          >
+            gracias por tu tiempo!
+          </td>
+        </tr>
+      </thead>
+    );
+  }
 
   return (
-    <div
-      css={`
-        display: flex;
-        color: ${clapsError ? '#a04040' : 'black'};
-      `}
-    >
-      <div
+    <thead>
+      <tr
         css={`
-          margin-right: 5px;
+          color: ${clapsError ? '#a04040' : 'black'};
         `}
       >
-        aplausos restantes:
-      </div>
-      <div>
-        {clapsLeft}
-      </div>
-    </div>
+        <td
+          css={`
+            text-align: right;
+          `}
+        >
+          aplausos restantes:
+        </td>
+        <td
+          css={`
+            font-weight: ${clapsError ? 700 : 300};
+          `}
+        >
+          {clapsLeft}
+        </td>
+      </tr>
+    </thead>
   );
 }
 
@@ -193,7 +225,7 @@ const Users = ({ users, assessment, attemptAssessment, disabled }) => {
   }, [assessment]);
 
   return (
-    <div>
+    <tbody>
       {users.map((user, i) => {
         const { address, name } = user;
         const claps = assessment[address] || '';
@@ -210,7 +242,7 @@ const Users = ({ users, assessment, attemptAssessment, disabled }) => {
            />
          );
       })}
-    </div>
+    </tbody>
   );
 }
 
@@ -225,20 +257,27 @@ const User = ({ name, address, claps, setClaps, hasFocus, disabled }) => {
   }, [hasFocus]);
 
   return (
-    <div
+    <tr
       css={`
-        display: flex;
       `}
     >
-      <div>
+      <td
+        css={`
+          text-align: right;
+        `}
+      >
         <Link
           type="address"
           value={address}
         >
           {name}
         </Link>
-      </div>
-      <div>
+      </td>
+      <td
+        css={`
+
+        `}
+      >
         <input
           ref={clapInput}
           type="number"
@@ -247,9 +286,12 @@ const User = ({ name, address, claps, setClaps, hasFocus, disabled }) => {
           step={1}
           onChange={e => setClaps(e.target.value)}
           disabled={disabled}
+          css={`
+            width: 60px;
+          `}
         />
-      </div>
-    </div>
+      </td>
+    </tr>
   );
 }
 
