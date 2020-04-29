@@ -31,6 +31,7 @@ const Coinosis = () => {
   const [selectedTab, setSelectedTab] = useState(REGISTRATION);
   const [ActiveElement, setActiveElement] = useState(() => Registration);
   const [backendOnline, setBackendOnline] = useState();
+  const [assessmentSent, setAssessmentSent] = useState();
 
   useEffect(() => {
     if (!Web3.givenProvider) {
@@ -69,6 +70,15 @@ const Coinosis = () => {
     setName(newName);
   }, [name]);
 
+  const preSetAssessmentSent = useCallback(newSent => {
+    if(assessmentSent === undefined && newSent) {
+      setAssessmentSent(newSent);
+      setSelectedTab(RESULT);
+    } else {
+      setAssessmentSent(newSent);
+    }
+  }, [assessmentSent]);
+
   useEffect(() => {
     if (backendOnline === false) {
       setSelectedTab(RESULT);
@@ -89,6 +99,8 @@ const Coinosis = () => {
           />
           <ActiveElement
             setSelectedTab={setSelectedTab}
+            sent={assessmentSent}
+            setSent={preSetAssessmentSent}
           />
         </BackendContext.Provider>
       </AccountContext.Provider>

@@ -5,12 +5,12 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-import { REGISTRATION, AccountContext } from './coinosis';
+import { REGISTRATION, RESULT, AccountContext } from './coinosis';
 import { environment, Link, Loading, post } from './helpers';
 import settings from './settings.json';
 import Account from './account';
 
-const Assessment = ({ setSelectedTab }) => {
+const Assessment = ({ setSelectedTab, sent, setSent }) => {
 
   const [account, setAccount, name, setName] = useContext(AccountContext);
   const [users, setUsers] = useState();
@@ -18,7 +18,6 @@ const Assessment = ({ setSelectedTab }) => {
   const [clapsLeft, setClapsLeft] = useState();
   const [assessment, setAssessment] = useState({});
   const [clapsError, setClapsError] = useState(false);
-  const [sent, setSent] = useState();
 
   useEffect(() => {
     fetch(`${settings[environment].backend}/users`)
@@ -41,7 +40,7 @@ const Assessment = ({ setSelectedTab }) => {
     fetch(`${settings[environment].backend}/assessment/${account}`)
       .then(response => {
         if (!response.ok) {
-          throw new Error(response.statusText);
+          throw new Error(response.status);
         } else {
           return response.json();
         }
@@ -49,7 +48,9 @@ const Assessment = ({ setSelectedTab }) => {
         setAssessment(data.assessment);
         setSent(true);
       }).catch(error => {
-        if (!error.toString().includes('404')) {
+        if (error.toString().includes('404')) {
+          setSent(false);
+        } else {
           console.error(error);
         }
       });
@@ -59,13 +60,15 @@ const Assessment = ({ setSelectedTab }) => {
     if (users) {
       const totalClaps = users.length * 3;
       setTotalClaps(totalClaps);
-      const assessment = {};
-      for (const key in users) {
-        assessment[users[key].address] = 0;
+      if (!Object.keys(assessment).length) {
+        const assessment = {};
+        for (const key in users) {
+          assessment[users[key].address] = 0;
+        }
+        setAssessment(assessment);
       }
-      setAssessment(assessment);
     }
-  }, [users]);
+  }, [assessment, users]);
 
   const computeClapsLeft = useCallback(assessment => {
     let clapsGiven = 0;
