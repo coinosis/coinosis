@@ -4,7 +4,16 @@ import settings from './settings.json';
 export const environment = process.env.NODE_ENV || 'development';
 
 export const Loading = () => {
-  return <div>por favor espera...</div>
+  return (
+    <div
+      css={`
+        display: flex;
+        justify-content: center;
+      `}
+    >
+      por favor espera...
+    </div>
+  );
 }
 
 export const ToolTip = ({ value, show, position="top" }) => {

@@ -52,6 +52,7 @@ const Registration = () => {
       <div
         css={`
           display: flex;
+          justify-content: center;
         `}
       >
         <div>nombre y apellido:</div>
@@ -89,6 +90,7 @@ const Registration = () => {
     <div
       css={`
         display: flex;
+        justify-content: center;
       `}
     >
       <div>

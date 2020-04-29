@@ -112,7 +112,12 @@ const Assessment = ({ setSelectedTab, sent, setSent }) => {
 
   if (name === null) {
     return (
-      <div>
+      <div
+        css={`
+          display: flex;
+          justify-content: center;
+        `}
+      >
         <span
           onClick={() => setSelectedTab(REGISTRATION)}
           css={`
@@ -178,6 +183,7 @@ const Claps = ({ clapsLeft, clapsError, sent }) => {
             colSpan={2}
             css={`
               text-align: center;
+              font-weight: 700;
             `}
           >
             gracias por tu tiempo!
