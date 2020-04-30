@@ -49,3 +49,10 @@ result = await instance.assess(registrationPriceUSDWei, ETHPriceUSDWei, names, a
 1. Make sure you're in the `master` branch and it is synced with GitHub
 2. `webpack -p`
 3. Copy the contents of the `dist/` folder to your webserver
+
+## Execute the assess() function with backend data
+
+`truffle exec scripts/assess.js`
+
+* set the NODE_ENV environment variable to `production` if you want to get data from the production backend
+* set the --network flag to `mainnet` if you want to execute the contract on that network
