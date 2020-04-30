@@ -20,8 +20,9 @@ contract Coinosis {
     string constant INSUFFICIENT_VALUE =
         "The ether value in this contract is less than the total reward value \
 to send (insufficient-value)";
+    string constant NO_CLAPS = "All the claps are zero (no-claps)";
 
-    string public version = "1.2.0";
+    string public version = "1.2.1";
     address payable private owner;
 
     event Assessment(
@@ -76,6 +77,7 @@ to send (insufficient-value)";
         for (uint i = 0; i < claps.length; i = i.add(1)) {
             totalClaps = totalClaps.add(claps[i]);
         }
+        require(totalClaps > 0, NO_CLAPS);
         uint[] memory rewards = new uint[](claps.length);
         for (uint i = 0; i < claps.length; i = i.add(1)) {
             rewards[i] = claps[i].mul(totalFeesWei).div(totalClaps);

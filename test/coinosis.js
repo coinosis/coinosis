@@ -297,26 +297,25 @@ contract('Coinosis', async accounts => {
        truffleAssert.eventNotEmitted(result, 'Transfer');
      });
 
-  it('empty arrays: the Assessment event should contain an empty rewards array',
-     async () => {
-       const instance = await Coinosis.new();
-       await web3.eth.sendTransaction({
-         from: accounts[0],
-         to: instance.address,
-         value: web3.utils.toWei('1')
-       });
-       const result = await instance.assess(
-         registrationFeeUSDWei,
-         ETHPriceUSDWei,
-         [],
-         [],
-         []
-       );
-       truffleAssert.eventEmitted(result, 'Assessment', event => {
-         return event.rewards.length == 0;
-       });
-       truffleAssert.eventNotEmitted(result, 'Transfer');
-     });
+  it('should revert with a \'no-claps\' error', async () => {
+    const instance = await Coinosis.new();
+    await web3.eth.sendTransaction({
+      from: accounts[0],
+      to: instance.address,
+      value: web3.utils.toWei('1')
+    });
+    const newClaps = claps.map(clap => 0);
+    truffleAssert.reverts(
+      instance.assess(
+        registrationFeeUSDWei,
+        ETHPriceUSDWei,
+        names,
+        addresses,
+        newClaps
+      ),
+      'no-claps'
+    );
+  });
 
   it('decommission: send all remaining funds to owner',
      async () => {
