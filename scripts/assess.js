@@ -10,7 +10,7 @@ const etherscanKey = '2RU78DJDPVG9G2VK3AHE8QVTAN65CP9MBI';
 const gasTracker = `${etherscanAPI}?module=gastracker&action=gasoracle&apikey=${etherscanKey}`
 const ETHPrice = `${etherscanAPI}?module=stats&action=ethprice&apikey=${etherscanKey}`
 
-const registrationFeeUSD = '5';
+const registrationFeeUSD = '3';
 
 module.exports = callback => {
   getUsers(callback);
@@ -110,6 +110,12 @@ const callContract = (
 ) => {
   Coinosis.deployed().then(instance => {
     const registrationFeeUSDWei = web3.utils.toWei(registrationFeeUSD);
+    console.log(gasPrice);
+    console.log(registrationFeeUSDWei);
+    console.log(ETHPriceUSDWei);
+    console.log(names);
+    console.log(addresses);
+    console.log(claps);
     instance.assess(
       registrationFeeUSDWei,
       ETHPriceUSDWei,
