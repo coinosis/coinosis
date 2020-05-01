@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import settings from './settings.json';
 
-export const environment = process.env.NODE_ENV || 'development';
+export const environment = process.env.ENVIRONMENT || 'development';
 
 export const Loading = () => {
   return (
