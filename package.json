@@ -5,6 +5,10 @@
   "description": "Knowledge-sharing dapp",
   "author": "@e18r",
   "license": "GPL-3.0-or-later",
+  "scripts": {
+    "postinstall": "webpack -p --define process.env.ENVIRONMENT=\"'testing'\"",
+    "start": "http-server dist/ -p $PORT"
+  },
   "devDependencies": {
     "@babel/core": "^7.9.0",
     "@babel/preset-env": "^7.9.0",
@@ -25,6 +29,7 @@
   "dependencies": {
     "@openzeppelin/contracts": "^2.5.0",
     "@truffle/hdwallet-provider": "^1.0.34",
+    "http-server": "^0.12.3",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "styled-components": "^5.1.0",

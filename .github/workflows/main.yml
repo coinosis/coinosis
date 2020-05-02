@@ -15,7 +15,7 @@ jobs:
       run: npm i
 
     - name: build the front-end
-      run: webpack -p
+      run: webpack -p --define process.env.ENVIRONMENT="'production'"
 
     - name: GitHub Pages
       uses: crazy-max/ghaction-github-pages@v1.4.1
