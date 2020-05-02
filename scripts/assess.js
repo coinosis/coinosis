@@ -3,12 +3,17 @@ const web3 = require('web3');
 const Coinosis = artifacts.require('Coinosis');
 const settings = require('../src/settings.json');
 
-const environment = process.env.NODE_ENV || 'development';
+const environment = process.env.ENVIRONMENT || 'development';
 const backend = settings[environment].backend;
 const etherscanAPI = 'https://api.etherscan.io/api';
 const etherscanKey = '2RU78DJDPVG9G2VK3AHE8QVTAN65CP9MBI';
 const gasTracker = `${etherscanAPI}?module=gastracker&action=gasoracle&apikey=${etherscanKey}`
 const ETHPrice = `${etherscanAPI}?module=stats&action=ethprice&apikey=${etherscanKey}`
+const dateOptions = {
+  timeZone: 'America/Bogota',
+  timeStyle: 'medium',
+  dateStyle: 'medium',
+};
 
 const registrationFeeUSD = '3';
 
@@ -124,7 +129,29 @@ const callContract = (
       claps,
       {gasPrice}
     ).then(result => {
-      console.log(result);
+      for (const i in result.logs) {
+        const log = result.logs[i];
+        console.log(log.event, 'event');
+        for (const name in log.args) {
+          if (!isNaN(name) || name === '__length__') continue;
+          const arg = log.args[name];
+          if (typeof arg === 'object') {
+            const value = arg.toString();
+            if (name === 'timestamp') {
+              const date = new Date(Number(value + '000'));
+
+              console.log(name, ':', date.toLocaleString('es-CO', dateOptions));
+            } else if(isNaN(value) || name === 'claps') {
+              console.log(name, ':', value);
+            } else {
+              console.log(name, ':', web3.utils.fromWei(value));
+            }
+          } else {
+            console.log(name, ':', arg);
+          }
+        }
+        console.log('\n')
+      }
       callback();
     });
   }).catch(error => {

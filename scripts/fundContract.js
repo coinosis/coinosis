@@ -6,10 +6,11 @@ module.exports = async callback => {
   const txObject = {
     from: accounts[0],
     to: instance.address,
-    value: web3.utils.toWei('2'),
+    value: web3.utils.toWei('10'),
     gasPrice: web3.utils.toWei('100', 'gwei'),
   }
-  const result = await web3.eth.sendTransaction({txObject}); // not working
-  console.log(result);
+  const result = await web3.eth.sendTransaction(txObject); // not working
+  const balance = await web3.eth.getBalance(instance.address);
+  console.log(web3.utils.fromWei(balance), 'ETH');
   callback();
 }

@@ -18,15 +18,24 @@
 8. `npx webpack-dev-server`
 9. On a browser window, head to `http://localhost:9000`
 
+## Submit your changes
+
+1. Commit & push to the `dev` branch
+2. Create a pull request targeting the `test` branch
+3. Once accepted, check everything is working in [the test deployment](https://coinosis-front.herokuapp.com)
+4. Create a pull request targeting the `master` branch
+5. Once accepted the code will be running live in [the production deployment](https://coinosis.github.io)
+
 ## Interact with the deployed contract from the command line
 
 ```bash
+
 git clone https://github.com/coinosis/coinosis.git -b master
 cd coinosis
 npm i
 truffle console --network mainnet
 
-gasPrice = web3.utils.toWei('7.5', 'gwei') // ethgasstation.info
+gasPrice = web3.utils.toWei('7.5', 'gwei') // get the latest gas price from https://etherscan.io/gastracker
 instance = await Coinosis.deployed()
 result = await web3.eth.sendTransaction({from: accounts[0], to: instance.address, value: web3.utils.toWei('1'), gasPrice})
 
@@ -36,7 +45,15 @@ names = ['Alejandra Arias', 'Valentina Jaramillo', 'Laura Acosta']
 addresses = ['0x3eBe044eAE12599b396CF779eE8124c5900B13a2', '0xB6E0fDeFB8D65D50cc5eEd77F79e46E10d749DE4', '0xEB13677C9B17746b7C1ac717A3113087e075E191']
 claps = [8, 10, 4]
 result = await instance.assess(registrationPriceUSDWei, ETHPriceUSDWei, names, addresses, claps, {gasPrice})
+
 ```
+
+## Deploy the contract to Ropsten or to Mainnet
+
+1. create a new Ethereum account
+2. fund that account on the desired network
+3. store its 12-word mnemonic in `.secret`
+4. run `truffle migrate --reset --network ropsten`
 
 ## Flatten the contract in order to verify it on Etherscan
 
@@ -50,9 +67,20 @@ result = await instance.assess(registrationPriceUSDWei, ETHPriceUSDWei, names, a
 2. `webpack -p`
 3. Copy the contents of the `dist/` folder to your webserver
 
-## Execute the assess() function with backend data
+## Execute the assess() function in the development environment
 
-`truffle exec scripts/assess.js`
+```bash
 
-* set the NODE_ENV environment variable to `production` if you want to get data from the production backend
+ganache-cli
+truffle migrate
+truffle exec scripts/fundContract.js
+truffle exec scripts/assess.js
+
+```
+
+## Execute the assess() function in other environments
+
+`ENVIRONMENT=testing truffle exec scripts/assess.js --network ropsten`
+
+* set the ENVIRONMENT environment variable to `production` if you want to get data from that database
 * set the --network flag to `mainnet` if you want to execute the contract on that network
