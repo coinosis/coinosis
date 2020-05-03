@@ -6,7 +6,7 @@ import React, {
   useState
 } from 'react';
 import { AccountContext } from './coinosis';
-import { environment, Link, Loading, post } from './helpers';
+import { environment, Link, Loading, usePost } from './helpers';
 import Account from './account';
 import settings from './settings.json';
 
@@ -16,6 +16,7 @@ const Registration = () => {
   const [unsavedName, setUnsavedName] = useState('');
   const [message, setMessage] = useState('');
   const nameInput = createRef();
+  const post = usePost();
 
   useEffect(() => {
     if (nameInput.current) {

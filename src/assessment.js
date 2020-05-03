@@ -6,7 +6,7 @@ import React, {
   useState,
 } from 'react';
 import { REGISTRATION, RESULT, AccountContext } from './coinosis';
-import { environment, Link, Loading, post } from './helpers';
+import { environment, Link, Loading, usePost } from './helpers';
 import settings from './settings.json';
 import Account from './account';
 
@@ -18,6 +18,7 @@ const Assessment = ({ setSelectedTab, sent, setSent }) => {
   const [clapsLeft, setClapsLeft] = useState();
   const [assessment, setAssessment] = useState({});
   const [clapsError, setClapsError] = useState(false);
+  const post = usePost();
 
   useEffect(() => {
     fetch(`${settings[environment].backend}/users`)

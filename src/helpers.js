@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import settings from './settings.json';
+import { Web3Context, AccountContext } from './coinosis';
 
 export const environment = process.env.ENVIRONMENT || 'development';
 
@@ -116,20 +117,31 @@ export const Link = ({
   );
 }
 
-export const post = (endpoint, object, callback) => {
-  fetch(`${settings[environment].backend}/${endpoint}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(object),
-  }).then(response => {
-    if (!response.ok) {
-      throw new Error(response.status);
-    } else {
-      return response.json();
-    }
-  }).then(data => {
-    callback(null, data);
-  }).catch(err => {
-    callback(err, null);
-  });
+export const usePost = () => {
+
+  const [ account ] = useContext(AccountContext);
+  const web3 = useContext(Web3Context);
+
+  return useCallback((endpoint, object, callback) => {
+    const payload = JSON.stringify(object);
+    web3.eth.personal.sign(payload, account).then(signature => {
+      object.signature = signature;
+      const body = JSON.stringify(object);
+      fetch(`${settings[environment].backend}/${endpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body,
+      }).then(response => {
+        if (!response.ok) {
+          throw new Error(response.status);
+        } else {
+          return response.json();
+        }
+      }).then(data => {
+        callback(null, data);
+      }).catch(err => {
+        callback(err, null);
+      });
+    });
+  }, [web3, account]);
 }
