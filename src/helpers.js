@@ -124,7 +124,8 @@ export const usePost = () => {
 
   return useCallback((endpoint, object, callback) => {
     const payload = JSON.stringify(object);
-    web3.eth.personal.sign(payload, account).then(signature => {
+    const hex = web3.utils.utf8ToHex(payload);
+    web3.eth.personal.sign(hex, account).then(signature => {
       object.signature = signature;
       const body = JSON.stringify(object);
       fetch(`${settings[environment].backend}/${endpoint}`, {
