@@ -48,11 +48,24 @@ const Account = () => {
 
   if (!name) {
     return (
-      <Hash
-        type="address"
-        value={account}
-        toolTipPosition="bottom"
-      />
+      <div
+        css={`
+          display: flex;
+        `}
+      >
+        <div
+          css={`
+            margin-right: 5px;
+          `}
+        >
+          cuenta
+        </div>
+        <Hash
+          type="address"
+          value={account}
+          toolTipPosition="bottomRight"
+        />
+      </div>
     );
   }
 
@@ -60,7 +73,7 @@ const Account = () => {
     <Link
       type="address"
       value={account}
-      toolTipPosition="bottom"
+      toolTipPosition="bottomRight"
     >
       {name}
     </Link>

@@ -25,7 +25,9 @@ export const ToolTip = ({ value, show, position="top" }) => {
         css={`
           display: ${show ? 'block' : 'none'};
           position: absolute;
-          ${ position === 'bottom' ? 'top: 25px; right: 0;' : 'bottom: 7px'};
+          ${ position !== 'top' ? 'top: 25px;' : 'bottom: 7px'};
+          ${ position === 'bottomRight' ? 'right: 0' 
+             : position === 'bottomLeft' ? 'left: 0' : '' };
           background: black;
           color: #f0f0f0;
           padding: 5px;
@@ -145,4 +147,12 @@ export const usePost = () => {
       });
     });
   }, [web3, account]);
+}
+
+export const NoContract = () => {
+  return (
+    <div>
+      ningún contrato ha sido desplegado en esta red.
+    </div>
+  )
 }

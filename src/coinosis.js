@@ -8,7 +8,8 @@ import React, {
 import Web3 from 'web3';
 import styled, { createGlobalStyle } from 'styled-components';
 import InstallMetamask from './installMetamask';
-import { environment } from './helpers';
+import contractJson from '../build/contracts/Coinosis.json';
+import { environment, Hash, Loading, NoContract } from './helpers';
 import settings from './settings.json';
 import Account from './account';
 import Registration from './registration';
@@ -21,11 +22,13 @@ const RESULT = Symbol('RESULT');
 
 export const Web3Context = createContext();
 export const AccountContext = createContext();
+export const ContractContext = createContext();
 export const BackendContext = createContext();
 
 const Coinosis = () => {
 
   const [web3, setWeb3] = useState();
+  const [contract, setContract] = useState();
   const [account, setAccount] = useState();
   const [name, setName] = useState();
   const [selectedTab, setSelectedTab] = useState(REGISTRATION);
@@ -41,6 +44,20 @@ const Coinosis = () => {
     const web3 = new Web3(Web3.givenProvider);
     setWeb3(web3);
   }, []);
+
+  useEffect(() => {
+    if (!web3) return;
+    web3.eth.net.getId().then(networkId => {
+      const deployment = contractJson.networks[networkId];
+      if (!deployment) {
+        setContract(null);
+        return;
+      }
+      const contractAddress = deployment.address;
+      const contract = new web3.eth.Contract(contractJson.abi, contractAddress);
+      setContract(contract);
+    });
+  }, [web3]);
 
   useEffect(() => {
     fetch(settings[environment].backend)
@@ -86,24 +103,30 @@ const Coinosis = () => {
   }, [backendOnline]);
 
   if (web3 === null) return <InstallMetamask/>
+  if (contract === undefined) return <Loading/>
+  if (contract === null) return <NoContract/>
 
   return (
     <Web3Context.Provider value={web3}>
-      <AccountContext.Provider value={[account, setAccount, name, preSetName]}>
-        <BackendContext.Provider value={backendOnline}>
-          <GlobalStyle/>
-          <Header/>
-          <Tabs
-            selectedTab={selectedTab}
-            setSelectedTab={setSelectedTab}
-          />
-          <ActiveElement
-            setSelectedTab={setSelectedTab}
-            sent={assessmentSent}
-            setSent={preSetAssessmentSent}
-          />
-        </BackendContext.Provider>
-      </AccountContext.Provider>
+      <ContractContext.Provider value={contract}>
+        <AccountContext.Provider
+          value={[account, setAccount, name, preSetName]}
+        >
+          <BackendContext.Provider value={backendOnline}>
+            <GlobalStyle/>
+            <Header/>
+            <Tabs
+              selectedTab={selectedTab}
+              setSelectedTab={setSelectedTab}
+            />
+            <ActiveElement
+              setSelectedTab={setSelectedTab}
+              sent={assessmentSent}
+              setSent={preSetAssessmentSent}
+            />
+          </BackendContext.Provider>
+        </AccountContext.Provider>
+      </ContractContext.Provider>
     </Web3Context.Provider>
   );
 }
@@ -120,76 +143,40 @@ const Header = () => {
   return (
     <div
       css={`
-        margin-bottom: 20px;
+        display: flex;
+        justify-content: space-between;
       `}
     >
-      <div
+      <HeaderItem
         css={`
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          margin-bottom: 10px;
+          justify-content: flex-start;
         `}
       >
-        <div
-          css={`
-            font-size: 18px;
-          `}
-        >
-          coinosis y CKWeb presentan
-        </div>
-      </div>
-      <div
+        <ContractInfo/>
+      </HeaderItem>
+      <HeaderItem
         css={`
-          position: relative;
-          display: flex;
+          justify-content: center;
+          font-size: 26px;
+        `}
+      >
+        coinosis
+      </HeaderItem>
+      <HeaderItem
+        css={`
           justify-content: flex-end;
         `}
       >
-        <div
-          css={`
-            position: absolute;
-            bottom: 0px;
-            right: 15px;
-            display: flex;
-          `}
-        >
-          <Account/>
-        </div>
-      </div>
-      <div
-        css={`
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-        `}
-      >
-        <div
-          css={`
-            font-size: 34px;
-          `}
-        >
-          La música en la cadena de bloques
-        </div>
-        <div
-          css={`
-            font-size: 24px;
-          `}
-        >
-          Blockchain en las Artes 2 de 4
-        </div>
-        <div
-          css={`
-            font-size: 20px;
-            margin-top: 20px;
-          `}
-        >
-          jueves 30 de abril, 4:00pm COL
-        </div>
-      </div>
+        <Account/>
+      </HeaderItem>
     </div>
   );
 }
+
+const HeaderItem = styled.div`
+  width: 33.333%;
+  display: flex;
+`
 
 const Tabs = ({ selectedTab, setSelectedTab }) => {
 
@@ -266,5 +253,42 @@ const StyledTab = styled.div`
   user-select: none;
   color: ${({ disabled }) => disabled ? '#505050' : 'black'};
 `
+
+const ContractInfo = () => {
+
+  const contract = useContext(ContractContext);
+  const [address, setAddress] = useState('');
+  const [version, setVersion] = useState('');
+
+  useEffect(() => {
+    if (contract) {
+      setAddress(contract._address);
+      contract.methods.version().call().then(setVersion);
+    }
+  }, [contract]);
+
+  return (
+    <div
+      css={`
+        display: flex;
+        justify-content: center;
+      `}
+    >
+      <div>
+        contrato
+      </div>
+      <div
+        css={`
+          margin: 0 5px;
+        `}
+      >
+        <Hash type="address" value={address} toolTipPosition="bottomLeft" />
+      </div>
+      <div>
+        {version ? `(v${version})` : ''}
+      </div>
+    </div>
+  );
+}
 
 export default Coinosis

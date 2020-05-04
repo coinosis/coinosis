@@ -6,11 +6,10 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import contractJson from '../build/contracts/Coinosis.json';
-import { Web3Context } from './coinosis';
+
+import { ContractContext, Web3Context } from './coinosis';
 import { Loading, ToolTip, Hash, Link } from './helpers';
 
-const ContractContext = createContext();
 const CurrencyContext = createContext([]);
 
 const usdPlaceholder = ' '.repeat(4);
@@ -23,67 +22,12 @@ const USD = 'usd';
 const Result = () => {
 
   const web3 = useContext(Web3Context);
-
-  const [contract, setContract] = useState();
   const [currencyType, setCurrencyType] = useState(ETH);
 
-  useEffect(() => {
-    if (!web3) return;
-    web3.eth.net.getId().then(networkId => {
-      const deployment = contractJson.networks[networkId];
-      if (!deployment) {
-        setContract(null);
-        return;
-      }
-      const contractAddress = deployment.address;
-      const contract = new web3.eth.Contract(contractJson.abi, contractAddress);
-      setContract(contract);
-    });
-  }, [web3]);
-
-  if (contract === undefined) return <Loading/>
-  if (contract === null) return <NoContract/>
-
   return (
-    <ContractContext.Provider value={contract}>
-      <CurrencyContext.Provider value={[currencyType, setCurrencyType]}>
-        <ContractInfo/>
-        <Assessments/>
-      </CurrencyContext.Provider>
-    </ContractContext.Provider>
-  );
-}
-
-const ContractInfo = () => {
-
-  const contract = useContext(ContractContext);
-  const [address, setAddress] = useState('');
-
-  useEffect(() => {
-    if (contract) {
-      setAddress(contract._address);
-    }
-  }, [contract]);
-
-  return (
-    <div
-      css={`
-        display: flex;
-        justify-content: center;
-        font-size: 24px;
-      `}
-    >
-      <div>
-        contrato
-      </div>
-      <div
-        css={`
-          margin-left: 5px;
-        `}
-      >
-        <Hash type="address" value={address} />
-      </div>
-    </div>
+    <CurrencyContext.Provider value={[currencyType, setCurrencyType]}>
+      <Assessments/>
+    </CurrencyContext.Provider>
   );
 }
 
@@ -537,14 +481,6 @@ const DateTime = ({ timestamp }) => {
       {date}
     </div>
   );
-}
-
-const NoContract = () => {
-  return (
-    <div>
-      ningún contrato ha sido desplegado en esta red.
-    </div>
-  )
 }
 
 export default Result
