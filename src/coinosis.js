@@ -7,6 +7,7 @@ import React, {
 } from 'react';
 import Web3 from 'web3';
 import styled, { createGlobalStyle } from 'styled-components';
+import logo from './assets/logo.png';
 import InstallMetamask from './installMetamask';
 import contractJson from '../build/contracts/Coinosis.json';
 import { environment, Hash, Loading, NoContract } from './helpers';
@@ -135,6 +136,7 @@ const GlobalStyle = createGlobalStyle`
   body {
     background: #f0f0f0;
     font-family: arial;
+    margin: 0;
   }
 `
 
@@ -145,6 +147,10 @@ const Header = () => {
       css={`
         display: flex;
         justify-content: space-between;
+        align-items: center;
+        background: #fafafa;
+        box-shadow: 0 1px 10px rgba(151, 164, 175, .1);
+        padding: 10px 40px;
       `}
     >
       <HeaderItem
@@ -160,7 +166,7 @@ const Header = () => {
           font-size: 26px;
         `}
       >
-        coinosis
+        <img src={logo} width={80} alt="coinosis" />
       </HeaderItem>
       <HeaderItem
         css={`
@@ -285,7 +291,7 @@ const ContractInfo = () => {
         <Hash type="address" value={address} toolTipPosition="bottomLeft" />
       </div>
       <div>
-        {version ? `(v${version})` : ''}
+        {version}
       </div>
     </div>
   );

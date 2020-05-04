@@ -7,7 +7,7 @@ module.exports = {
   module: {
     rules: [
       { test: /\.js$/, exclude: /node_modules/, loader: 'babel-loader' },
-      { test: /\.gif$/, loader: 'file-loader' }
+      { test: /\.gif$|.png$/, loader: 'file-loader' }
     ]
   },
   plugins: [
