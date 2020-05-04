@@ -116,6 +116,7 @@ const Coinosis = () => {
           <BackendContext.Provider value={backendOnline}>
             <GlobalStyle/>
             <Header/>
+            <Title/>
             <Tabs
               selectedTab={selectedTab}
               setSelectedTab={setSelectedTab}
@@ -151,6 +152,7 @@ const Header = () => {
         background: #fafafa;
         box-shadow: 0 1px 10px rgba(151, 164, 175, .1);
         padding: 10px 40px;
+        margin-bottom: 40px;
       `}
     >
       <HeaderItem
@@ -183,6 +185,21 @@ const HeaderItem = styled.div`
   width: 33.333%;
   display: flex;
 `
+
+const Title = () => {
+  return (
+    <div
+      css={`
+        display: flex;
+        justify-content: center;
+        margin: 40px;
+        font-size: 32px;
+      `}
+    >
+      título del evento
+    </div>
+  );
+}
 
 const Tabs = ({ selectedTab, setSelectedTab }) => {
 
