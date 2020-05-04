@@ -11,16 +11,16 @@ const RESULT = Symbol('RESULT');
 
 const Event = () => {
 
-  const backendOnline = useContext(BackendContext);
+  const backendURL = useContext(BackendContext);
   const [selectedTab, setSelectedTab] = useState(REGISTRATION);
   const [ActiveElement, setActiveElement] = useState(() => Registration);
   const [assessmentSent, setAssessmentSent] = useState();
 
   useEffect(() => {
-    if (backendOnline === false) {
+    if (backendURL === null) {
       setSelectedTab(RESULT);
     }
-  }, [backendOnline]);
+  }, [backendURL]);
 
   useEffect(() => {
     if (selectedTab === REGISTRATION) {
@@ -68,7 +68,7 @@ const Title = () => {
 
 const Tabs = ({ selectedTab, setSelectedTab }) => {
 
-  const backendOnline = useContext(BackendContext);
+  const backendURL = useContext(BackendContext);
 
   return (
     <div
@@ -82,13 +82,13 @@ const Tabs = ({ selectedTab, setSelectedTab }) => {
         id={REGISTRATION}
         selectedTab={selectedTab}
         setSelectedTab={setSelectedTab}
-        disabled={backendOnline === false}
+        disabled={backendURL === null}
       />
       <Tab
         id={ASSESSMENT}
         selectedTab={selectedTab}
         setSelectedTab={setSelectedTab}
-        disabled={backendOnline === false}
+        disabled={backendURL === null}
       />
       <Tab
         id={RESULT}

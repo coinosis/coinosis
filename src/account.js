@@ -1,11 +1,11 @@
 import React, { useCallback, useContext, useEffect } from 'react';
-import { Web3Context, AccountContext } from './coinosis.js';
+import { Web3Context, AccountContext, BackendContext } from './coinosis.js';
 import { environment, Loading, Hash, Link } from './helpers.js';
-import settings from './settings.json';
 
 const Account = () => {
 
   const web3 = useContext(Web3Context);
+  const backendURL = useContext(BackendContext);
   const [account, setAccount, name, setName] = useContext(AccountContext);
 
   const updateAccounts = useCallback(() => {
@@ -28,7 +28,7 @@ const Account = () => {
 
   useEffect(() => {
     if(!account) return;
-    fetch(`${settings[environment].backend}/user/${account}`)
+    fetch(`${backendURL}/user/${account}`)
       .then(response => {
         if (!response.ok) {
           throw new Error(response.statusText);

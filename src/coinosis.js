@@ -20,7 +20,7 @@ const Coinosis = () => {
   const [contract, setContract] = useState();
   const [account, setAccount] = useState();
   const [name, setName] = useState();
-  const [backendOnline, setBackendOnline] = useState();
+  const [backendURL, setBackendURL] = useState();
 
   useEffect(() => {
     if (!Web3.givenProvider) {
@@ -48,9 +48,9 @@ const Coinosis = () => {
   useEffect(() => {
     fetch(settings[environment].backend)
       .then(response => {
-        setBackendOnline(true);
+        setBackendURL(settings[environment].backend);
       }).catch(err => {
-        setBackendOnline(false);
+        setBackendURL(null);
       });
   }, []);
 
@@ -64,7 +64,7 @@ const Coinosis = () => {
         <AccountContext.Provider
           value={[account, setAccount, name, setName]}
         >
-          <BackendContext.Provider value={backendOnline}>
+          <BackendContext.Provider value={backendURL}>
             <GlobalStyle/>
             <Header/>
             <Event/>

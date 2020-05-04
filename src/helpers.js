@@ -1,6 +1,5 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import settings from './settings.json';
-import { Web3Context, AccountContext } from './coinosis';
+import { Web3Context, AccountContext, BackendContext } from './coinosis';
 
 export const environment = process.env.ENVIRONMENT || 'development';
 
@@ -122,6 +121,7 @@ export const Link = ({
 export const usePost = () => {
 
   const [ account ] = useContext(AccountContext);
+  const backendURL = useContext(BackendContext);
   const web3 = useContext(Web3Context);
 
   return useCallback((endpoint, object, callback) => {
@@ -130,7 +130,7 @@ export const usePost = () => {
     web3.eth.personal.sign(hex, account).then(signature => {
       object.signature = signature;
       const body = JSON.stringify(object);
-      fetch(`${settings[environment].backend}/${endpoint}`, {
+      fetch(`${backendURL}/${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body,

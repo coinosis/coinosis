@@ -5,15 +5,15 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-import { AccountContext } from './coinosis';
+import { AccountContext, BackendContext } from './coinosis';
 import { REGISTRATION } from './event';
 import { environment, Link, Loading, usePost } from './helpers';
-import settings from './settings.json';
 import Account from './account';
 
 const Assessment = ({ setSelectedTab, sent, setSent }) => {
 
   const [account, setAccount, name, setName] = useContext(AccountContext);
+  const backendURL = useContext(BackendContext);
   const [users, setUsers] = useState();
   const [totalClaps, setTotalClaps] = useState();
   const [clapsLeft, setClapsLeft] = useState();
@@ -22,7 +22,7 @@ const Assessment = ({ setSelectedTab, sent, setSent }) => {
   const post = usePost();
 
   useEffect(() => {
-    fetch(`${settings[environment].backend}/users`)
+    fetch(`${backendURL}/users`)
       .then(response => {
         if (!response.ok) {
           throw new Error(response.statusText);
@@ -40,7 +40,7 @@ const Assessment = ({ setSelectedTab, sent, setSent }) => {
 
   useEffect(() => {
     if (!name) return;
-    fetch(`${settings[environment].backend}/assessment/${account}`)
+    fetch(`${backendURL}/assessment/${account}`)
       .then(response => {
         if (!response.ok) {
           throw new Error(response.status);
