@@ -110,7 +110,7 @@ const Header = () => {
           font-size: 26px;
         `}
       >
-        <img src={logo} width={80} alt="coinosis" />
+        <img src={logo} height={45} alt="coinosis" />
       </HeaderItem>
       <HeaderItem
         css={`
