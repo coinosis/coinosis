@@ -5,7 +5,8 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-import { REGISTRATION, RESULT, AccountContext } from './coinosis';
+import { AccountContext } from './coinosis';
+import { REGISTRATION } from './event';
 import { environment, Link, Loading, usePost } from './helpers';
 import settings from './settings.json';
 import Account from './account';
