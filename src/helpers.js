@@ -67,6 +67,21 @@ export const Hash = ({ type, value, toolTipPosition="top" }) => {
   );
 }
 
+export const Link = ({ onClick, children }) => {
+  return (
+    <span
+      onClick={onClick}
+      css={`
+        margin-right: 5px;
+        text-decoration: underline;
+        cursor: pointer;
+      `}
+    >
+      {children}
+    </span>
+  );
+}
+
 export const EtherscanLink = ({
   type,
   value,

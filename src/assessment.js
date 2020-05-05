@@ -7,7 +7,7 @@ import React, {
 } from 'react';
 import { AccountContext, BackendContext } from './coinosis';
 import { REGISTRATION } from './event';
-import { environment, EtherscanLink, Loading, usePost } from './helpers';
+import { environment, EtherscanLink, Link, Loading, usePost } from './helpers';
 import Account from './account';
 
 const Assessment = ({ setSelectedTab, sent, setSent }) => {
@@ -132,16 +132,9 @@ const Assessment = ({ setSelectedTab, sent, setSent }) => {
           justify-content: center;
         `}
       >
-        <span
-          onClick={() => setSelectedTab(REGISTRATION)}
-          css={`
-            margin-right: 5px;
-            text-decoration: underline;
-            cursor: pointer;
-          `}
-        >
+        <Link onClick={() => setSelectedTab(REGISTRATION)}>
           regístrate
-        </span>
+        </Link>
         para poder aplaudir.
       </div>
     );
