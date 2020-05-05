@@ -6,7 +6,7 @@ import React, {
   useState
 } from 'react';
 import { AccountContext } from './coinosis';
-import { environment, Link, Loading, usePost } from './helpers';
+import { environment, EtherscanLink, Loading, usePost } from './helpers';
 import Account from './account';
 
 const Registration = () => {
@@ -119,9 +119,9 @@ const Registration = () => {
           margin: 0 5px;
         `}
       >
-        <Link type="address" value={account}>
+        <EtherscanLink type="address" value={account}>
           {name}
-        </Link>
+        </EtherscanLink>
       </div>
       <div>
         !

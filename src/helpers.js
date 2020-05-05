@@ -54,7 +54,7 @@ export const Hash = ({ type, value, toolTipPosition="top" }) => {
 
   return (
     <div>
-      <Link
+      <EtherscanLink
         type={type}
         value={value}
         onMouseOver={() => setShowFull(true)}
@@ -62,12 +62,12 @@ export const Hash = ({ type, value, toolTipPosition="top" }) => {
         toolTipPosition={toolTipPosition}
       >
         {short}
-      </Link>
+      </EtherscanLink>
     </div>
   );
 }
 
-export const Link = ({
+export const EtherscanLink = ({
   type,
   value,
   internal=false,

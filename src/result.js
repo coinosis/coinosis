@@ -8,7 +8,7 @@ import React, {
 } from 'react';
 
 import { ContractContext, Web3Context } from './coinosis';
-import { Loading, ToolTip, Hash, Link } from './helpers';
+import { Loading, ToolTip, Hash, EtherscanLink } from './helpers';
 
 const CurrencyContext = createContext([]);
 
@@ -344,13 +344,13 @@ const Participant = ({
           text-align: center;
         `}
       >
-        <Link
+        <EtherscanLink
           type="address"
           value={address}
           internal
         >
           {name}
-        </Link>
+        </EtherscanLink>
       </td>
       <td
         css={`
@@ -405,13 +405,13 @@ const Status = ({tx}) => {
   if (!tx) return <div/>
 
   return (
-    <Link
+    <EtherscanLink
       type="tx"
       value={tx}
       internal
     >
       enviada
-    </Link>
+    </EtherscanLink>
   );
 }
 

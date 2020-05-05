@@ -7,7 +7,7 @@ import React, {
 } from 'react';
 import { AccountContext, BackendContext } from './coinosis';
 import { REGISTRATION } from './event';
-import { environment, Link, Loading, usePost } from './helpers';
+import { environment, EtherscanLink, Loading, usePost } from './helpers';
 import Account from './account';
 
 const Assessment = ({ setSelectedTab, sent, setSent }) => {
@@ -286,12 +286,12 @@ const User = ({ name, address, claps, setClaps, hasFocus, disabled }) => {
           text-align: right;
         `}
       >
-        <Link
+        <EtherscanLink
           type="address"
           value={address}
         >
           {name}
-        </Link>
+        </EtherscanLink>
       </td>
       <td
         css={`
