@@ -1,12 +1,15 @@
-import React, { useCallback, useContext, useEffect } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { Web3Context, AccountContext, BackendContext } from './coinosis.js';
-import { environment, Loading, Hash, EtherscanLink } from './helpers.js';
+import { environment, Loading, EtherscanLink, usePost } from './helpers.js';
 
 const Account = () => {
 
   const web3 = useContext(Web3Context);
   const backendURL = useContext(BackendContext);
   const { account, setAccount, name, setName } = useContext(AccountContext);
+  const [unsavedName, setUnsavedName] = useState('');
+  const [message, setMessage] = useState('');
+  const post = usePost();
 
   const updateAccounts = useCallback(() => {
     web3.eth.getAccounts().then(accounts => {
@@ -43,28 +46,66 @@ const Account = () => {
       });
   }, [account]);
 
-  if (account === undefined) return <Loading />
+  const register = useCallback(() => {
+    const object = {
+      address: account,
+      name: unsavedName
+    };
+    post('users', object, (error, data) => {
+      if (error) {
+        if (error.toString().includes('400')) {
+          setMessage('ese nombre ya existe en nuestra base de datos');
+        }
+        return;
+      }
+      setName(data.name);
+    });
+  }, [account, unsavedName]);
+
+  if (account === undefined || name === undefined) return <Loading />
   if (account === null) return <Login />
 
-  if (!name) {
+  if (name === null) {
     return (
       <div
         css={`
           display: flex;
+          flex-direction: column;
+          align-items: center;
         `}
       >
         <div
           css={`
-            margin-right: 5px;
+            display: flex;
           `}
         >
-          cuenta
+          <div>
+            ¿cómo te llamas?
+          </div>
+          <div
+            css={`
+              margin: 0 5px;
+            `}
+          >
+            <input
+              value={unsavedName}
+              onChange={e => setUnsavedName(e.target.value)}
+            />
+          </div>
+          <div>
+            <button
+              onClick={register}
+              disabled={unsavedName === ''}
+            >
+              regístrate
+            </button>
+          </div>
         </div>
-        <Hash
-          type="address"
-          value={account}
-          toolTipPosition="bottomRight"
-        />
+        <div>
+          <div>
+            {message}
+          </div>
+        </div>
       </div>
     );
   }
