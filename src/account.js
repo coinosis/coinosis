@@ -6,7 +6,7 @@ const Account = () => {
 
   const web3 = useContext(Web3Context);
   const backendURL = useContext(BackendContext);
-  const [account, setAccount, name, setName] = useContext(AccountContext);
+  const { account, setAccount, name, setName } = useContext(AccountContext);
 
   const updateAccounts = useCallback(() => {
     web3.eth.getAccounts().then(accounts => {

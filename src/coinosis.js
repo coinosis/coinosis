@@ -11,8 +11,8 @@ import EventList from './eventList';
 import Event from './event';
 
 export const Web3Context = createContext();
-export const AccountContext = createContext();
 export const ContractContext = createContext();
+export const AccountContext = createContext();
 export const BackendContext = createContext();
 
 const Coinosis = () => {
@@ -22,7 +22,6 @@ const Coinosis = () => {
   const [account, setAccount] = useState();
   const [name, setName] = useState();
   const [backendURL, setBackendURL] = useState();
-  const [event, setEvent] = useState();
 
   useEffect(() => {
     if (!Web3.givenProvider) {
@@ -63,7 +62,7 @@ const Coinosis = () => {
   return (
     <Web3Context.Provider value={web3}>
       <ContractContext.Provider value={contract}>
-        <AccountContext.Provider value={[account, setAccount, name, setName]}>
+        <AccountContext.Provider value={{ account, setAccount, name, setName }}>
           <BackendContext.Provider value={backendURL}>
             <GlobalStyle/>
             <HashRouter>
@@ -73,7 +72,7 @@ const Coinosis = () => {
                   <Event/>
                 </Route>
                 <Route path="/">
-                  <EventList setEvent={setEvent} />
+                  <EventList />
                 </Route>
               </Switch>
             </HashRouter>

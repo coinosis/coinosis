@@ -12,7 +12,7 @@ import Account from './account';
 
 const Assessment = ({ setSelectedTab, sent, setSent }) => {
 
-  const [account, setAccount, name, setName] = useContext(AccountContext);
+  const { account, name } = useContext(AccountContext);
   const backendURL = useContext(BackendContext);
   const [users, setUsers] = useState();
   const [totalClaps, setTotalClaps] = useState();

@@ -11,7 +11,7 @@ import Account from './account';
 
 const Registration = () => {
 
-  const [account, setAccount, name, setName] = useContext(AccountContext);
+  const { account, setAccount, name, setName } = useContext(AccountContext);
   const [unsavedName, setUnsavedName] = useState('');
   const [message, setMessage] = useState('');
   const nameInput = createRef();

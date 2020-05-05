@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { BackendContext } from './coinosis';
 import AddEvent from './addEvent';
 
-const EventList = ({ setEvent }) => {
+const EventList = () => {
 
   const backendURL = useContext(BackendContext);
   const [events, setEvents] = useState([]);

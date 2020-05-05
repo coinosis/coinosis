@@ -6,7 +6,7 @@ const AddEvent = ({ show, setEvents }) => {
 
   const post = usePost();
   const backendURL = useContext(BackendContext);
-  const [account, setAccount, userName] = useContext(AccountContext);
+  const { account, name: userName } = useContext(AccountContext);
   const [name, setName] = useState('');
   const [url, setUrl] = useState('');
   const [description, setDescription] = useState('');

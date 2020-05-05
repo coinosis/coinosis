@@ -135,7 +135,7 @@ export const EtherscanLink = ({
 
 export const usePost = () => {
 
-  const [ account ] = useContext(AccountContext);
+  const { account } = useContext(AccountContext);
   const backendURL = useContext(BackendContext);
   const web3 = useContext(Web3Context);
 
