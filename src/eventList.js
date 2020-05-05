@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { BackendContext } from './coinosis';
 import AddEvent from './addEvent';
 
@@ -24,13 +25,15 @@ const EventList = ({ setEvent }) => {
   return (
     <div>
       <div>
-        <AddEvent show />
+        <AddEvent show setEvents={setEvents} />
       </div>
       <div>
         {events.map(event => {
           return (
             <div key={event._id}>
-              {event.name}
+              <Link to={event.url}>
+                {event.name}
+              </Link>
             </div>
           );
         })}

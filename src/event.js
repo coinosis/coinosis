@@ -1,4 +1,5 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { BackendContext } from './coinosis';
 import Registration from './registration';
@@ -11,7 +12,9 @@ const RESULT = Symbol('RESULT');
 
 const Event = () => {
 
+  const { eventURL } = useParams();
   const backendURL = useContext(BackendContext);
+  const [name, setName] = useState();
   const [selectedTab, setSelectedTab] = useState(REGISTRATION);
   const [ActiveElement, setActiveElement] = useState(() => Registration);
   const [assessmentSent, setAssessmentSent] = useState();
@@ -21,6 +24,20 @@ const Event = () => {
       setSelectedTab(RESULT);
     }
   }, [backendURL]);
+
+  useEffect(() => {
+    fetch(`${backendURL}/event/${eventURL}`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(response.status);
+        }
+        return response.json();
+      }).then(({ name }) => {
+        setName(name);
+      }).catch(err => {
+        console.error(err);
+      });
+  }, [backendURL, eventURL]);
 
   useEffect(() => {
     if (selectedTab === REGISTRATION) {
@@ -36,7 +53,7 @@ const Event = () => {
 
   return (
     <div>
-      <Title/>
+      <Title text={name} />
       <Tabs
         selectedTab={selectedTab}
         setSelectedTab={setSelectedTab}
@@ -51,7 +68,7 @@ const Event = () => {
 
 }
 
-const Title = () => {
+const Title = ({ text }) => {
   return (
     <div
       css={`
@@ -61,7 +78,7 @@ const Title = () => {
         font-size: 32px;
       `}
     >
-      título del evento
+      {text}
     </div>
   );
 }

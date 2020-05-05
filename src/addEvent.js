@@ -2,12 +2,13 @@ import React, { useContext, useEffect, useCallback, useState } from 'react';
 import { AccountContext, BackendContext } from './coinosis';
 import { usePost } from './helpers';
 
-const AddEvent = ({ show }) => {
+const AddEvent = ({ show, setEvents }) => {
 
   const post = usePost();
   const backendURL = useContext(BackendContext);
-  const [account] = useContext(AccountContext);
+  const [account, setAccount, userName] = useContext(AccountContext);
   const [name, setName] = useState('');
+  const [url, setUrl] = useState('');
   const [description, setDescription] = useState('');
   const [fee, setFee] = useState('');
   const [start, setStart] = useState('');
@@ -19,14 +20,41 @@ const AddEvent = ({ show }) => {
   useEffect(() => {
     setFormValid(
       name !== ''
+        && url !== ''
         && description !== ''
         && fee !== ''
         && start !== ''
         && startValid
         && end !== ''
         && endValid
+        && userName !== null
     );
-  }, [name, description, fee, start, startValid, end, endValid]);
+  }, [name, url, description, fee, start, startValid, end, endValid, userName]);
+
+  const preSetName = useCallback(e => {
+    const value = e.target.value;
+    setName(value);
+    setUrl(value
+           .toLowerCase()
+           .replace(/ /g, '-')
+           .replace(/á/g, 'a')
+           .replace(/é/g, 'e')
+           .replace(/í/g, 'i')
+           .replace(/ó/g, 'o')
+           .replace(/ú/g, 'u')
+           .replace(/ñ/g, 'n')
+           .replace(/ü/g, 'u')
+           .replace(/[^a-z0-9-]/g, '')
+           .substring(0, 60)
+          );
+  }, []);
+
+  const preSetUrl = useCallback(e => {
+    const value = e.target.value;
+    if(/^[a-z0-9-]{1,60}$/.test(value)) {
+      setUrl(value);
+    }
+  }, []);
 
   const preSetFee = useCallback(e => {
     const value = e.target.value;
@@ -59,30 +87,49 @@ const AddEvent = ({ show }) => {
 
   const add = useCallback(() => {
     const organizer = account;
-    const object = {name, description, fee, start, end, organizer};
+    const object = {name, url, description, fee, start, end, organizer};
     post('events', object, (err, data) => {
       if (err) {
         console.error(err);
         return;
       }
-      console.log(data);
+      setEvents(events => [...events, data]);
     });
-  }, [name, description, fee, start, end, account]);
+  }, [name, url, description, fee, start, end, account]);
 
   if (!show) return <div/>
 
   return (
     <div>
       <Field
-        label="nombre del evento"
+        label="nombre del evento:"
         element={
           <input
             value={name}
-            onChange={e => setName(e.target.value)}
+            onChange={preSetName}
             css={`
               width: 300px;
             `}
           />
+        }
+      />
+      <Field
+        label="url del evento:"
+        element={
+          <div
+            css={`
+              font-family: monospace;
+            `}
+          >
+            https://coinosis.github.io/#/
+          <input
+            value={url}
+            onChange={preSetUrl}
+            css={`
+              width: 300px;
+            `}
+            />
+          </div>
         }
       />
       <Field
@@ -99,7 +146,7 @@ const AddEvent = ({ show }) => {
         }
       />
       <Field
-        label="costo de inscripción"
+        label="costo de inscripción:"
         element={
           <input
             value={fee}
@@ -115,7 +162,7 @@ const AddEvent = ({ show }) => {
         unit="USD"
       />
       <Field
-        label="fecha y hora de inicio"
+        label="fecha y hora de inicio:"
         element={
           <input
             type="datetime-local"
@@ -128,7 +175,7 @@ const AddEvent = ({ show }) => {
          }
       />
       <Field
-        label="fecha y hora de finalización"
+        label="fecha y hora de finalización:"
         element={
           <input
             type="datetime-local"

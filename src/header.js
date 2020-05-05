@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { Hash } from './helpers';
 import logo from './assets/logo.png';
@@ -32,7 +33,9 @@ const Header = () => {
           font-size: 26px;
         `}
       >
-        <img src={logo} height={45} alt="coinosis" />
+        <Link to="/">
+          <img src={logo} height={45} alt="coinosis" />
+        </Link>
       </HeaderItem>
       <HeaderItem
         css={`

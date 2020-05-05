@@ -161,7 +161,7 @@ export const usePost = () => {
         callback(err, null);
       });
     });
-  }, [web3, account]);
+  }, [account, backendURL, web3]);
 }
 
 export const NoContract = () => {

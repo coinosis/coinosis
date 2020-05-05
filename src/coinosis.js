@@ -1,12 +1,13 @@
 import React, { createContext, useEffect, useState } from 'react';
+import { HashRouter, Switch, Route } from 'react-router-dom';
 import Web3 from 'web3';
 import { createGlobalStyle } from 'styled-components';
 import InstallMetamask from './installMetamask';
 import contractJson from '../build/contracts/Coinosis.json';
 import { environment, Loading, NoContract } from './helpers';
 import settings from './settings.json';
-
 import Header from './header';
+import EventList from './eventList';
 import Event from './event';
 
 export const Web3Context = createContext();
@@ -21,6 +22,7 @@ const Coinosis = () => {
   const [account, setAccount] = useState();
   const [name, setName] = useState();
   const [backendURL, setBackendURL] = useState();
+  const [event, setEvent] = useState();
 
   useEffect(() => {
     if (!Web3.givenProvider) {
@@ -61,13 +63,20 @@ const Coinosis = () => {
   return (
     <Web3Context.Provider value={web3}>
       <ContractContext.Provider value={contract}>
-        <AccountContext.Provider
-          value={[account, setAccount, name, setName]}
-        >
+        <AccountContext.Provider value={[account, setAccount, name, setName]}>
           <BackendContext.Provider value={backendURL}>
             <GlobalStyle/>
-            <Header/>
-            <Event/>
+            <HashRouter>
+              <Header/>
+              <Switch>
+                <Route path="/:eventURL">
+                  <Event/>
+                </Route>
+                <Route path="/">
+                  <EventList setEvent={setEvent} />
+                </Route>
+              </Switch>
+            </HashRouter>
           </BackendContext.Provider>
         </AccountContext.Provider>
       </ContractContext.Provider>
