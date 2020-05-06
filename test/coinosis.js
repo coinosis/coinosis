@@ -30,6 +30,7 @@ contract('Coinosis', async accounts => {
     }
   }
 
+  const eventURL = 'reencuentro-helvetia-2020';
   const registrationFeeUSDWei = web3.utils.toWei('5');
   const ETHPriceUSDWei = web3.utils.toWei('187.79');
   const names = [
@@ -71,6 +72,7 @@ contract('Coinosis', async accounts => {
     });
     const initialBalances = await getBalances(addresses);
     await instance.assess(
+      eventURL,
       registrationFeeUSDWei,
       ETHPriceUSDWei,
       names,
@@ -89,6 +91,7 @@ contract('Coinosis', async accounts => {
       value: web3.utils.toWei('1')
     });
     const result = await instance.assess(
+      eventURL,
       registrationFeeUSDWei,
       ETHPriceUSDWei,
       names,
@@ -99,6 +102,7 @@ contract('Coinosis', async accounts => {
     truffleAssert.eventEmitted(result, 'Assessment', event => {
       return event.timestamp <= currentTime &&
         event.timestamp > currentTime - 10 &&
+        event.eventURL == web3.utils.sha3(eventURL) &&
         event.registrationFeeUSDWei == registrationFeeUSDWei &&
         event.ETHPriceUSDWei == ETHPriceUSDWei &&
         areEqual(event.names, names) &&
@@ -119,6 +123,7 @@ contract('Coinosis', async accounts => {
       value: web3.utils.toWei('1')
     });
     const result = await instance.assess(
+      eventURL,
       registrationFeeUSDWei,
       ETHPriceUSDWei,
       names,
@@ -146,6 +151,7 @@ contract('Coinosis', async accounts => {
       value: web3.utils.toWei('1')
     });
     const result = await instance.assess(
+      eventURL,
       registrationFeeUSDWei,
       ETHPriceUSDWei,
       names,
@@ -162,6 +168,7 @@ contract('Coinosis', async accounts => {
     const instance = await Coinosis.new({from: accounts[1]});
     truffleAssert.reverts(
       instance.assess(
+        eventURL,
         registrationFeeUSDWei,
         ETHPriceUSDWei,
         names,
@@ -176,6 +183,7 @@ contract('Coinosis', async accounts => {
     const instance = await Coinosis.new();
     truffleAssert.reverts(
       instance.assess(
+        eventURL,
         registrationFeeUSDWei,
         ETHPriceUSDWei,
         names,
@@ -195,6 +203,7 @@ contract('Coinosis', async accounts => {
     });
     const newClaps = [0, 0, 0, 0, 0, 0, 0, 5, 10];
     const result = await instance.assess(
+      eventURL,
       registrationFeeUSDWei,
       ETHPriceUSDWei,
       names,
@@ -229,6 +238,7 @@ contract('Coinosis', async accounts => {
     newAddresses.push(accounts[0]);
     truffleAssert.reverts(
       instance.assess(
+        eventURL,
         registrationFeeUSDWei,
         ETHPriceUSDWei,
         names,
@@ -250,6 +260,7 @@ contract('Coinosis', async accounts => {
     newClaps.push(8);
     truffleAssert.reverts(
       instance.assess(
+        eventURL,
         registrationFeeUSDWei,
         ETHPriceUSDWei,
         names,
@@ -269,6 +280,7 @@ contract('Coinosis', async accounts => {
     });
     truffleAssert.reverts(
       instance.assess(
+        eventURL,
         registrationFeeUSDWei,
         0,
         names,
@@ -288,6 +300,7 @@ contract('Coinosis', async accounts => {
          value: web3.utils.toWei('1')
        });
        const result = await instance.assess(
+         eventURL,
          0,
          ETHPriceUSDWei,
          names,
@@ -307,6 +320,7 @@ contract('Coinosis', async accounts => {
     const newClaps = claps.map(clap => 0);
     truffleAssert.reverts(
       instance.assess(
+        eventURL,
         registrationFeeUSDWei,
         ETHPriceUSDWei,
         names,
@@ -327,6 +341,7 @@ contract('Coinosis', async accounts => {
          value,
        });
        await instance.assess(
+         eventURL,
          registrationFeeUSDWei,
          ETHPriceUSDWei,
          names,
@@ -345,7 +360,7 @@ contract('Coinosis', async accounts => {
        assert.equal(expectedBalance, actualBalance);
        const contractBalance = await web3.eth.getBalance(instance.address);
        assert.equal(contractBalance, '0');
-       const decommissionProof = await instance.assess(0, 0, [], [], []);
+       const decommissionProof = await instance.assess('', 0, 0, [], [], []);
        assert.equal(decommissionProof.logs.length, 0);
      });
 
@@ -359,6 +374,7 @@ contract('Coinosis', async accounts => {
          value,
        });
        await instance.assess(
+         eventURL,
          registrationFeeUSDWei,
          ETHPriceUSDWei,
          names,

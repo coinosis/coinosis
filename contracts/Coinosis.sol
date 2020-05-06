@@ -22,11 +22,12 @@ contract Coinosis {
 to send (insufficient-value)";
     string constant NO_CLAPS = "All the claps are zero (no-claps)";
 
-    string public version = "1.2.1";
+    string public version = "1.3.1";
     address payable private owner;
 
     event Assessment(
         uint timestamp,
+        string indexed eventURL,
         uint registrationFeeUSDWei,
         uint ETHPriceUSDWei,
         string[] names,
@@ -59,6 +60,7 @@ to send (insufficient-value)";
     }
 
     function assess(
+        string memory eventURL,
         uint registrationFeeUSDWei,
         uint ETHPriceUSDWei,
         string[] memory names,
@@ -84,6 +86,7 @@ to send (insufficient-value)";
         }
         emit Assessment(
             now,
+            eventURL,
             registrationFeeUSDWei,
             ETHPriceUSDWei,
             names,
