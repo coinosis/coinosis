@@ -6,7 +6,7 @@ import React, {
   useState,
 } from 'react';
 import { AccountContext, BackendContext } from './coinosis';
-import { REGISTRATION } from './event';
+import { ATTENDANCE } from './event';
 import { environment, EtherscanLink, Link, Loading, usePost } from './helpers';
 import Account from './account';
 
@@ -132,7 +132,7 @@ const Assessment = ({ setSelectedTab, sent, setSent }) => {
           justify-content: center;
         `}
       >
-        <Link onClick={() => setSelectedTab(REGISTRATION)}>
+        <Link onClick={() => setSelectedTab(ATTENDANCE)}>
           regístrate
         </Link>
         para poder aplaudir.

@@ -2,11 +2,11 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { BackendContext } from './coinosis';
-import Registration from './registration';
+import Attendance from './attendance';
 import Assessment from './assessment';
 import Result from './result';
 
-export const REGISTRATION = Symbol('REGISTRATION');
+export const ATTENDANCE = Symbol('ATTENDANCE');
 const ASSESSMENT = Symbol('ASSESSMENT');
 const RESULT = Symbol('RESULT');
 
@@ -15,8 +15,8 @@ const Event = () => {
   const { eventURL } = useParams();
   const backendURL = useContext(BackendContext);
   const [name, setName] = useState();
-  const [selectedTab, setSelectedTab] = useState(REGISTRATION);
-  const [ActiveElement, setActiveElement] = useState(() => Registration);
+  const [selectedTab, setSelectedTab] = useState(ATTENDANCE);
+  const [ActiveElement, setActiveElement] = useState(() => Attendance);
   const [assessmentSent, setAssessmentSent] = useState();
 
   useEffect(() => {
@@ -40,8 +40,8 @@ const Event = () => {
   }, [backendURL, eventURL]);
 
   useEffect(() => {
-    if (selectedTab === REGISTRATION) {
-      setActiveElement(() => Registration);
+    if (selectedTab === ATTENDANCE) {
+      setActiveElement(() => Attendance);
     }
     else if (selectedTab === ASSESSMENT) {
       setActiveElement(() => Assessment);
@@ -96,7 +96,7 @@ const Tabs = ({ selectedTab, setSelectedTab }) => {
       `}
     >
       <Tab
-        id={REGISTRATION}
+        id={ATTENDANCE}
         selectedTab={selectedTab}
         setSelectedTab={setSelectedTab}
         disabled={backendURL === null}
@@ -122,8 +122,8 @@ const Tab = ({ id, selectedTab, setSelectedTab, disabled=false }) => {
   const [isSelected, setIsSelected] = useState(false);
 
   useEffect(() => {
-    const name = id === REGISTRATION ?
-          'registro' :
+    const name = id === ATTENDANCE ?
+          'asistencia' :
           id === ASSESSMENT ?
           'aplausos' :
           id === RESULT ?

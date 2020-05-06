@@ -9,7 +9,7 @@ import { AccountContext } from './coinosis';
 import { environment, EtherscanLink, Loading, usePost } from './helpers';
 import Account from './account';
 
-const Registration = () => {
+const Attendance = () => {
 
   const { account, setAccount, name, setName } = useContext(AccountContext);
   const [unsavedName, setUnsavedName] = useState('');
@@ -23,7 +23,7 @@ const Registration = () => {
     }
   }, [nameInput]);
 
-  const register = useCallback(() => {
+  const attend = useCallback(() => {
     const object = {
       address: account,
       name: unsavedName
@@ -88,10 +88,10 @@ const Registration = () => {
           </div>
           <div>
             <button
-              onClick={register}
+              onClick={attend}
               disabled={unsavedName === ''}
             >
-              regístrate
+              asistiré
             </button>
           </div>
         </div>
@@ -130,4 +130,4 @@ const Registration = () => {
   );
 }
 
-export default Registration;
+export default Attendance;

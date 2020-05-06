@@ -46,7 +46,7 @@ const Account = () => {
       });
   }, [account]);
 
-  const register = useCallback(() => {
+  const signup = useCallback(() => {
     const object = {
       address: account,
       name: unsavedName
@@ -79,22 +79,20 @@ const Account = () => {
             display: flex;
           `}
         >
-          <div>
-            ¿cómo te llamas?
-          </div>
           <div
             css={`
-              margin: 0 5px;
+              margin-right: 5px;
             `}
           >
             <input
               value={unsavedName}
               onChange={e => setUnsavedName(e.target.value)}
+              placeholder="¿cómo te llamas?"
             />
           </div>
           <div>
             <button
-              onClick={register}
+              onClick={signup}
               disabled={unsavedName === ''}
             >
               regístrate
@@ -133,7 +131,7 @@ const Login = () => {
     <button
       onClick={login}
     >
-      inicia sesión con Metamask
+      inicia sesión
     </button>
   );
 
