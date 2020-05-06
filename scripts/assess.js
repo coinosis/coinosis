@@ -7,22 +7,32 @@ const environment = process.env.ENVIRONMENT || 'development';
 const backend = settings[environment].backend;
 const etherscanAPI = 'https://api.etherscan.io/api';
 const etherscanKey = '2RU78DJDPVG9G2VK3AHE8QVTAN65CP9MBI';
-const gasTracker = `${etherscanAPI}?module=gastracker&action=gasoracle&apikey=${etherscanKey}`
-const ETHPrice = `${etherscanAPI}?module=stats&action=ethprice&apikey=${etherscanKey}`
+const gasTracker = `${etherscanAPI}?module=gastracker&action=gasoracle`
+      + `&apikey=${etherscanKey}`;
+const ETHPrice =
+      `${etherscanAPI}?module=stats&action=ethprice&apikey=${etherscanKey}`;
 const dateOptions = {
   timeZone: 'America/Bogota',
   timeStyle: 'medium',
   dateStyle: 'medium',
 };
 
-const registrationFeeUSD = '3';
-const eventURL = 'kafka-connect';
+const usage =
+      'usage: [ENVIRONMENT=<environment>] truffle exec scripts/assess.js '
+      + '<eventURL> <registrationFeeUSD> --network <network>\n';
 
 module.exports = callback => {
-  getAttendees(callback);
+  const argv = process.argv.slice(4);
+  if (argv.length !== 4 || argv[2] !== '--network') {
+    callback(usage);
+  }
+  const eventURL = argv[0];
+  const registrationFeeUSD = argv[1];
+  const network = argv[3]
+  getAttendees(eventURL, registrationFeeUSD, network, callback);
 }
 
-const getAttendees = callback => {
+const getAttendees = (eventURL, registrationFeeUSD, network, callback) => {
   fetch(`${backend}/event/${eventURL}/attendees`)
     .then(response => {
       if (!response.ok) {
@@ -30,13 +40,25 @@ const getAttendees = callback => {
       }
       return response.json();
     }).then(attendees => {
-      getAssessments(attendees, callback);
+      getAssessments(
+        eventURL,
+        registrationFeeUSD,
+        attendees,
+        network,
+        callback
+      );
     }).catch(error => {
       callback(error);
     });
 }
 
-const getAssessments = (attendees, callback) => {
+const getAssessments = (
+  eventURL,
+  registrationFeeUSD,
+  attendees,
+  network,
+  callback
+) => {
   fetch(`${backend}/assessments/${eventURL}`)
     .then(response => {
       if (!response.ok) {
@@ -44,13 +66,27 @@ const getAssessments = (attendees, callback) => {
       }
       return response.json();
     }).then(assessments => {
-      getClaps(attendees, assessments, callback);
+      getClaps(
+        eventURL,
+        registrationFeeUSD,
+        attendees,
+        assessments,
+        network,
+        callback
+      );
     }).catch(error => {
       callback(error);
     });
 }
 
-const getClaps = (attendees, assessments, callback) => {
+const getClaps = (
+  eventURL,
+  registrationFeeUSD,
+  attendees,
+  assessments,
+  network,
+  callback
+) => {
   const addresses = attendees.map(user => user.address);
   const names = addresses.map(address =>
     attendees.find(attendee => attendee.address === address).name
@@ -69,10 +105,26 @@ const getClaps = (attendees, assessments, callback) => {
     }
   }
   const claps = addresses.map(address => totalAssessment[address]);
-  getETHPrice(names, addresses, claps, callback);
+  getETHPrice(
+    eventURL,
+    registrationFeeUSD,
+    names,
+    addresses,
+    claps,
+    network,
+    callback
+  );
 }
 
-const getETHPrice = (names, addresses, claps, callback) => {
+const getETHPrice = (
+  eventURL,
+  registrationFeeUSD,
+  names,
+  addresses,
+  claps,
+  network,
+  callback
+) => {
   fetch(ETHPrice)
     .then(response => {
       if (!response.ok) {
@@ -83,13 +135,31 @@ const getETHPrice = (names, addresses, claps, callback) => {
       if (data.status !== '1') callback(data);
       const ETHPriceUSD = data.result.ethusd;
       const ETHPriceUSDWei = web3.utils.toWei(ETHPriceUSD);
-      getGasPrice(ETHPriceUSDWei, names, addresses, claps, callback);
+      getGasPrice(
+        eventURL,
+        registrationFeeUSD,
+        ETHPriceUSDWei,
+        names,
+        addresses,
+        claps,
+        network,
+        callback
+      );
     }).catch(error => {
       callback(error);
     });
 }
 
-const getGasPrice = (ETHPriceUSDWei, names, addresses, claps, callback) => {
+const getGasPrice = (
+  eventURL,
+  registrationFeeUSD,
+  ETHPriceUSDWei,
+  names,
+  addresses,
+  claps,
+  network,
+  callback
+) => {
   fetch(gasTracker)
     .then(response => {
       if (!response.ok) {
@@ -100,37 +170,58 @@ const getGasPrice = (ETHPriceUSDWei, names, addresses, claps, callback) => {
       if (data.status !== '1') callback(data);
       const gasPriceGwei = data.result.ProposeGasPrice;
       const gasPrice = web3.utils.toWei(gasPriceGwei, 'gwei');
-      callContract(gasPrice, ETHPriceUSDWei, names, addresses, claps, callback);
+      callContract(
+        eventURL,
+        registrationFeeUSD,
+        gasPrice,
+        ETHPriceUSDWei,
+        names,
+        addresses,
+        claps,
+        network,
+        callback
+      );
     }).catch(error => {
       callback(error);
     });
 }
 
 const callContract = (
+  eventURL,
+  registrationFeeUSD,
   gasPrice,
   ETHPriceUSDWei,
   names,
   addresses,
   claps,
+  network,
   callback
 ) => {
   Coinosis.deployed().then(instance => {
     const registrationFeeUSDWei = web3.utils.toWei(registrationFeeUSD);
+    console.log('registration fee:', registrationFeeUSD, 'USD');
+    console.log('number of attendees:', addresses.length);
     console.log(
-      'registration fee:',
-      web3.utils.fromWei(registrationFeeUSDWei),
+      'total amount to be distributed:',
+      registrationFeeUSD * addresses.length,
       'USD'
     );
     console.log('ETH price:', web3.utils.fromWei(ETHPriceUSDWei), 'USD');
     console.log('names:', names);
-    console.log('addresses:', addresses);
+    console.log('attendees:', addresses);
     console.log('claps:', claps);
     console.log(
       'gas price:',
       web3.utils.toWei(web3.utils.fromWei(gasPrice), 'gwei'),
       'gwei'
     );
-    console.log('press enter to send transaction');
+    console.log('environment:', environment);
+    console.log('network:', network);
+    if (network === 'mainnet') {
+      console.log('\n\nWARNING: this is a MAINNET transaction.',
+                  'Real money is involved.\n\n');
+    }
+    console.log('press enter to send transaction, Ctrl+C to cancel');
     process.stdin.on('data', () => {
       instance.assess(
         registrationFeeUSDWei,
@@ -172,6 +263,8 @@ const callContract = (
         console.log('tx fee:', txFeeUSD, 'USD');
         process.stdin.pause();
         callback();
+      }).catch(error => {
+        callback(error);
       });
     });
   }).catch(error => {
