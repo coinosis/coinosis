@@ -1,47 +1,23 @@
-import React, {
-  createRef,
-  useCallback,
-  useContext,
-  useEffect,
-  useState
-} from 'react';
+import React, {useCallback, useContext } from 'react';
 import { AccountContext } from './coinosis';
-import { environment, EtherscanLink, Loading, usePost } from './helpers';
+import { Amount, Loading, usePost } from './helpers';
 import Account from './account';
 
-const Attendance = () => {
+const Attendance = ({ url, fee, attendees, setAttendees }) => {
 
-  const { account, setAccount, name, setName } = useContext(AccountContext);
-  const [unsavedName, setUnsavedName] = useState('');
-  const [message, setMessage] = useState('');
-  const nameInput = createRef();
+  const { account, name } = useContext(AccountContext);
   const post = usePost();
 
-  useEffect(() => {
-    if (nameInput.current) {
-      nameInput.current.focus();
-    }
-  }, [nameInput]);
-
   const attend = useCallback(() => {
-    const object = {
-      address: account,
-      name: unsavedName
-    };
-    post('users', object, (error, data) => {
+    const object = { attendee: account, event: url };
+    post('attend', object, (error, data) => {
       if (error) {
-        if (error.toString().includes('400')) {
-          setMessage('ese nombre ya existe en nuestra base de datos');
-        }
+        console.log(error);
         return;
       }
-      setName(data.name);
+      setAttendees(data.attendees);
     });
-  }, [account, unsavedName]);
-
-  useEffect(() => {
-    if (message) setMessage('');
-  }, [unsavedName]);
+  }, [url, account]);
 
   if (account === null) {
     return (
@@ -59,6 +35,10 @@ const Attendance = () => {
   if (name === undefined) return <Loading/>
 
   if (name === null) {
+    return <Account/>
+  }
+
+  if (!attendees.includes(account)) {
     return (
       <div
         css={`
@@ -73,31 +53,21 @@ const Attendance = () => {
           `}
         >
           <div>
-            nombre y apellido:
+            este evento tiene un costo de
           </div>
           <div
             css={`
               margin: 0 5px;
             `}
           >
-            <input
-              ref={nameInput}
-              value={unsavedName}
-              onChange={e => setUnsavedName(e.target.value)}
-            />
+            <Amount usd={String(fee)} rate="1" />
           </div>
           <div>
             <button
               onClick={attend}
-              disabled={unsavedName === ''}
             >
-              asistiré
+              inscríbete
             </button>
-          </div>
-        </div>
-        <div>
-          <div>
-            {message}
           </div>
         </div>
       </div>
@@ -112,19 +82,7 @@ const Attendance = () => {
       `}
     >
       <div>
-        gracias por registrarte,
-      </div>
-      <div
-        css={`
-          margin: 0 5px;
-        `}
-      >
-        <EtherscanLink type="address" value={account}>
-          {name}
-        </EtherscanLink>
-      </div>
-      <div>
-        !
+        vas a asistir a este evento.
       </div>
     </div>
   );

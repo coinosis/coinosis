@@ -2,6 +2,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { BackendContext } from './coinosis';
+import { Loading } from './helpers';
 import Attendance from './attendance';
 import Assessment from './assessment';
 import Result from './result';
@@ -15,6 +16,9 @@ const Event = () => {
   const { eventURL } = useParams();
   const backendURL = useContext(BackendContext);
   const [name, setName] = useState();
+  const [url, setUrl] = useState();
+  const [fee, setFee] = useState();
+  const [attendees, setAttendees] = useState();
   const [selectedTab, setSelectedTab] = useState(ATTENDANCE);
   const [ActiveElement, setActiveElement] = useState(() => Attendance);
   const [assessmentSent, setAssessmentSent] = useState();
@@ -32,8 +36,11 @@ const Event = () => {
           throw new Error(response.status);
         }
         return response.json();
-      }).then(({ name }) => {
+      }).then(({ name, url, fee, attendees }) => {
         setName(name);
+        setUrl(url);
+        setFee(fee);
+        setAttendees(attendees);
       }).catch(err => {
         console.error(err);
       });
@@ -51,6 +58,8 @@ const Event = () => {
     }
   }, [selectedTab]);
 
+  if (name === undefined) return <Loading/>
+
   return (
     <div>
       <Title text={name} />
@@ -62,6 +71,10 @@ const Event = () => {
         setSelectedTab={setSelectedTab}
         sent={assessmentSent}
         setSent={setAssessmentSent}
+        url={url}
+        fee={fee}
+        attendees={attendees}
+        setAttendees={setAttendees}
       />
     </div>
   );
