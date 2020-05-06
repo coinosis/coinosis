@@ -58,7 +58,7 @@ const Event = () => {
     }
   }, [selectedTab]);
 
-  if (name === undefined) return <Loading/>
+  if (attendees === undefined) return <Loading/>
 
   return (
     <div>

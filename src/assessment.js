@@ -10,7 +10,13 @@ import { ATTENDANCE } from './event';
 import { environment, EtherscanLink, Link, Loading, usePost } from './helpers';
 import Account from './account';
 
-const Assessment = ({ setSelectedTab, sent, setSent }) => {
+const Assessment = ({
+  setSelectedTab,
+  sent,
+  setSent,
+  url: event,
+  attendees
+}) => {
 
   const { account, name } = useContext(AccountContext);
   const backendURL = useContext(BackendContext);
@@ -22,7 +28,7 @@ const Assessment = ({ setSelectedTab, sent, setSent }) => {
   const post = usePost();
 
   useEffect(() => {
-    fetch(`${backendURL}/users`)
+    fetch(`${backendURL}/event/${event}/attendees`)
       .then(response => {
         if (!response.ok) {
           throw new Error(response.statusText);
@@ -30,9 +36,10 @@ const Assessment = ({ setSelectedTab, sent, setSent }) => {
           return response.json();
         }
       }).then(data => {
-        const users = data.filter(user => user.address !== account)
+        const attendees = data
+              .filter(attendee => attendee.address !== account)
               .sort((a, b) => a.name.localeCompare(b.name));
-        setUsers(users);
+        setUsers(attendees);
       }).catch(error => {
         console.error(error);
       });
@@ -40,7 +47,7 @@ const Assessment = ({ setSelectedTab, sent, setSent }) => {
 
   useEffect(() => {
     if (!name) return;
-    fetch(`${backendURL}/assessment/${account}`)
+    fetch(`${backendURL}/assessment/${event}/${account}`)
       .then(response => {
         if (!response.ok) {
           throw new Error(response.status);
@@ -100,7 +107,7 @@ const Assessment = ({ setSelectedTab, sent, setSent }) => {
   }, [assessment]);
 
   const send = useCallback(() => {
-    const object = { sender: account, assessment };
+    const object = { event, sender: account, assessment };
     post('assessments', object, (error, data) => {
       if(error) {
         console.error(error);
@@ -111,7 +118,7 @@ const Assessment = ({ setSelectedTab, sent, setSent }) => {
     });
   }, [account, assessment]);
 
-  if (account === null) {
+  if (account === null || name === null) {
     return (
       <div
         css={`
@@ -124,7 +131,7 @@ const Assessment = ({ setSelectedTab, sent, setSent }) => {
     );
   }
 
-  if (name === null) {
+  if (!attendees.includes(account)) {
     return (
       <div
         css={`
@@ -133,7 +140,7 @@ const Assessment = ({ setSelectedTab, sent, setSent }) => {
         `}
       >
         <Link onClick={() => setSelectedTab(ATTENDANCE)}>
-          regístrate
+          inscríbete
         </Link>
         para poder aplaudir.
       </div>

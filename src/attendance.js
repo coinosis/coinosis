@@ -62,6 +62,8 @@ const Attendance = ({ url, fee, attendees, setAttendees }) => {
           >
             <Amount usd={String(fee)} rate="1" />
           </div>
+        </div>
+        <div>
           <div>
             <button
               onClick={attend}
