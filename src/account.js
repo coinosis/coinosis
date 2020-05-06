@@ -44,7 +44,7 @@ const Account = () => {
       }).catch(err => {
         setName(null);
       });
-  }, [account]);
+  }, [account, backendURL]);
 
   const signup = useCallback(() => {
     const object = {
@@ -62,7 +62,7 @@ const Account = () => {
     });
   }, [account, unsavedName]);
 
-  if (account === undefined || name === undefined) return <Loading />
+  if (account === undefined) return <Loading />
   if (account === null) return <Login />
 
   if (name === null) {
