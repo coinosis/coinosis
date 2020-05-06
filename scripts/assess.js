@@ -16,43 +16,44 @@ const dateOptions = {
 };
 
 const registrationFeeUSD = '3';
+const eventURL = 'kafka-connect';
 
 module.exports = callback => {
-  getUsers(callback);
+  getAttendees(callback);
 }
 
-const getUsers = callback => {
-  fetch(backend + '/users')
+const getAttendees = callback => {
+  fetch(`${backend}/event/${eventURL}/attendees`)
     .then(response => {
       if (!response.ok) {
         throw new Error(response.status);
       }
       return response.json();
-    }).then(users => {
-      getAssessments(users, callback);
+    }).then(attendees => {
+      getAssessments(attendees, callback);
     }).catch(error => {
       callback(error);
     });
 }
 
-const getAssessments = (users, callback) => {
-  fetch(backend + '/assessments')
+const getAssessments = (attendees, callback) => {
+  fetch(`${backend}/assessments/${eventURL}`)
     .then(response => {
       if (!response.ok) {
         throw new Error(response.status);
       }
       return response.json();
     }).then(assessments => {
-      getClaps(users, assessments, callback);
+      getClaps(attendees, assessments, callback);
     }).catch(error => {
       callback(error);
     });
 }
 
-const getClaps = (users, assessments, callback) => {
-  const addresses = users.map(user => user.address);
+const getClaps = (attendees, assessments, callback) => {
+  const addresses = attendees.map(user => user.address);
   const names = addresses.map(address =>
-    users.find(user => user.address === address).name
+    attendees.find(attendee => attendee.address === address).name
   );
   const totalAssessment = {};
   for (const i in addresses) {
@@ -115,44 +116,63 @@ const callContract = (
 ) => {
   Coinosis.deployed().then(instance => {
     const registrationFeeUSDWei = web3.utils.toWei(registrationFeeUSD);
-    console.log(gasPrice);
-    console.log(registrationFeeUSDWei);
-    console.log(ETHPriceUSDWei);
-    console.log(names);
-    console.log(addresses);
-    console.log(claps);
-    instance.assess(
-      registrationFeeUSDWei,
-      ETHPriceUSDWei,
-      names,
-      addresses,
-      claps,
-      {gasPrice}
-    ).then(result => {
-      for (const i in result.logs) {
-        const log = result.logs[i];
-        console.log(log.event, 'event');
-        for (const name in log.args) {
-          if (!isNaN(name) || name === '__length__') continue;
-          const arg = log.args[name];
-          if (typeof arg === 'object') {
-            const value = arg.toString();
-            if (name === 'timestamp') {
-              const date = new Date(Number(value + '000'));
-
-              console.log(name, ':', date.toLocaleString('es-CO', dateOptions));
-            } else if(isNaN(value) || name === 'claps') {
-              console.log(name, ':', value);
+    console.log(
+      'registration fee:',
+      web3.utils.fromWei(registrationFeeUSDWei),
+      'USD'
+    );
+    console.log('ETH price:', web3.utils.fromWei(ETHPriceUSDWei), 'USD');
+    console.log('names:', names);
+    console.log('addresses:', addresses);
+    console.log('claps:', claps);
+    console.log(
+      'gas price:',
+      web3.utils.toWei(web3.utils.fromWei(gasPrice), 'gwei'),
+      'gwei'
+    );
+    console.log('press enter to send transaction');
+    process.stdin.on('data', () => {
+      instance.assess(
+        registrationFeeUSDWei,
+        ETHPriceUSDWei,
+        names,
+        addresses,
+        claps,
+        {gasPrice}
+      ).then(result => {
+        for (const i in result.logs) {
+          const log = result.logs[i];
+          console.log(log.event);
+          for (const name in log.args) {
+            if (!isNaN(name) || name === '__length__') continue;
+            const arg = log.args[name];
+            if (typeof arg === 'object') {
+              const value = arg.toString();
+              if (name === 'timestamp') {
+                const date = new Date(Number(value + '000'));
+                console.log(name, ':', date.toLocaleString('es-CO', dateOptions));
+              } else if(isNaN(value) || name.indexOf('laps') !== -1) {
+                console.log(name, ':', value);
+              } else {
+                console.log(name, ':', web3.utils.fromWei(value));
+              }
             } else {
-              console.log(name, ':', web3.utils.fromWei(value));
+              console.log(name, ':', arg);
             }
-          } else {
-            console.log(name, ':', arg);
           }
+          console.log('\n')
         }
-        console.log('\n')
-      }
-      callback();
+        const gasUsed = result.receipt.gasUsed;
+        const txFeeWei = gasUsed * gasPrice;
+        const txFee = txFeeWei / 1e18;
+        const ETHPriceUSD = ETHPriceUSDWei / 1e18;
+        const txFeeUSD = (txFee * ETHPriceUSD).toFixed(2);
+        console.log('gas used:', gasUsed);
+        console.log('tx fee:', txFee, 'ETH');
+        console.log('tx fee:', txFeeUSD, 'USD');
+        process.stdin.pause();
+        callback();
+      });
     });
   }).catch(error => {
     callback(error);
