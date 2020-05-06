@@ -14,6 +14,10 @@ export const Web3Context = createContext();
 export const ContractContext = createContext();
 export const AccountContext = createContext();
 export const BackendContext = createContext();
+export const CurrencyContext = createContext([]);
+
+export const ETH = Symbol('ETH');
+export const USD = Symbol('USD');
 
 const Coinosis = () => {
 
@@ -22,6 +26,7 @@ const Coinosis = () => {
   const [account, setAccount] = useState();
   const [name, setName] = useState();
   const [backendURL, setBackendURL] = useState();
+  const [currencyType, setCurrencyType] = useState(ETH);
 
   useEffect(() => {
     if (!Web3.givenProvider) {
@@ -64,18 +69,20 @@ const Coinosis = () => {
       <ContractContext.Provider value={contract}>
         <AccountContext.Provider value={{ account, setAccount, name, setName }}>
           <BackendContext.Provider value={backendURL}>
-            <GlobalStyle/>
-            <HashRouter>
-              <Header/>
-              <Switch>
-                <Route path="/:eventURL">
-                  <Event/>
-                </Route>
-                <Route path="/">
-                  <EventList />
-                </Route>
-              </Switch>
-            </HashRouter>
+            <CurrencyContext.Provider value={[currencyType, setCurrencyType]}>
+              <GlobalStyle/>
+              <HashRouter>
+                <Header/>
+                <Switch>
+                  <Route path="/:eventURL">
+                    <Event/>
+                  </Route>
+                  <Route path="/">
+                    <EventList />
+                  </Route>
+                </Switch>
+              </HashRouter>
+            </CurrencyContext.Provider>
           </BackendContext.Provider>
         </AccountContext.Provider>
       </ContractContext.Provider>

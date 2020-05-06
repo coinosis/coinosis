@@ -8,27 +8,10 @@ import React, {
 } from 'react';
 
 import { ContractContext, Web3Context } from './coinosis';
-import { Loading, ToolTip, Hash, EtherscanLink } from './helpers';
-
-const CurrencyContext = createContext([]);
-
-const usdPlaceholder = ' '.repeat(4);
-const ethPlaceholder = ' '.repeat(5);
-const datePlaceholder = ' '.repeat(21);
-const percentagePlaceholder = ' '.repeat(4);
-const ETH = 'eth';
-const USD = 'usd';
+import { Amount, Loading, ToolTip, Hash, EtherscanLink } from './helpers';
 
 const Result = () => {
-
-  const web3 = useContext(Web3Context);
-  const [currencyType, setCurrencyType] = useState(ETH);
-
-  return (
-    <CurrencyContext.Provider value={[currencyType, setCurrencyType]}>
-      <Assessments/>
-    </CurrencyContext.Provider>
-  );
+  return <Assessments/>
 }
 
 const Assessments = () => {
@@ -82,7 +65,7 @@ const Assessment = ({
   rewards,
 }) => {
 
-  const [totalBalance, setTotalBalance] = useState(ethPlaceholder);
+  const [totalBalance, setTotalBalance] = useState();
 
   useEffect(() => {
     const totalRewards = rewards.reduce((a, b) => BigInt(a) + BigInt(b))
@@ -179,11 +162,13 @@ const Assessment = ({
                 />
               </th>
               <th>
-                <Amount
-                  eth={totalBalance}
-                  rate={ETHPriceUSDWei}
-                  css={`font-weight: bold`}
-                />
+                { totalBalance && (
+                  <Amount
+                    eth={totalBalance}
+                    rate={ETHPriceUSDWei}
+                    css={`font-weight: bold`}
+                  />
+                )}
               </th>
               <th/>
             </tr>
@@ -303,7 +288,7 @@ const Participant = ({
 
   const isMounted = useRef(true);
   const contract = useContext(ContractContext);
-  const [percentage, setPercentage] = useState(percentagePlaceholder);
+  const [percentage, setPercentage] = useState();
   const [fraction, setFraction] = useState('');
   const [balance, setBalance] = useState('');
   const [tx, setTx] = useState('');
@@ -415,61 +400,9 @@ const Status = ({tx}) => {
   );
 }
 
-const Amount = ({ usd: usdWei, eth: wei, rate: rateWei, ...props }) => {
-
-  const web3 = useContext(Web3Context);
-  const [currencyType, setCurrencyType] = useContext(CurrencyContext);
-
-  const [usd, setUSD] = useState(usdPlaceholder);
-  const [eth, setETH] = useState(ethPlaceholder);
-  const [currency, setCurrency] = useState(ethPlaceholder);
-  const [rate, setRate] = useState(usdPlaceholder);
-  const [displayRate, setDisplayRate] = useState(false);
-  
-  useEffect(() => {
-    if(!usdWei) {
-      usdWei = String(Math.round(web3.utils.fromWei(
-        String(BigInt(wei) * BigInt(rateWei))
-      )));
-    }
-    setUSD(Number(web3.utils.fromWei(usdWei)).toFixed(2) + ' USD');
-    setETH(Number(web3.utils.fromWei(wei)).toFixed(3) + ' ETH');
-    setRate(Number(web3.utils.fromWei(rateWei)).toFixed(2) + ' USD/ETH');
-  }, [ usdWei, wei, rateWei ]);
-
-  useEffect(() => {
-    setCurrency(currencyType === ETH ? eth : usd);
-  }, [ currencyType, eth, usd ]);
-
-  const switchCurrencyType = useCallback(() => {
-    setCurrencyType(currencyType => currencyType === ETH ? USD : ETH);
-  }, []);
-
-  return (
-    <div>
-      <ToolTip value={rate} show={displayRate} />
-      <button
-        onClick={switchCurrencyType}
-        onMouseOver={() => setDisplayRate(true)}
-        onMouseOut={() => setDisplayRate(false)}
-        css={`
-          background: ${currencyType === 'eth' ? '#97b9ca' : '#97cab3'};
-          border: none;
-          border-radius: 4px;
-          outline: none;
-          cursor: pointer;
-        `}
-        { ...props }
-      >
-        {currency}
-      </button>
-    </div>
-  );
-}
-
 const DateTime = ({ timestamp }) => {
   
-  const [date, setDate] = useState(datePlaceholder);
+  const [date, setDate] = useState();
 
   useEffect(() => {
     const date = new Date(timestamp * 1000);

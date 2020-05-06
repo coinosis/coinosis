@@ -1,5 +1,12 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { Web3Context, AccountContext, BackendContext } from './coinosis';
+import {
+  Web3Context,
+  AccountContext,
+  BackendContext,
+  CurrencyContext,
+  ETH,
+  USD,
+} from './coinosis';
 
 export const environment = process.env.ENVIRONMENT || 'development';
 
@@ -170,4 +177,61 @@ export const NoContract = () => {
       ningún contrato ha sido desplegado en esta red.
     </div>
   )
+}
+
+export const Amount = ({ usd: usdWei, eth: wei, rate: rateWei, ...props }) => {
+
+  const web3 = useContext(Web3Context);
+  const [currencyType, setCurrencyType] = useContext(CurrencyContext);
+
+  const [usd, setUSD] = useState();
+  const [eth, setETH] = useState();
+  const [currency, setCurrency] = useState();
+  const [rate, setRate] = useState();
+  const [displayRate, setDisplayRate] = useState(false);
+
+  useEffect(() => {
+    if(!usdWei) {
+      usdWei = String(Math.round(web3.utils.fromWei(
+        String(BigInt(wei) * BigInt(rateWei))
+      )));
+    }
+    else if(!wei) {
+      wei = String(Math.round(web3.utils.fromWei(
+        String(BigInt(usdWei) / BigInt(rateWei))
+      )));
+    }
+    setUSD(Number(web3.utils.fromWei(usdWei)).toFixed(2) + ' USD');
+    setETH(Number(web3.utils.fromWei(wei)).toFixed(3) + ' ETH');
+    setRate(Number(web3.utils.fromWei(rateWei)).toFixed(2) + ' USD/ETH');
+  }, [ usdWei, wei, rateWei ]);
+
+  useEffect(() => {
+    setCurrency(currencyType === ETH ? eth : usd);
+  }, [ currencyType, eth, usd ]);
+
+  const switchCurrencyType = useCallback(() => {
+    setCurrencyType(currencyType => currencyType === ETH ? USD : ETH);
+  }, []);
+
+  return (
+    <div>
+      <ToolTip value={rate} show={displayRate} />
+      <button
+        onClick={switchCurrencyType}
+        onMouseOver={() => setDisplayRate(true)}
+        onMouseOut={() => setDisplayRate(false)}
+        css={`
+          background: ${currencyType === ETH ? '#97b9ca' : '#97cab3'};
+          border: none;
+          border-radius: 4px;
+          outline: none;
+          cursor: pointer;
+        `}
+        { ...props }
+      >
+        {currency}
+      </button>
+    </div>
+  );
 }
