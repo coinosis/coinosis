@@ -58,11 +58,19 @@ const ContractInfo = () => {
   const contract = useContext(ContractContext);
   const [address, setAddress] = useState('');
   const [version, setVersion] = useState('');
+  const [color, setColor] = useState('black');
 
   useEffect(() => {
     if (contract) {
       setAddress(contract._address);
-      contract.methods.version().call().then(setVersion);
+      contract.methods
+        .version()
+        .call()
+        .then(setVersion)
+        .catch(err => {
+          setVersion('(fuera de servicio)');
+          setColor('#a04040');
+        });
     }
   }, [contract]);
 
@@ -83,7 +91,11 @@ const ContractInfo = () => {
       >
         <Hash type="address" value={address} toolTipPosition="bottomLeft" />
       </div>
-      <div>
+      <div
+        css={`
+          color: ${color};
+        `}
+      >
         {version}
       </div>
     </div>
