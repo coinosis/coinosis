@@ -30,7 +30,7 @@ const Account = () => {
   }, [web3]);
 
   useEffect(() => {
-    if(!account) return;
+    if(!account || !backendURL) return;
     fetch(`${backendURL}/user/${account}`)
       .then(response => {
         if (!response.ok) {

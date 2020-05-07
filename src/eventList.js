@@ -18,6 +18,7 @@ const EventList = () => {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
+    if (!backendURL) return;
     fetch(`${backendURL}/events`)
       .then(response => {
         if (!response.ok) {
