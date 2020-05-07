@@ -1,4 +1,5 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import {
   Web3Context,
   AccountContext,
@@ -74,18 +75,18 @@ export const Hash = ({ type, value, toolTipPosition="top" }) => {
   );
 }
 
-export const Link = ({ onClick, children }) => {
+export const Link = props => {
   return (
-    <span
-      onClick={onClick}
+    <RouterLink
+      {...props}
       css={`
-        margin-right: 5px;
         text-decoration: underline;
         cursor: pointer;
+        color: black;
       `}
     >
-      {children}
-    </span>
+      {props.children}
+    </RouterLink>
   );
 }
 

@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useCallback, useState } from 'react';
 import { AccountContext, BackendContext } from './coinosis';
 import { usePost } from './helpers';
 
-const AddEvent = ({ show, setEvents }) => {
+const AddEvent = ({ setEvents }) => {
 
   const post = usePost();
   const backendURL = useContext(BackendContext);
@@ -97,129 +97,148 @@ const AddEvent = ({ show, setEvents }) => {
     });
   }, [name, url, description, fee, start, end, account]);
 
-  if (!show) return <div/>
-
   return (
-    <div>
-      <Field
-        label="nombre del evento:"
-        element={
-          <input
-            value={name}
-            onChange={preSetName}
-            css={`
-              width: 300px;
-            `}
+    <div
+      css={`
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+      `}
+    >
+      <table
+        css={`
+          width: 100%;
+        `}
+      >
+        <tbody>
+          <Field
+            label="nombre del evento:"
+            element={
+              <input
+                value={name}
+                onChange={preSetName}
+                css={`
+                  width: 500px;
+                `}
+              />
+            }
           />
-        }
-      />
-      <Field
-        label="url del evento:"
-        element={
-          <div
-            css={`
-              font-family: monospace;
-            `}
-          >
-            https://coinosis.github.io/#/
-          <input
-            value={url}
-            onChange={preSetUrl}
-            css={`
-              width: 300px;
-            `}
-            />
-          </div>
-        }
-      />
-      <Field
-        label="descripción"
-        element={
-          <textarea
-            value={description}
-            onChange={e => setDescription(e.target.value)}
-            css={`
-              width: 300px;
-              height: 200px;
-            `}
+          <Field
+            label="URL del evento:"
+            element={
+              <div
+                css={`
+                  font-family: monospace;
+                `}
+              >
+                https://coinosis.github.io/#/
+                <input
+                  value={url}
+                  onChange={preSetUrl}
+                  css={`
+                    width: 273px;
+                  `}
+                />
+              </div>
+            }
           />
-        }
-      />
-      <Field
-        label="costo de inscripción:"
-        element={
-          <input
-            value={fee}
-            onChange={preSetFee}
-            type="number"
-            min={0}
-            step={0.01}
-            css={`
-              width: 60px;
-            `}
+          <Field
+            label="descripción:"
+            element={
+              <textarea
+                value={description}
+                onChange={e => setDescription(e.target.value)}
+                css={`
+                  width: 498px;
+                  height: 200px;
+                `}
+              />
+            }
           />
-        }
-        unit="USD"
-      />
-      <Field
-        label="fecha y hora de inicio:"
-        element={
-          <input
-            type="datetime-local"
-            value={start}
-            onChange={preSetStart}
-            css={`
-              border: 1px solid ${startValid ? 'rgb(169, 169, 169)' : 'red'};
-            `}
+          <Field
+            label="costo de inscripción:"
+            element={
+              <input
+                value={fee}
+                onChange={preSetFee}
+                type="number"
+                min={0}
+                step={0.01}
+                css={`
+                  width: 60px;
+                `}
+              />
+            }
+            unit="USD"
           />
-         }
-      />
-      <Field
-        label="fecha y hora de finalización:"
-        element={
-          <input
-            type="datetime-local"
-            value={end}
-            onChange={preSetEnd}
-            css={`
-              border: 1px solid ${endValid ? 'rgb(169, 169, 169)' : 'red'};
-            `}
+          <Field
+            label="fecha y hora de inicio:"
+            element={
+              <input
+                type="datetime-local"
+                value={start}
+                onChange={preSetStart}
+                css={`
+                  border: 1px solid ${
+                    startValid
+                    ? 'rgb(169, 169, 169)'
+                    : 'red'
+                  };
+                `}
+              />
+            }
           />
-         }
-      />
-      <div>
-        <button
-          disabled={!formValid}
-          onClick={add}
-        >
-          crear
-        </button>
-      </div>
+          <Field
+            label="fecha y hora de finalización:"
+            element={
+              <input
+                type="datetime-local"
+                value={end}
+                onChange={preSetEnd}
+                css={`
+                  border: 1px solid ${endValid ? 'rgb(169, 169, 169)' : 'red'};
+                `}
+              />
+            }
+          />
+          <tr>
+            <td/>
+            <td>
+              <button
+                disabled={!formValid}
+                onClick={add}
+              >
+                crear
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   );
 }
 
 const Field = ({ label, element, unit }) => {
   return (
-    <div
-      css={`
-        display: flex;
-      `}
-    >
-      <div>
-        {label}
-      </div>
-      <div
+    <tr>
+      <td
         css={`
-          margin: 0 5px;
+          width: 50%;
+          text-align: end;
+          vertical-align: top;
         `}
       >
-        {element}
-      </div>
-      <div>
-        {unit}
-      </div>
-    </div>
+        {label}
+      </td>
+      <td
+        css={`
+          width: 50%;
+        `}
+      >
+        {element} {unit}
+      </td>
+    </tr>
   );
 }
 
