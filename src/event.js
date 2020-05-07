@@ -91,17 +91,19 @@ const Title = ({ text }) => {
         display: flex;
       `}
     >
-      <Link to="/">← atrás</Link>
+      <Link to="/" css={'width: 60px'}>← atrás</Link>
       <div
         css={`
           display: flex;
           justify-content: center;
           margin: 40px;
           font-size: 32px;
+          flex-grow: 1;
         `}
       >
         {text}
       </div>
+      <div css={'width: 60px'}/>
     </div>
   );
 }
