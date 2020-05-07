@@ -2,7 +2,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { BackendContext } from './coinosis';
-import { Loading } from './helpers';
+import { Link, Loading } from './helpers';
 import Attendance from './attendance';
 import Assessment from './assessment';
 import Result from './result';
@@ -89,12 +89,19 @@ const Title = ({ text }) => {
     <div
       css={`
         display: flex;
-        justify-content: center;
-        margin: 40px;
-        font-size: 32px;
       `}
     >
-      {text}
+      <Link to="/">← atrás</Link>
+      <div
+        css={`
+          display: flex;
+          justify-content: center;
+          margin: 40px;
+          font-size: 32px;
+        `}
+      >
+        {text}
+      </div>
     </div>
   );
 }
