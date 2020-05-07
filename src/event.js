@@ -18,6 +18,7 @@ const Event = () => {
   const [name, setName] = useState();
   const [url, setUrl] = useState();
   const [fee, setFee] = useState();
+  const [organizer, setOrganizer] = useState();
   const [attendees, setAttendees] = useState();
   const [selectedTab, setSelectedTab] = useState(ATTENDANCE);
   const [ActiveElement, setActiveElement] = useState(() => Attendance);
@@ -36,10 +37,11 @@ const Event = () => {
           throw new Error(response.status);
         }
         return response.json();
-      }).then(({ name, url, fee, attendees }) => {
+      }).then(({ name, url, fee, organizer, attendees }) => {
         setName(name);
         setUrl(url);
         setFee(fee);
+        setOrganizer(organizer);
         setAttendees(attendees);
       }).catch(err => {
         console.error(err);
@@ -73,6 +75,7 @@ const Event = () => {
         setSent={setAssessmentSent}
         url={url}
         fee={fee}
+        organizer={organizer}
         attendees={attendees}
         setAttendees={setAttendees}
       />

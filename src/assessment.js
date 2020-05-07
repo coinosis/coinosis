@@ -67,7 +67,7 @@ const Assessment = ({
   }, [name, account]);
 
   useEffect(() => {
-    if (users) {
+    if (users && users.length) {
       const totalClaps = users.length * 3;
       setTotalClaps(totalClaps);
       if (!Object.keys(assessment).length) {
@@ -148,6 +148,19 @@ const Assessment = ({
   }
 
   if (users === undefined || sent === undefined) return <Loading/>
+
+  if (!users.length) {
+    return (
+      <div
+        css={`
+          display: flex;
+          justify-content: center;
+        `}
+      >
+        nadie se ha inscrito todavía.
+      </div>
+    );
+  }
 
   return (
     <div

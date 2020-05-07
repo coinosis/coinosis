@@ -3,7 +3,7 @@ import { AccountContext } from './coinosis';
 import { Amount, Loading, usePost } from './helpers';
 import Account from './account';
 
-const Attendance = ({ url, fee, attendees, setAttendees }) => {
+const Attendance = ({ url, fee, organizer, attendees, setAttendees }) => {
 
   const { account, name } = useContext(AccountContext);
   const post = usePost();
@@ -36,6 +36,21 @@ const Attendance = ({ url, fee, attendees, setAttendees }) => {
 
   if (name === null) {
     return <Account/>
+  }
+
+  if (account === organizer) {
+    return (
+      <div
+        css={`
+          display: flex;
+          justify-content: center;
+        `}
+      >
+        <div>
+          tú creaste este evento.
+        </div>
+      </div>
+    );
   }
 
   if (!attendees.includes(account)) {
