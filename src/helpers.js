@@ -80,6 +80,7 @@ export const Link = props => {
     <RouterLink
       {...props}
       css={`
+        margin: 0 5px;
         text-decoration: underline;
         cursor: pointer;
         color: black;
