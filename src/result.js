@@ -10,19 +10,21 @@ import React, {
 import { ContractContext, Web3Context } from './coinosis';
 import { Amount, Loading, ToolTip, Hash, EtherscanLink } from './helpers';
 
-const Result = () => {
-  return <Assessments/>
+const Result = ({ url: eventURL }) => {
+  return <Assessments eventURL={eventURL} />
 }
 
-const Assessments = () => {
+const Assessments = ({ eventURL }) => {
 
   const isMounted = useRef(true);
+  const web3 = useContext(Web3Context);
   const contract = useContext(ContractContext);
   const [assessments, setAssessments] = useState([]);
 
   useEffect(() => {
     if (!contract) return;
-    contract.events.Assessment({fromBlock: 9931712}, (error, event) => {
+    const topics = [ null, web3.utils.sha3(eventURL) ];
+    contract.events.Assessment({fromBlock: 0, topics }, (error, event) => {
       if (error) {
         console.error(error);
         return;
@@ -37,6 +39,19 @@ const Assessments = () => {
       isMounted.current = false;
     }
   }, []);
+
+  if (!assessments.length) {
+    return (
+      <div
+        css={`
+          display: flex;
+          justify-content: center;
+        `}
+      >
+        aquí aparecerá la distribución apenas ocurra.
+      </div>
+    );
+  }
 
   return (
     <div>
