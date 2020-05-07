@@ -9686,7 +9686,7 @@
               "type": "string"
             },
             {
-              "indexed": false,
+              "indexed": true,
               "internalType": "address",
               "name": "addr",
               "type": "address"
@@ -9718,11 +9718,97 @@
           ],
           "name": "Transfer",
           "type": "event"
+        },
+        "0x5e59a8025184c1608567a405f6ce99185bf136419d33deb04d2d822957d294c5": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "timestamp",
+              "type": "uint256"
+            },
+            {
+              "indexed": true,
+              "internalType": "string",
+              "name": "eventURL",
+              "type": "string"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "registrationFeeUSDWei",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "ETHPriceUSDWei",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "string[]",
+              "name": "names",
+              "type": "string[]"
+            },
+            {
+              "indexed": false,
+              "internalType": "address payable[]",
+              "name": "addresses",
+              "type": "address[]"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256[]",
+              "name": "claps",
+              "type": "uint256[]"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "registrationFeeWei",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "totalFeesWei",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "totalClaps",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256[]",
+              "name": "rewards",
+              "type": "uint256[]"
+            }
+          ],
+          "name": "Assessment",
+          "type": "event"
+        },
+        "0xf45ef13729b4b44bf31cfc593a8c10a2f431141062af083154b2737f808cc56f": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "rewardedAmount",
+              "type": "uint256"
+            }
+          ],
+          "name": "RewardedAmount",
+          "type": "event"
         }
       },
       "links": {},
-      "address": "0x3E824EEeD4Ad41a7dFb91F11bf8D39D0C6077B4f",
-      "transactionHash": "0xc6f93f3bb894c161d0a3376cf13ebfef4a9c99b595827eeb953276d16dcb0872"
+      "address": "0xBA77007e5745f7e6F80F78904c7628e30909F828",
+      "transactionHash": "0x62cf526f204dc35379655cc5a6427b294203020aeabe92f681d78503bd86a60c"
     },
     "3": {
       "events": {
@@ -10009,7 +10095,7 @@
     }
   },
   "schemaVersion": "3.0.23",
-  "updatedAt": "2020-05-07T03:41:42.357Z",
+  "updatedAt": "2020-05-07T05:22:37.240Z",
   "networkType": "ethereum",
   "devdoc": {
     "methods": {}

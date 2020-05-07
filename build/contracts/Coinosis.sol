@@ -181,11 +181,14 @@ contract Coinosis {
     string constant INSUFFICIENT_VALUE =
         "The ether value in this contract is less than the total reward value \
 to send (insufficient-value)";
+    string constant NO_CLAPS = "All the claps are zero (no-claps)";
 
+    string public version = "1.3.1";
     address payable private owner;
 
     event Assessment(
         uint timestamp,
+        string indexed eventURL,
         uint registrationFeeUSDWei,
         uint ETHPriceUSDWei,
         string[] names,
@@ -198,12 +201,13 @@ to send (insufficient-value)";
     );
     event Transfer(
         string name,
-        address addr,
+        address indexed addr,
         uint registrationFeeUSDWei,
         uint registrationFeeWei,
         uint claps,
         uint reward
     );
+    event RewardedAmount(uint rewardedAmount);
 
     constructor () public {
         owner = msg.sender;
@@ -217,6 +221,7 @@ to send (insufficient-value)";
     }
 
     function assess(
+        string memory eventURL,
         uint registrationFeeUSDWei,
         uint ETHPriceUSDWei,
         string[] memory names,
@@ -235,12 +240,14 @@ to send (insufficient-value)";
         for (uint i = 0; i < claps.length; i = i.add(1)) {
             totalClaps = totalClaps.add(claps[i]);
         }
+        require(totalClaps > 0, NO_CLAPS);
         uint[] memory rewards = new uint[](claps.length);
         for (uint i = 0; i < claps.length; i = i.add(1)) {
             rewards[i] = claps[i].mul(totalFeesWei).div(totalClaps);
         }
         emit Assessment(
             now,
+            eventURL,
             registrationFeeUSDWei,
             ETHPriceUSDWei,
             names,
@@ -251,6 +258,7 @@ to send (insufficient-value)";
             totalClaps,
             rewards
         );
+        uint rewardedAmount = 0;
         for (uint i = 0; i < addresses.length; i = i.add(1)) {
             if (rewards[i] > 0 && addresses[i].send(rewards[i])) {
                 emit Transfer(
@@ -261,7 +269,9 @@ to send (insufficient-value)";
                     claps[i],
                     rewards[i]
                 );
+                rewardedAmount += rewards[i];
             }
         }
+        emit RewardedAmount(rewardedAmount);
     }
 }
