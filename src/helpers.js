@@ -191,6 +191,7 @@ export const Amount = ({ usd: usdWei, eth: wei, rate: rateWei, ...props }) => {
   const [displayRate, setDisplayRate] = useState(false);
 
   useEffect(() => {
+    if (!usdWei && !wei) return;
     if (!rateWei) {
       rateWei = web3.utils.toWei('200'); // TODO
     }
