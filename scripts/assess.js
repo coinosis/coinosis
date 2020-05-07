@@ -199,6 +199,7 @@ const callContract = (
 ) => {
   Coinosis.deployed().then(instance => {
     const registrationFeeUSDWei = web3.utils.toWei(registrationFeeUSD);
+    console.log('event URL:', eventURL);
     console.log('registration fee:', registrationFeeUSD, 'USD');
     console.log('number of attendees:', addresses.length);
     console.log(
@@ -216,7 +217,7 @@ const callContract = (
       'gwei'
     );
     console.log('environment:', environment);
-    console.log('network:', network);
+    console.log('network:', network, '\n');
     if (network === 'mainnet') {
       console.log('\n\nWARNING: this is a MAINNET transaction.',
                   'Real money is involved.\n\n');
@@ -224,6 +225,7 @@ const callContract = (
     console.log('press enter to send transaction, Ctrl+C to cancel');
     process.stdin.on('data', () => {
       instance.assess(
+        eventURL,
         registrationFeeUSDWei,
         ETHPriceUSDWei,
         names,
@@ -241,7 +243,11 @@ const callContract = (
               const value = arg.toString();
               if (name === 'timestamp') {
                 const date = new Date(Number(value + '000'));
-                console.log(name, ':', date.toLocaleString('es-CO', dateOptions));
+                console.log(
+                  name,
+                  ':',
+                  date.toLocaleString('es-CO', dateOptions)
+                );
               } else if(isNaN(value) || name.indexOf('laps') !== -1) {
                 console.log(name, ':', value);
               } else {
