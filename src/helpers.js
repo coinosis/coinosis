@@ -191,15 +191,16 @@ export const Amount = ({ usd: usdWei, eth: wei, rate: rateWei, ...props }) => {
   const [displayRate, setDisplayRate] = useState(false);
 
   useEffect(() => {
-    if(!usdWei) {
+    if (!rateWei) {
+      rateWei = web3.utils.toWei('200'); // TODO
+    }
+    if (!usdWei) {
       usdWei = String(Math.round(web3.utils.fromWei(
         String(BigInt(wei) * BigInt(rateWei))
       )));
     }
-    else if(!wei) {
-      wei = String(Math.round(web3.utils.fromWei(
-        String(BigInt(usdWei) / BigInt(rateWei))
-      )));
+    else if (!wei) {
+      wei = String(BigInt(usdWei) * BigInt(1e18) / BigInt(rateWei));
     }
     setUSD(Number(web3.utils.fromWei(usdWei)).toFixed(2) + ' USD');
     setETH(Number(web3.utils.fromWei(wei)).toFixed(3) + ' ETH');

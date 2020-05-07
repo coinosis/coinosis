@@ -1,12 +1,19 @@
-import React, {useCallback, useContext } from 'react';
-import { AccountContext } from './coinosis';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { Web3Context, AccountContext } from './coinosis';
 import { Amount, Loading, usePost } from './helpers';
 import Account from './account';
 
 const Attendance = ({ url, fee, organizer, attendees, setAttendees }) => {
 
+  const web3 = useContext(Web3Context);
   const { account, name } = useContext(AccountContext);
   const post = usePost();
+  const [feeUSDWei, setFeeUSDWei] = useState();
+
+  useEffect(() => {
+    const feeUSDWei = web3.utils.toWei(String(fee));
+    setFeeUSDWei(feeUSDWei);
+  }, [fee]);
 
   const attend = useCallback(() => {
     const object = { attendee: account, event: url };
@@ -75,7 +82,7 @@ const Attendance = ({ url, fee, organizer, attendees, setAttendees }) => {
               margin: 0 5px;
             `}
           >
-            <Amount usd={String(fee)} rate="1" />
+            <Amount usd={feeUSDWei} />
           </div>
         </div>
         <div>
