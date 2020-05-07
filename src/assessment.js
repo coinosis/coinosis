@@ -40,6 +40,7 @@ const Assessment = ({
               .filter(attendee => attendee.address !== account)
               .sort((a, b) => a.name.localeCompare(b.name));
         setUsers(attendees);
+        setAssessment({});
       }).catch(error => {
         console.error(error);
       });
