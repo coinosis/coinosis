@@ -56,13 +56,12 @@ const Coinosis = () => {
       .then(response => {
         setBackendURL(settings[environment].backend);
       }).catch(err => {
-        console.error(err);
         setBackendURL(null);
       });
-  }, [settings, environment]);
+  }, []);
 
   if (web3 === null) return <InstallMetamask/>
-  if (contract === undefined) return <Loading/>
+  if (contract === undefined || backendURL === undefined) return <Loading/>
   if (contract === null) return <NoContract/>
 
   return (
