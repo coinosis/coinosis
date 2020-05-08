@@ -11,7 +11,6 @@ import { environment, EtherscanLink, Link, Loading, usePost } from './helpers';
 import Account from './account';
 
 const Assessment = ({
-  setSelectedTab,
   sent,
   setSent,
   url: event,
@@ -140,7 +139,7 @@ const Assessment = ({
           justify-content: center;
         `}
       >
-        <Link onClick={() => setSelectedTab(ATTENDANCE)}>
+        <Link to={`${event}/${ATTENDANCE}`}>
           inscríbete
         </Link>
         para poder aplaudir.

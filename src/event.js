@@ -1,34 +1,35 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import {
+  NavLink,
+  Switch,
+  Route,
+  Redirect,
+  useParams,
+  useRouteMatch,
+} from 'react-router-dom';
 import styled from 'styled-components';
-import { BackendContext } from './coinosis';
+import { AccountContext, BackendContext } from './coinosis';
 import { Link, Loading } from './helpers';
 import Attendance from './attendance';
 import Assessment from './assessment';
 import Result from './result';
 
-export const ATTENDANCE = Symbol('ATTENDANCE');
-const ASSESSMENT = Symbol('ASSESSMENT');
-const RESULT = Symbol('RESULT');
+export const ATTENDANCE = 'asistencia';
+const ASSESSMENT = 'aplausos';
+const RESULT = 'resultados';
 
 const Event = () => {
 
   const { eventURL } = useParams();
+  const { account } = useContext(AccountContext);
   const backendURL = useContext(BackendContext);
   const [name, setName] = useState();
   const [url, setUrl] = useState();
   const [fee, setFee] = useState();
   const [organizer, setOrganizer] = useState();
   const [attendees, setAttendees] = useState();
-  const [selectedTab, setSelectedTab] = useState(ATTENDANCE);
-  const [ActiveElement, setActiveElement] = useState(() => Attendance);
   const [assessmentSent, setAssessmentSent] = useState();
-
-  useEffect(() => {
-    if (backendURL === null) {
-      setSelectedTab(RESULT);
-    }
-  }, [backendURL]);
+  const match = useRouteMatch();
 
   useEffect(() => {
     fetch(`${backendURL}/event/${eventURL}`)
@@ -48,40 +49,39 @@ const Event = () => {
       });
   }, [backendURL, eventURL]);
 
-  useEffect(() => {
-    if (selectedTab === ATTENDANCE) {
-      setActiveElement(() => Attendance);
-    }
-    else if (selectedTab === ASSESSMENT) {
-      setActiveElement(() => Assessment);
-    }
-    else if (selectedTab === RESULT) {
-      setActiveElement(() => Result);
-    }
-  }, [selectedTab]);
-
   if (attendees === undefined) return <Loading/>
 
   return (
     <div>
       <Title text={name} />
-      <Tabs
-        selectedTab={selectedTab}
-        setSelectedTab={setSelectedTab}
-      />
-      <ActiveElement
-        setSelectedTab={setSelectedTab}
-        sent={assessmentSent}
-        setSent={setAssessmentSent}
-        url={url}
-        fee={fee}
-        organizer={organizer}
-        attendees={attendees}
-        setAttendees={setAttendees}
-      />
+      <Tabs/>
+      <Switch>
+        <Route path={`${match.path}/${ATTENDANCE}`}>
+          <Attendance
+            url={url}
+            fee={fee}
+            organizer={organizer}
+            attendees={attendees}
+            setAttendees={setAttendees}
+          />
+        </Route>
+        <Route path={`${match.path}/${ASSESSMENT}`}>
+          <Assessment
+            sent={assessmentSent}
+            setSent={setAssessmentSent}
+            url={url}
+            attendees={attendees}
+          />
+        </Route>
+        <Route path={`${match.path}/${RESULT}`}>
+          <Result url={url} />
+        </Route>
+        <Route path={match.path}>
+          <Redirect to={`${match.url}/${ATTENDANCE}`} />
+        </Route>
+      </Switch>
     </div>
   );
-
 }
 
 const Title = ({ text }) => {
@@ -108,10 +108,7 @@ const Title = ({ text }) => {
   );
 }
 
-const Tabs = ({ selectedTab, setSelectedTab }) => {
-
-  const backendURL = useContext(BackendContext);
-
+const Tabs = () => {
   return (
     <div
       css={`
@@ -120,68 +117,40 @@ const Tabs = ({ selectedTab, setSelectedTab }) => {
         margin-bottom: 50px;
       `}
     >
-      <Tab
-        id={ATTENDANCE}
-        selectedTab={selectedTab}
-        setSelectedTab={setSelectedTab}
-        disabled={backendURL === null}
-      />
-      <Tab
-        id={ASSESSMENT}
-        selectedTab={selectedTab}
-        setSelectedTab={setSelectedTab}
-        disabled={backendURL === null}
-      />
-      <Tab
-        id={RESULT}
-        selectedTab={selectedTab}
-        setSelectedTab={setSelectedTab}
-      />
+      <Tab name={ATTENDANCE} />
+      <Tab name={ASSESSMENT} />
+      <Tab name={RESULT} />
     </div>
   );
 }
 
-const Tab = ({ id, selectedTab, setSelectedTab, disabled=false }) => {
+const Tab = ({ name }) => {
 
-  const [name, setName] = useState('');
-  const [isSelected, setIsSelected] = useState(false);
-
-  useEffect(() => {
-    const name = id === ATTENDANCE ?
-          'asistencia' :
-          id === ASSESSMENT ?
-          'aplausos' :
-          id === RESULT ?
-          'resultados' :
-          '';
-    setName(name);
-    setIsSelected(id === selectedTab);
-  }, [selectedTab]);
-
-  const select = useCallback(() => {
-    if (disabled) return;
-    setSelectedTab(id);
-  }, [disabled]);
+  const match = useRouteMatch();
+  const backendURL = useContext(BackendContext);
 
   return (
     <StyledTab
-      isSelected={isSelected}
-      onClick={select}
-      disabled={disabled}
+      to={`${match.url}/${name}`}
+      activeClassName="selected"
+      disabled={backendURL === null}
     >
       {name}
     </StyledTab>
   );
-
 }
 
-const StyledTab = styled.div`
+export const StyledTab = styled(NavLink)`
   padding: 10px;
-  background: ${({ isSelected }) => isSelected ? '#e0e0e0' : '#f8f8f8'};
+  background: #f8f8f8;
   border: 1px solid #e0e0e0;
   cursor: ${({ disabled }) => disabled ? 'not-allowed' : 'pointer'};
   user-select: none;
   color: ${({ disabled }) => disabled ? '#505050' : 'black'};
+  text-decoration: none;
+  &.selected {
+    background: #e0e0e0;
+  }
 `
 
 export default Event;
