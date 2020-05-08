@@ -239,3 +239,7 @@ export const Amount = ({ usd: usdWei, eth: wei, rate: rateWei, ...props }) => {
     </div>
   );
 }
+
+export const formatDate = date => (
+  date.toLocaleString('es-CO', {dateStyle: 'full', timeStyle: 'long'})
+);

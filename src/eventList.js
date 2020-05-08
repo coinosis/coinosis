@@ -1,7 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { AccountContext, BackendContext } from './coinosis';
-import { Link } from './helpers';
+import { Link, formatDate } from './helpers';
 import AddEvent from './addEvent';
 
 const privilegedAccounts = [
@@ -30,7 +30,17 @@ const EventList = () => {
         }
         return response.json();
       }).then(data => {
-        setEvents(data);
+        const events = data.map(event => {
+          return {
+            startDate: new Date(event.start),
+            endDate: new Date(event.end),
+            ...event,
+          };
+        });
+        const sortedEvents = events.sort((a, b) => {
+          return b.startDate - a.startDate;
+        });
+        setEvents(sortedEvents);
       }).catch(err => {
         setEvents([]);
       });
@@ -38,11 +48,12 @@ const EventList = () => {
 
   useEffect(() => {
     const now = new Date();
-    const upcoming = events.filter(event => now < new Date(event.start));
+    const upcoming = events.filter(event => now < event.startDate);
     const live = events.filter(event =>
-      now >= new Date(event.start) && now <= new Date(event.end)
+      now >= event.startDate
+        && now <= event.endDate
     );
-    const past = events.filter(event => now > new Date(event.end));
+    const past = events.filter(event => now > event.endDate);
     setUpcoming(upcoming);
     setLive(live);
     setPast(past);
@@ -113,16 +124,24 @@ const EventSection = ({ title, events }) => {
           font-size: 18px;
         `}
       >
-        {events
-         .map(event => {
-           return (
-             <div key={event._id}>
-               <Link to={event.url}>
-                 {event.name}
-               </Link>
-             </div>
-           );
-         })}
+        <table>
+          <tbody>
+            {events.map(event => {
+              return (
+                <tr key={event._id}>
+                  <td>
+                    <Link to={event.url}>
+                      {event.name}
+                    </Link>
+                  </td>
+                  <td>
+                    {formatDate(event.startDate)}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
       </div>
     </div>
   );
