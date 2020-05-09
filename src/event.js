@@ -11,6 +11,7 @@ import styled from 'styled-components';
 import { AccountContext, BackendContext } from './coinosis';
 import { Link, Loading } from './helpers';
 import Attendance from './attendance';
+import Meet from './meet';
 import Assessment from './assessment';
 import Result from './result';
 
@@ -21,10 +22,11 @@ const RESULT = 'resultados';
 const Event = () => {
 
   const { eventURL } = useParams();
-  const { account } = useContext(AccountContext);
+  const { account, name: userName } = useContext(AccountContext);
   const backendURL = useContext(BackendContext);
   const [name, setName] = useState();
   const [url, setUrl] = useState();
+  const [id, setId] = useState();
   const [fee, setFee] = useState();
   const [organizer, setOrganizer] = useState();
   const [attendees, setAttendees] = useState();
@@ -38,7 +40,8 @@ const Event = () => {
           throw new Error(response.status);
         }
         return response.json();
-      }).then(({ name, url, fee, organizer, attendees }) => {
+      }).then(({ _id, name, url, fee, organizer, attendees }) => {
+        setId(_id);
         setName(name);
         setUrl(url);
         setFee(fee);
@@ -66,12 +69,19 @@ const Event = () => {
           />
         </Route>
         <Route path={`${match.path}/${ASSESSMENT}`}>
-          <Assessment
-            sent={assessmentSent}
-            setSent={setAssessmentSent}
-            url={url}
-            attendees={attendees}
-          />
+          <div
+            css={`
+              display: flex;
+            `}
+          >
+            <Assessment
+              sent={assessmentSent}
+              setSent={setAssessmentSent}
+              url={url}
+              attendees={attendees}
+            />
+            <Meet id={id} userName={userName} />
+          </div>
         </Route>
         <Route path={`${match.path}/${RESULT}`}>
           <Result url={url} />
