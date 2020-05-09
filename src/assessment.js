@@ -131,6 +131,8 @@ const Assessment = ({
     );
   }
 
+  if (users === undefined || sent === undefined) return <Loading/>
+
   if (!attendees.includes(account)) {
     return (
       <div
@@ -146,8 +148,6 @@ const Assessment = ({
       </div>
     );
   }
-
-  if (users === undefined || sent === undefined) return <Loading/>
 
   if (!users.length) {
     return (
