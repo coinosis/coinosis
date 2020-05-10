@@ -22,9 +22,9 @@ const Attendance = ({ url, fee, organizer, attendees, setAttendees }) => {
         console.log(error);
         return;
       }
-      setAttendees(data.attendees);
+      setAttendees(attendees => [ ...attendees, {address: account, name} ]);
     });
-  }, [url, account]);
+  }, [url, account, name]);
 
   if (account === null) {
     return (
@@ -60,7 +60,7 @@ const Attendance = ({ url, fee, organizer, attendees, setAttendees }) => {
     );
   }
 
-  if (!attendees.includes(account)) {
+  if (!attendees.map(a => a.address).includes(account)) {
     return (
       <div
         css={`

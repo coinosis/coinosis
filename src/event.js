@@ -46,11 +46,23 @@ const Event = () => {
         setUrl(url);
         setFee(fee);
         setOrganizer(organizer);
-        setAttendees(attendees);
       }).catch(err => {
         console.error(err);
       });
-  }, [backendURL, eventURL]);
+    fetch(`${backendURL}/event/${eventURL}/attendees`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(response.status);
+        }
+        return response.json();
+      })
+      .then(data => {
+        setAttendees(data);
+      })
+      .catch(err => {
+        console.error(err);
+      });
+  }, [backendURL, eventURL, account]);
 
   if (attendees === undefined) return <Loading/>
 
