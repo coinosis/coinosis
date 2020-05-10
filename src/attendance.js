@@ -22,7 +22,11 @@ const Attendance = ({ url, fee, organizer, attendees, setAttendees }) => {
         console.log(error);
         return;
       }
-      setAttendees(attendees => [ ...attendees, {address: account, name} ]);
+      setAttendees(attendees => {
+        attendees = [ ...attendees, {address: account, name} ];
+        attendees.sort((a, b) => a.name.localeCompare(b.name));
+        return attendees;
+      });
     });
   }, [url, account, name]);
 

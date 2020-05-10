@@ -19,31 +19,11 @@ const Assessment = ({
 
   const { account, name } = useContext(AccountContext);
   const backendURL = useContext(BackendContext);
-  const [users, setUsers] = useState();
   const [totalClaps, setTotalClaps] = useState();
   const [clapsLeft, setClapsLeft] = useState();
   const [assessment, setAssessment] = useState({});
   const [clapsError, setClapsError] = useState(false);
   const post = usePost();
-
-  useEffect(() => {
-    fetch(`${backendURL}/event/${event}/attendees`)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(response.statusText);
-        } else {
-          return response.json();
-        }
-      }).then(data => {
-        const attendees = data
-              .filter(attendee => attendee.address !== account)
-              .sort((a, b) => a.name.localeCompare(b.name));
-        setUsers(attendees);
-        setAssessment({});
-      }).catch(error => {
-        console.error(error);
-      });
-  }, [account]);
 
   useEffect(() => {
     if (!name) return;
@@ -60,25 +40,24 @@ const Assessment = ({
       }).catch(error => {
         if (error.toString().includes('404')) {
           setSent(false);
+          const assessment = {};
+          for (const key in attendees) {
+            assessment[attendees[key].address] = 0;
+          }
+          setAssessment(assessment);
+          setTotalClaps(attendees.length * 3);
         } else {
           console.error(error);
         }
       });
-  }, [name, account]);
+  }, [backendURL, event, account, attendees, name]);
 
   useEffect(() => {
-    if (users && users.length) {
-      const totalClaps = users.length * 3;
-      setTotalClaps(totalClaps);
-      if (!Object.keys(assessment).length) {
-        const assessment = {};
-        for (const key in users) {
-          assessment[users[key].address] = 0;
-        }
-        setAssessment(assessment);
-      }
+    if (assessment && totalClaps) {
+      const clapsLeft = computeClapsLeft(assessment)
+      setClapsLeft(clapsLeft);
     }
-  }, [assessment, users]);
+  }, [assessment, totalClaps]);
 
   const computeClapsLeft = useCallback(assessment => {
     let clapsGiven = 0;
@@ -87,13 +66,6 @@ const Assessment = ({
     }
     return totalClaps - clapsGiven;
   }, [totalClaps]);
-
-  useEffect(() => {
-    if (assessment && totalClaps) {
-      const clapsLeft = computeClapsLeft(assessment)
-      setClapsLeft(clapsLeft);
-    }
-  }, [assessment, totalClaps]);
 
   const attemptAssessment = useCallback(assessmentFn => {
     const newAssessment = assessmentFn(assessment);
@@ -131,9 +103,9 @@ const Assessment = ({
     );
   }
 
-  if (users === undefined || sent === undefined) return <Loading/>
+  if (sent === undefined) return <Loading/>
 
-  if (!attendees.includes(account)) {
+  if (!attendees.map(a => a.address).includes(account)) {
     return (
       <div
         css={`
@@ -149,7 +121,7 @@ const Assessment = ({
     );
   }
 
-  if (!users.length) {
+  if (attendees.length === 1) {
     return (
       <div
         css={`
@@ -157,7 +129,7 @@ const Assessment = ({
           justify-content: center;
         `}
       >
-        nadie se ha inscrito todavía.
+        nadie más se ha inscrito todavía.
       </div>
     );
   }
@@ -176,7 +148,7 @@ const Assessment = ({
         sent={sent}
       />
       <Users
-        users={users}
+        users={attendees}
         assessment={assessment}
         attemptAssessment={attemptAssessment}
         clapsError={clapsError}
