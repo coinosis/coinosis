@@ -2,7 +2,13 @@ import React, { useContext, useEffect, useCallback, useState } from 'react';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { es } from 'date-fns/esm/locale';
-import { addHours, setHours, setMinutes } from 'date-fns';
+import {
+  addHours,
+  setHours,
+  addMinutes,
+  setMinutes,
+  subMinutes
+} from 'date-fns';
 import { AccountContext, BackendContext } from './coinosis';
 import { formatDate, usePost } from './helpers';
 
@@ -18,8 +24,10 @@ const AddEvent = ({ setEvents }) => {
   const [description, setDescription] = useState('');
   const [fee, setFee] = useState('');
   const [now] = useState(new Date());
-  const [start, setStart] = useState();
+  const [start, setStart] = useState('');
   const [end, setEnd] = useState('');
+  const [minutesBefore, setMinutesBefore] = useState(30);
+  const [minutesAfter, setMinutesAfter] = useState(30);
   const [formValid, setFormValid] = useState(false);
 
   useEffect(() => {
@@ -74,19 +82,70 @@ const AddEvent = ({ setEvents }) => {
   const preSetStart = useCallback(start => {
     setStart(start);
     setEnd(addHours(start, 1));
+  }, []);
+
+  const makeNatural = useCallback(value => {
+    const number = Number(value);
+    const positive = Math.abs(number);
+    const integer = Math.floor(positive);
+    return integer;
+  }, []);
+
+  const preSetMinutesBefore = useCallback(e => {
+    const { value } = e.target;
+    const natural = makeNatural(value);
+    setMinutesBefore(natural);
+  });
+
+  const preSetMinutesAfter = useCallback(e => {
+    const { value } = e.target;
+    const natural = makeNatural(value);
+    setMinutesAfter(natural);
   });
 
   const add = useCallback(() => {
     const organizer = account;
-    const object = {name, url, description, fee, start, end, organizer};
+    const beforeStart = subMinutes(start, minutesBefore);
+    const afterEnd = addMinutes(end, minutesAfter);
+    const object = {
+      name,
+      url,
+      description,
+      fee,
+      start,
+      end,
+      beforeStart,
+      afterEnd,
+      organizer,
+    };
     post('events', object, (err, data) => {
       if (err) {
         console.error(err);
         return;
       }
+      data.startDate = start;
+      data.endDate = end;
       setEvents(events => [...events, data]);
+      setName('');
+      setUrl('');
+      setDescription('');
+      setFee('');
+      setStart('');
+      setEnd('');
+      setMinutesBefore(30);
+      setMinutesAfter(30);
     });
-  }, [name, url, description, fee, start, end, account]);
+  }, [
+    name,
+    url,
+    description,
+    fee,
+    start,
+    end,
+    minutesBefore,
+    minutesAfter,
+    account,
+  ]);
 
   return (
     <div
@@ -175,8 +234,6 @@ const AddEvent = ({ setEvents }) => {
                 timeFormat="h:mm aa"
                 timeIntervals={30}
                 minDate={now}
-                minTime={now}
-                maxTime={setHours(setMinutes(now, 59), 23)}
                 locale="es"
               />
             }
@@ -193,11 +250,41 @@ const AddEvent = ({ setEvents }) => {
                 timeFormat="h:mm aa"
                 timeIntervals={30}
                 minDate={start || now}
-                minTime={start || now}
-                maxTime={setHours(setMinutes(now, 59), 23)}
                 locale="es"
               />
             }
+          />
+          <Field
+            label="comenzar la videoconferencia"
+            element={
+              <input
+                value={minutesBefore}
+                onChange={preSetMinutesBefore}
+                type="number"
+                min={0}
+                step={1}
+                css={`
+                  width: 60px;
+                `}
+              />
+            }
+            unit="minutos antes"
+          />
+          <Field
+            label="y finalizarla"
+            element={
+              <input
+                value={minutesAfter}
+                onChange={preSetMinutesAfter}
+                type="number"
+                min={0}
+                step={1}
+                css={`
+                  width: 60px;
+                `}
+              />
+            }
+            unit="minutos después"
           />
           <tr>
             <td/>
