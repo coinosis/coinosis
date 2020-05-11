@@ -45,7 +45,7 @@ const Assessment = ({
             assessment[attendees[key].address] = 0;
           }
           setAssessment(assessment);
-          setTotalClaps(attendees.length * 3);
+          setTotalClaps((attendees.length - 1) * 3);
         } else {
           console.error(error);
         }
@@ -79,7 +79,9 @@ const Assessment = ({
   }, [assessment]);
 
   const send = useCallback(() => {
-    const object = { event, sender: account, assessment };
+    const selflessAssessment = { ...assessment };
+    delete selflessAssessment[account];
+    const object = { event, sender: account, assessment: selflessAssessment };
     post('assessments', object, (error, data) => {
       if(error) {
         console.error(error);
