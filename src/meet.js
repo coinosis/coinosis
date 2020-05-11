@@ -2,23 +2,70 @@ import React, { useCallback } from 'react';
 import Jitsi from 'react-jitsi';
 import { Loading } from './helpers';
 
-const Meet = ({ id, userName }) => {
+const Meet = ({ id, userName, setAttendees }) => {
+
+  const participantChanged = useCallback((jitster, change) => {
+    setAttendees(oldAttendees => {
+      const attendees = [ ...oldAttendees ];
+      let index = attendees.findIndex(a => a.id === jitster.id);
+      if (index === -1) {
+        index = attendees.findIndex(a =>
+          a.name === jitster.displayName
+        );
+      }
+      if (index === -1) {
+        index = attendees.findIndex(a =>
+          a.displayname === jitster.displayName
+        );
+      }
+      if (index === -1) {
+        console.error('jitster not found');
+        console.error(jitster);
+        console.error(attendees);
+        return;
+      }
+      const joinedAttendee = {...attendees[index], ...jitster, ...change};
+      attendees[index] = joinedAttendee;
+      return attendees;
+    });
+  }, []);
 
   const handleAPI = useCallback(API => {
+
     API.executeCommand('subject', ' ');
-    API.on('participantJoined', obj => {
-      console.log(obj);
+
+    API.on('videoConferenceJoined', jitster  => {
+      participantChanged(jitster, { present: true });
     });
-    API.on('displayNameChange', obj => {
-      console.log(obj);
+
+    API.on('participantJoined', jitster => {
+      participantChanged(jitster, { present: true });
     });
-    API.on('dominantSpeakerChanged', obj => {
-      console.log(obj);
+
+    API.on('dominantSpeakerChanged', jitster => {
+      setAttendees(oldAttendees => {
+        const attendees = [ ...oldAttendees ];
+        const index = attendees.findIndex(a => a.speaker);
+        if (index !== -1) {
+          attendees[index].speaker = false;
+        }
+        return attendees;
+      });
+      participantChanged(jitster, { speaker: true });
     });
-    API.on('participantLeft', obj => {
-      console.log(obj);
+
+    API.on('displayNameChange', jitster => {
+      participantChanged(jitster, {});
     });
-    API.getDisplayName('aou');
+
+    API.on('participantLeft', jitster => {
+      participantChanged(jitster, { present: false });
+    });
+
+    API.on('videoConferenceLeft', () => {
+      API.dispose();
+    });
+
   }, []);
 
   if (userName === undefined) return <div/>
@@ -27,6 +74,7 @@ const Meet = ({ id, userName }) => {
     <Jitsi
       roomName={id}
       displayName={userName}
+      userInfo={{ displayName: userName }}
       loadingComponent={Loading}
       onAPILoad={handleAPI}
       containerStyle={{ width: '100%', height: '800px' }}

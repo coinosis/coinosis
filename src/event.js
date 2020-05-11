@@ -92,7 +92,11 @@ const Event = () => {
               url={url}
               attendees={attendees}
             />
-            <Meet id={id} userName={userName} />
+            <Meet
+              id={id}
+              userName={userName}
+              setAttendees={setAttendees}
+            />
           </div>
         </Route>
         <Route path={`${match.path}/${RESULT}`}>
