@@ -14,7 +14,7 @@ const Assessment = ({
   sent,
   setSent,
   url: event,
-  attendees
+  attendees,
 }) => {
 
   const { account, name } = useContext(AccountContext);
@@ -232,7 +232,7 @@ const Users = ({ users, assessment, attemptAssessment, disabled }) => {
   return (
     <tbody>
       {users.map((user, i) => {
-        const { address, name } = user;
+        const { address, name, present, speaker } = user;
         const claps = assessment[address] || '';
         const hasFocus = i === 0;
          return (
@@ -241,6 +241,8 @@ const Users = ({ users, assessment, attemptAssessment, disabled }) => {
              hasFocus={hasFocus}
              name={name}
              address={address}
+             present={present}
+             speaker={speaker}
              claps={claps}
              setClaps={value => setClaps(address, value)}
              disabled={disabled}
@@ -251,15 +253,30 @@ const Users = ({ users, assessment, attemptAssessment, disabled }) => {
   );
 }
 
-const User = ({ name, address, claps, setClaps, hasFocus, disabled }) => {
+const User = ({
+  name,
+  address,
+  present,
+  speaker,
+  claps,
+  setClaps,
+  hasFocus,
+  disabled,
+}) => {
 
   const clapInput = createRef();
+  const { account } = useContext(AccountContext);
+  const [ownAddress, setOwnAddress] = useState(false);
 
   useEffect(() => {
     if (hasFocus) {
       clapInput.current.focus();
     }
   }, [hasFocus]);
+
+  useEffect(() => {
+    setOwnAddress(account === address);
+  }, [account, address]);
 
   return (
     <tr
@@ -274,6 +291,13 @@ const User = ({ name, address, claps, setClaps, hasFocus, disabled }) => {
         <EtherscanLink
           type="address"
           value={address}
+          css={`
+            color: ${present ? 'black' : '#a0a0a0'};
+            background: ${speaker ? '#a0e0a0' : 'initial'};
+            &:visited {
+              color: ${present ? 'black' : '#a0a0a0'};
+            }
+          `}
         >
           {name}
         </EtherscanLink>
@@ -290,7 +314,7 @@ const User = ({ name, address, claps, setClaps, hasFocus, disabled }) => {
           min={0}
           step={1}
           onChange={e => setClaps(e.target.value)}
-          disabled={disabled}
+          disabled={disabled || ownAddress}
           css={`
             width: 60px;
           `}

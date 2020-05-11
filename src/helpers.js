@@ -124,7 +124,6 @@ export const EtherscanLink = ({
       <a
         href={href}
         target="_blank"
-        {...props}
         css={`
           color: black;
           &:visited {
@@ -135,6 +134,7 @@ export const EtherscanLink = ({
         onMouseOver={() => setShowToolTip(true)}
         onMouseOut={() => setShowToolTip(false)}
         tabIndex={-1}
+        {...props}
       >
         {children}
       </a>
