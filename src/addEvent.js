@@ -1,6 +1,12 @@
 import React, { useContext, useEffect, useCallback, useState } from 'react';
+import DatePicker, { registerLocale } from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { es } from 'date-fns/esm/locale';
+import { addHours, setHours, setMinutes } from 'date-fns';
 import { AccountContext, BackendContext } from './coinosis';
 import { formatDate, usePost } from './helpers';
+
+registerLocale('es', es);
 
 const AddEvent = ({ setEvents }) => {
 
@@ -11,23 +17,10 @@ const AddEvent = ({ setEvents }) => {
   const [url, setUrl] = useState('');
   const [description, setDescription] = useState('');
   const [fee, setFee] = useState('');
-  const [start, setStart] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [startValid, setStartValid] = useState(true);
+  const [now] = useState(new Date());
+  const [start, setStart] = useState();
   const [end, setEnd] = useState('');
-  const [endValid, setEndValid] = useState(true);
   const [formValid, setFormValid] = useState(false);
-
-  useEffect(() => {
-    const now = new Date().getTime();
-    const week = 7 * 24 * 60 * 60 * 1000;
-    const aWeekFromNow = new Date(now + week);
-    aWeekFromNow.setMinutes(0);
-    aWeekFromNow.setSeconds(0);
-    aWeekFromNow.setMilliseconds(0);
-    setStart(aWeekFromNow.toISOString());
-    setStartDate(formatDate(aWeekFromNow));
-  }, []);
 
   useEffect(() => {
     setFormValid(
@@ -36,12 +29,10 @@ const AddEvent = ({ setEvents }) => {
         && description !== ''
         && fee !== ''
         && start !== ''
-        && startValid
         && end !== ''
-        && endValid
         && userName !== null
     );
-  }, [name, url, description, fee, start, startValid, end, endValid, userName]);
+  }, [name, url, description, fee, start, end, userName]);
 
   const preSetName = useCallback(e => {
     const value = e.target.value;
@@ -80,30 +71,10 @@ const AddEvent = ({ setEvents }) => {
     setFee(rounded);
   }, []);
 
-  const preSetStart = useCallback(e => {
-    const { value } = e.target;
-    setStart(value);
-    const startDate = new Date(value);
-    if (!isNaN(startDate.getTime())) {
-      setStartValid(true);
-      setStartDate(formatDate(new Date(value)));
-    }
-    else {
-      setStartValid(false);
-      setStartDate('');
-    }
-  }, []);
-
-  const preSetEnd = useCallback(e => {
-    const { value } = e.target;
-    setEnd(value);
-    setEndValid(isDateValid(value));
-  }, []);
-
-  const isDateValid = useCallback((value, set) => {
-    const date = new Date(value);
-    return !isNaN(date.getTime());
-  }, []);
+  const preSetStart = useCallback(start => {
+    setStart(start);
+    setEnd(addHours(start, 1));
+  });
 
   const add = useCallback(() => {
     const organizer = account;
@@ -145,7 +116,7 @@ const AddEvent = ({ setEvents }) => {
             }
           />
           <Field
-            label="URL del evento:"
+            label="URL:"
             element={
               <div
                 css={`
@@ -195,31 +166,36 @@ const AddEvent = ({ setEvents }) => {
           <Field
             label="fecha y hora de inicio:"
             element={
-              <input
-                type="text"
-                value={start}
+              <DatePicker
+                dateFormat="dd 'de' MMMM 'de' yyyy, h:mm aa"
+                selected={start}
                 onChange={preSetStart}
-                css={`
-                  border: 1px solid ${
-                    startValid
-                    ? 'rgb(169, 169, 169)'
-                    : 'red'
-                  };
-                `}
+                showTimeSelect
+                timeCaption="hora"
+                timeFormat="h:mm aa"
+                timeIntervals={30}
+                minDate={now}
+                minTime={now}
+                maxTime={setHours(setMinutes(now, 59), 23)}
+                locale="es"
               />
             }
-            unit={startDate}
           />
           <Field
             label="fecha y hora de finalización:"
             element={
-              <input
-                type="datetime-local"
-                value={end}
-                onChange={preSetEnd}
-                css={`
-                  border: 1px solid ${endValid ? 'rgb(169, 169, 169)' : 'red'};
-                `}
+              <DatePicker
+                dateFormat="dd 'de' MMMM 'de' yyyy, h:mm aa"
+                selected={end}
+                onChange={setEnd}
+                showTimeSelect
+                timeCaption="hora"
+                timeFormat="h:mm aa"
+                timeIntervals={30}
+                minDate={start || now}
+                minTime={start || now}
+                maxTime={setHours(setMinutes(now, 59), 23)}
+                locale="es"
               />
             }
           />
