@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useCallback, useState } from 'react';
 import { AccountContext, BackendContext } from './coinosis';
-import { usePost } from './helpers';
+import { formatDate, usePost } from './helpers';
 
 const AddEvent = ({ setEvents }) => {
 
@@ -12,10 +12,22 @@ const AddEvent = ({ setEvents }) => {
   const [description, setDescription] = useState('');
   const [fee, setFee] = useState('');
   const [start, setStart] = useState('');
+  const [startDate, setStartDate] = useState('');
   const [startValid, setStartValid] = useState(true);
   const [end, setEnd] = useState('');
   const [endValid, setEndValid] = useState(true);
   const [formValid, setFormValid] = useState(false);
+
+  useEffect(() => {
+    const now = new Date().getTime();
+    const week = 7 * 24 * 60 * 60 * 1000;
+    const aWeekFromNow = new Date(now + week);
+    aWeekFromNow.setMinutes(0);
+    aWeekFromNow.setSeconds(0);
+    aWeekFromNow.setMilliseconds(0);
+    setStart(aWeekFromNow.toISOString());
+    setStartDate(formatDate(aWeekFromNow));
+  }, []);
 
   useEffect(() => {
     setFormValid(
@@ -71,7 +83,15 @@ const AddEvent = ({ setEvents }) => {
   const preSetStart = useCallback(e => {
     const { value } = e.target;
     setStart(value);
-    setStartValid(isDateValid(value));
+    const startDate = new Date(value);
+    if (!isNaN(startDate.getTime())) {
+      setStartValid(true);
+      setStartDate(formatDate(new Date(value)));
+    }
+    else {
+      setStartValid(false);
+      setStartDate('');
+    }
   }, []);
 
   const preSetEnd = useCallback(e => {
@@ -176,7 +196,7 @@ const AddEvent = ({ setEvents }) => {
             label="fecha y hora de inicio:"
             element={
               <input
-                type="datetime-local"
+                type="text"
                 value={start}
                 onChange={preSetStart}
                 css={`
@@ -188,6 +208,7 @@ const AddEvent = ({ setEvents }) => {
                 `}
               />
             }
+            unit={startDate}
           />
           <Field
             label="fecha y hora de finalización:"
