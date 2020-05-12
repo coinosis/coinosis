@@ -223,6 +223,7 @@ const Claps = ({ clapsLeft, clapsError, sent }) => {
 const Users = ({ users, assessment, attemptAssessment, disabled }) => {
 
   const setClaps = useCallback((address, value) => {
+    if (isNaN(value)) return;
     const claps = Math.abs(Math.floor(Number(value)))
     attemptAssessment(assessment => {
       const newAssessment = {...assessment}
@@ -311,10 +312,8 @@ const User = ({
       >
         <input
           ref={clapInput}
-          type="number"
+          type="text"
           value={claps}
-          min={0}
-          step={1}
           onChange={e => setClaps(e.target.value)}
           disabled={disabled || ownAddress}
           css={`

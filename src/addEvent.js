@@ -68,11 +68,12 @@ const AddEvent = ({ setEvents }) => {
   }, []);
 
   const preSetFee = useCallback(e => {
-    const value = e.target.value;
-    if (value === '') {
+    const { value } = e.target;
+    if (value === '' || (value.length > 1 && value[value.length - 1] === '.')) {
       setFee(value);
       return;
     }
+    if (isNaN(value)) return;
     const number = Number(value);
     const positive = Math.abs(number);
     const rounded = Math.round(positive * 100) / 100;
@@ -93,12 +94,22 @@ const AddEvent = ({ setEvents }) => {
 
   const preSetMinutesBefore = useCallback(e => {
     const { value } = e.target;
+    if (value === '') {
+      setMinutesBefore(value);
+      return;
+    }
+    if (isNaN(value)) return;
     const natural = makeNatural(value);
     setMinutesBefore(natural);
   });
 
   const preSetMinutesAfter = useCallback(e => {
     const { value } = e.target;
+    if (value === '') {
+      setMinutesAfter(value);
+      return;
+    }
+    if (isNaN(value)) return;
     const natural = makeNatural(value);
     setMinutesAfter(natural);
   });
@@ -212,9 +223,7 @@ const AddEvent = ({ setEvents }) => {
               <input
                 value={fee}
                 onChange={preSetFee}
-                type="number"
-                min={0}
-                step={0.01}
+                type="text"
                 css={`
                   width: 60px;
                 `}
@@ -260,9 +269,7 @@ const AddEvent = ({ setEvents }) => {
               <input
                 value={minutesBefore}
                 onChange={preSetMinutesBefore}
-                type="number"
-                min={0}
-                step={1}
+                type="text"
                 css={`
                   width: 60px;
                 `}
@@ -276,9 +283,7 @@ const AddEvent = ({ setEvents }) => {
               <input
                 value={minutesAfter}
                 onChange={preSetMinutesAfter}
-                type="number"
-                min={0}
-                step={1}
+                type="text"
                 css={`
                   width: 60px;
                 `}
