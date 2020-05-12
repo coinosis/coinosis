@@ -7,7 +7,7 @@
   "license": "GPL-3.0-or-later",
   "scripts": {
     "postinstall": "webpack -p --define process.env.ENVIRONMENT=\"'testing'\"",
-    "start": "http-server docs/ -p $PORT",
+    "start": "http-server dist/ -p $PORT",
     "start:dev": "./start.dev.sh"
   },
   "devDependencies": {
