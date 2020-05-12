@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import Jitsi from 'react-jitsi';
 import { Loading } from './helpers';
 
-const Meet = ({ id, userName, setAttendees }) => {
+const Meet = ({ id, account, userName, attendees, setAttendees }) => {
 
   const participantChanged = useCallback((jitster, change) => {
     setAttendees(oldAttendees => {
@@ -68,7 +68,14 @@ const Meet = ({ id, userName, setAttendees }) => {
 
   }, []);
 
-  if (userName === undefined) return <div/>
+  if (
+    userName === undefined
+      || attendees === undefined
+      || account === undefined
+  ) return <div>loading</div>
+
+  if (userName === null || !attendees.map(a => a.address).includes(account))
+    return <div/>
 
   return (
     <Jitsi

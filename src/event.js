@@ -64,7 +64,7 @@ const Event = () => {
       });
   }, [backendURL, eventURL, account]);
 
-  if (attendees === undefined) return <Loading/>
+  if (attendees === undefined || userName === undefined) return <Loading/>
 
   return (
     <div>
@@ -94,7 +94,9 @@ const Event = () => {
             />
             <Meet
               id={id}
+              account={account}
               userName={userName}
+              attendees={attendees}
               setAttendees={setAttendees}
             />
           </div>
