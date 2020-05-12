@@ -1,8 +1,19 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import Jitsi from 'react-jitsi';
+import { format } from 'date-fns';
 import { Loading } from './helpers';
 
-const Meet = ({ id, account, userName, attendees, setAttendees }) => {
+const Meet = ({
+  id,
+  account,
+  userName,
+  attendees,
+  setAttendees,
+  beforeStart,
+  afterEnd,
+}) => {
+
+  const [now] = useState(new Date());
 
   const participantChanged = useCallback((jitster, change) => {
     setAttendees(oldAttendees => {
@@ -72,10 +83,30 @@ const Meet = ({ id, account, userName, attendees, setAttendees }) => {
     userName === undefined
       || attendees === undefined
       || account === undefined
-  ) return <div>loading</div>
+      || beforeStart === undefined
+      || afterEnd === undefined
+  ) return <div/>
 
   if (userName === null || !attendees.map(a => a.address).includes(account))
     return <div/>
+
+  if (now < beforeStart) return (
+    <div>
+      {format(
+        beforeStart,
+        "'la videoconferencia comenzará el' dd 'de' MMMM 'de' yyyy 'a las' h:mm aa"
+      )}
+    </div>
+  );
+
+  if (now > afterEnd) return (
+    <div>
+      {format(
+        afterEnd,
+        "'la videoconferencia finalizó el' dd 'de' MMMM 'de' yyyy 'a las' h:mm aa"
+      )}
+    </div>
+  );
 
   return (
     <Jitsi

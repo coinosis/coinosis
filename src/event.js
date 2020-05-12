@@ -28,6 +28,8 @@ const Event = () => {
   const [url, setUrl] = useState();
   const [id, setId] = useState();
   const [fee, setFee] = useState();
+  const [beforeStart, setBeforeStart] = useState();
+  const [afterEnd, setAfterEnd] = useState();
   const [organizer, setOrganizer] = useState();
   const [attendees, setAttendees] = useState();
   const [assessmentSent, setAssessmentSent] = useState();
@@ -40,11 +42,22 @@ const Event = () => {
           throw new Error(response.status);
         }
         return response.json();
-      }).then(({ _id, name, url, fee, organizer, attendees }) => {
+      }).then(({
+        _id,
+        name,
+        url,
+        fee,
+        beforeStart,
+        afterEnd,
+        organizer,
+        attendees
+      }) => {
         setId(_id);
         setName(name);
         setUrl(url);
         setFee(fee);
+        setBeforeStart(new Date(beforeStart));
+        setAfterEnd(new Date(afterEnd));
         setOrganizer(organizer);
       }).catch(err => {
         console.error(err);
@@ -98,6 +111,8 @@ const Event = () => {
               userName={userName}
               attendees={attendees}
               setAttendees={setAttendees}
+              beforeStart={beforeStart}
+              afterEnd={afterEnd}
             />
           </div>
         </Route>
