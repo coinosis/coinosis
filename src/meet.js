@@ -75,6 +75,7 @@ const Meet = ({ id, userName, setAttendees }) => {
       roomName={id}
       displayName={userName}
       userInfo={{ displayName: userName }}
+      noSSL={false}
       loadingComponent={Loading}
       onAPILoad={handleAPI}
       containerStyle={{ width: '100%', height: '800px' }}
