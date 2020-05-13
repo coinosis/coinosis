@@ -1,10 +1,10 @@
 <!doctype html>
 <html>
   <body style="font-family: arial">
-    <img src="./logo.png" width="100px" />
+    <img src="<%= require('./logo.png').default %>" width="100px" />
     <h1>Mi cámara y micrófono no funcionan</h1>
     <h2>Síntomas</h2>
-    <img src="./unmute.png" border="1px solid black" />
+    <img src="<%= require('./unmute.png').default %>" border="1px solid black" />
     <ul>
       <li>Estás usando Brave o Firefox</li>
       <li>No puedes activar la cámara ni el micrófono</li>
@@ -20,7 +20,7 @@
     <h2>¿Es seguro habilitar WebRTC?</h2>
     <ul>
       <li>Habilitar WebRTC no tiene impacto sobre tu seguridad, pero sí sobre tu privacidad.</li>
-      <li>Si estás usando una VPN, debes saber que habilitar WebRTC puede revelar tu verdadera dirección IP. Para comprobarlo, <a href="https://browserleaks.com/webrtc" target="_blank">haz esta prueba</a>.</li>
+      <li>Si estás usando una VPN, habilitar WebRTC puede revelar tu verdadera dirección IP. Para comprobarlo, <a href="https://browserleaks.com/webrtc" target="_blank">haz esta prueba</a>.</li>
       <li>Si no estás usando una VPN, habilitar WebRTC no va a cambiar en nada tu privacidad. Sin embargo, sólo por las dudas, <a href="https://browserleaks.com/webrtc" target="_blank">haz la prueba</a>.</li>
     </ul>
     <h2>Solución</h2>
@@ -32,7 +32,7 @@
       <li>Selecciona <i>All fingerprinting attempts allowed</i>.</li>
       <li>Refresca la página.</li>
     </ol>
-    <img src="./brave.png" border="1px solid black"/>
+    <img src="<%= require('./brave.png').default %>" border="1px solid black"/>
     <h3>Firefox</h3>
     <i>Nota: este procedimiento habilita WebRTC en todos los sitios web.</i>
     <ol>
@@ -42,8 +42,8 @@
       <li>Cierra la pestaña de opciones de configuración.</li>
       <li>Refresca la página.</li>
     </ol>
-    <img src="./firefox.png" border="1px solid black"/>
+    <img src="<%= require('./firefox.png').default %>" border="1px solid black"/>
     <br/><br/><br/>
-    <img src="./logo.png" width="100px" />
+    <img src="<%= require('./logo.png').default %>" width="100px" />
   </body>
 </html>

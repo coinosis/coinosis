@@ -13,7 +13,13 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: 'src/assets/index.html'
+      template: 'src/assets/index.html',
+      chunks: ['main'],
+    }),
+    new HtmlWebpackPlugin({
+      template: 'src/assets/webrtc.html',
+      filename: 'webrtc.html',
+      chunks: ['webrtc'],
     }),
   ],
   devServer: {
