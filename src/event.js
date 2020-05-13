@@ -35,6 +35,33 @@ const Event = () => {
   const [assessmentSent, setAssessmentSent] = useState();
   const match = useRouteMatch();
 
+  const fetchAttendees = useCallback(() => {
+    fetch(`${backendURL}/event/${eventURL}/attendees`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(response.status);
+        }
+        return response.json();
+      })
+      .then(data => {
+        setAttendees(attendees => {
+          if (!attendees) return data;
+          if (data.length <= attendees.length) return attendees;
+          const newAttendees = [...attendees];
+          data.forEach(d => {
+            if (!attendees.map(a => a.address).includes(d.address)) {
+              newAttendees.push(d);
+            }
+          });
+          newAttendees.sort((a, b) => a.name.localeCompare(b.name));
+          return newAttendees;
+        });
+      })
+      .catch(err => {
+        console.error(err);
+      });
+  }, [backendURL, eventURL]);
+
   useEffect(() => {
     fetch(`${backendURL}/event/${eventURL}`)
       .then(response => {
@@ -62,19 +89,11 @@ const Event = () => {
       }).catch(err => {
         console.error(err);
       });
-    fetch(`${backendURL}/event/${eventURL}/attendees`)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(response.status);
-        }
-        return response.json();
-      })
-      .then(data => {
-        setAttendees(data);
-      })
-      .catch(err => {
-        console.error(err);
-      });
+    fetchAttendees();
+    const updateAttendees = setInterval(fetchAttendees, 10000);
+    return () => {
+      clearInterval(updateAttendees);
+    }
   }, [backendURL, eventURL, account]);
 
   if (attendees === undefined || userName === undefined) return <Loading/>
