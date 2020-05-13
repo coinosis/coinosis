@@ -1,14 +1,24 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { Web3Context, AccountContext } from './coinosis';
-import { Amount, Loading, usePost } from './helpers';
+import { ASSESSMENT } from './event';
+import { Amount, Link, Loading, usePost } from './helpers';
 import Account from './account';
 
-const Attendance = ({ url, fee, organizer, attendees, setAttendees }) => {
+const Attendance = ({
+  url,
+  fee,
+  organizer,
+  attendees,
+  setAttendees,
+  beforeStart,
+  afterEnd
+}) => {
 
   const web3 = useContext(Web3Context);
   const { account, name } = useContext(AccountContext);
   const post = usePost();
   const [feeUSDWei, setFeeUSDWei] = useState();
+  const [now] = useState(new Date());
 
   useEffect(() => {
     const feeUSDWei = web3.utils.toWei(String(fee));
@@ -97,6 +107,23 @@ const Attendance = ({ url, fee, organizer, attendees, setAttendees }) => {
               inscríbete
             </button>
           </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (now >= beforeStart && now <= afterEnd) {
+    return (
+      <div
+        css={`
+          display: flex;
+          justify-content: center;
+        `}
+      >
+        <div>
+          dirígete a
+          <Link to={`${ASSESSMENT}`}>{ASSESSMENT}</Link>
+          para participar.
         </div>
       </div>
     );

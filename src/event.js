@@ -16,7 +16,7 @@ import Assessment from './assessment';
 import Result from './result';
 
 export const ATTENDANCE = 'asistencia';
-const ASSESSMENT = 'aplausos';
+export const ASSESSMENT = 'aplausos';
 const RESULT = 'resultados';
 
 const Event = () => {
@@ -91,6 +91,8 @@ const Event = () => {
             organizer={organizer}
             attendees={attendees}
             setAttendees={setAttendees}
+            beforeStart={beforeStart}
+            afterEnd={afterEnd}
           />
         </Route>
         <Route path={`${match.path}/${ASSESSMENT}`}>
