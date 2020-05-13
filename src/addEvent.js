@@ -244,6 +244,7 @@ const AddEvent = ({ setEvents }) => {
                 timeIntervals={30}
                 minDate={now}
                 locale="es"
+                css="width: 250px;"
               />
             }
           />
@@ -260,6 +261,7 @@ const AddEvent = ({ setEvents }) => {
                 timeIntervals={30}
                 minDate={start || now}
                 locale="es"
+                css="width: 250px;"
               />
             }
           />
