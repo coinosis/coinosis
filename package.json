@@ -6,7 +6,7 @@
   "author": "@e18r",
   "license": "GPL-3.0-or-later",
   "scripts": {
-    "postinstall": "webpack -p --define process.env.ENVIRONMENT=\"'testing'\" && cp src/assets/* dist",
+    "postinstall": "cp src/assets/* dist && webpack -p --define process.env.ENVIRONMENT=\"'testing'\"",
     "start": "http-server dist/ -p $PORT",
     "start:dev": "./start.dev.sh"
   },
