@@ -1,11 +1,25 @@
-import React from 'react';
-import instructions from './assets/installMetamask.gif';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Loading } from './helpers';
+import installBraveWallet from './assets/installBraveWallet.png';
+import installMetamask from './assets/installMetamask.gif';
 
 const InstallMetamask = () => {
 
-  const reload = () => {
+  const [brave, setBrave] = useState();
+
+  const reload = useCallback(() => {
     window.location.reload(false);
-  }
+  }, [ window.location ]);
+
+  useEffect(() => {
+    if (navigator.brave) {
+      setBrave(true);
+    } else {
+      setBrave(false);
+    }
+  }, [ navigator.brave ]);
+
+  if (brave === undefined) return <Loading/>
   
   return (
     <div
@@ -37,18 +51,24 @@ const InstallMetamask = () => {
           para continuar, necesitas instalar
         </div>
         <div>
-          <a
-            target="_blank"
-            href="https://metamask.io/"
-            css={`
-              color: black;
-              &:visited {
+          { brave ? (
+            <span>
+              tu billetera de Brave
+            </span>
+          ) : (
+            <a
+              target="_blank"
+              href="https://metamask.io/"
+              css={`
                 color: black;
-              };
-            `}
-          >
-            metamask
-          </a>
+                &:visited {
+                  color: black;
+                };
+              `}
+            >
+              metamask
+            </a>
+          )}
         </div>
       </div>
       <div
@@ -61,7 +81,7 @@ const InstallMetamask = () => {
             margin-right: 5px;
           `}
         >
-          cuando lo hayas instalado, haz clic
+          cuando lo hayas hecho, haz clic
         </div>
         <div
           onClick={reload}
@@ -78,7 +98,20 @@ const InstallMetamask = () => {
           margin-top: 50px;
         `}
       >
-        <img src={instructions} />
+        { brave ? (
+          <ol>
+            <li>Escribe <i>brave://wallet</i> en la barra de direcciones</li>
+            <li>
+              En la sección <i>New Local Wallet</i>, selecciona <i>Create</i>
+            </li>
+            <li>
+              Sigue las instrucciones
+            </li>
+            <img src={installBraveWallet} />
+          </ol>
+        ) : (
+          <img src={installMetamask} />
+        )}
       </div>
     </div>
   );
