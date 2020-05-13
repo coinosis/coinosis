@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+  <body>
+    <img src="./logo.png" width="100px" />
+    <h1>Mi cámara y micrófono no funcionan</h1>
+    <h2>Síntomas</h2>
+    <img src="./unmute.png" border="1px solid black" />
+    <ul>
+      <li>Estás usando Brave o Firefox</li>
+      <li>No puedes activar la cámara ni el micrófono</li>
+      <li>No ves ni oyes a otros participantes de la videollamada</li>
+      <li>Sí puedes leer los mensajes del chat y escribir en él</li>
+    </ul>
+    <h2>Diagnóstico</h2>
+    Es posible que tu navegador haya deshabilitado
+    <a href="https://es.wikipedia.org/wiki/WebRTC" target="_blank">WebRTC</a>
+    para evitar la filtración de tu dirección IP.
+    <h2>Explicación</h2>
+    Tu dirección IP es como la placa de tu carro. La web es como una ciudad llena de cámaras. Por medio de estas cámaras, un computador puede detectar la placa de tu carro y saber los lugares que visitaste y así vigilarte o mostrarte publicidad personalizada. Para evitar esto, puedes usar una <a href="https://es.wikipedia.org/wiki/Red_privada_virtual" target="_blank">VPN</a>, que es como una placa falsa, y así proteger tu privacidad. Sin embargo, algunos sitios web utilizan WebRTC, que es una tecnología para compartir audio y video, la cual, en algunas circunstancias, permite revelar tu verdadera dirección IP. Para más información, haz clic <a href="https://restoreprivacy.com/webrtc-leaks/" target="_blank">aquí</a>.
+    <h2>¿Es seguro habilitar WebRTC?</h2>
+    <ul>
+      <li>Habilitar WebRTC no tiene impacto sobre tu seguridad, pero sí sobre tu privacidad.</li>
+      <li>Si estás usando una VPN, debes saber que habilitar WebRTC puede revelar tu verdadera dirección IP. Para comprobarlo, <a href="https://browserleaks.com/webrtc" target="_blank">haz esta prueba</a>.</li>
+      <li>Si no estás usando una VPN, habilitar WebRTC no va a cambiar en nada tu privacidad. Sin embargo, sólo por las dudas, <a href="https://browserleaks.com/webrtc" target="_blank">haz la prueba</a>.</li>
+    </ul>
+    <h2>Solución</h2>
+    <h3>Brave</h3>
+    <ol>
+      <li>Entra al sitio web de <a href="https://coinosis.github.io" target="_blank">coinosis</a>.</li>
+      <li>En la barra de Brave, haz clic en <i>Brave shields</i>.</li>
+      <li>Busca la opción de bloqueo de <i>fingerprinting</i>.</li>
+      <li>Selecciona <i>All fingerprinting attempts allowed</i>.</li>
+      <li>Refresca la página.</li>
+    </ol>
+    <img src="./brave.png" border="1px solid black"/>
+    <h3>Firefox</h3>
+    <i>Nota: este procedimiento habilita WebRTC en todos los sitios web.</i>
+    <ol>
+      <li>En la barra de direcciones, escribe <i>about:config</i>.</li>
+      <li>En el campo de búsqueda de opciones de configuración, escribe <i>media.peerconnection.enabled</i>.</li>
+      <li>Pasa el valor a <i>true</i> haciendo clic en el botón de la derecha.</li>
+      <li>Cierra la pestaña de opciones de configuración.</li>
+      <li>Refresca la página.</li>
+    </ol>
+    <img src="./firefox.png" border="1px solid black"/>
+    <br/><br/><br/>
+    <img src="./logo.png" width="100px" />
+  </body>
+</html>
