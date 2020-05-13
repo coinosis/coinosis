@@ -15,6 +15,7 @@ const Account = () => {
     web3.eth.getAccounts().then(accounts => {
       if (!accounts.length) {
         setAccount(null);
+        setName(null);
       } else if (accounts[0] !== account) {
         setAccount(accounts[0]);
       }
