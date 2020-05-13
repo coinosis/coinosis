@@ -281,11 +281,30 @@ const User = ({
     setOwnAddress(account === address);
   }, [account, address]);
 
+  if (address === '0x000') {
+    return (
+      <tr>
+        <td
+          css={`
+            text-align: right;
+          `}
+        >
+          <span
+            css={`
+              color: ${present ? 'black' : '#a0a0a0'};
+              background: ${speaker ? '#a0e0a0' : 'initial'};
+            `}
+          >
+            {name}
+          </span>
+        </td>
+        <td/>
+      </tr>
+    );
+  }
+
   return (
-    <tr
-      css={`
-      `}
-    >
+    <tr>
       <td
         css={`
           text-align: right;
@@ -305,11 +324,7 @@ const User = ({
           {name}
         </EtherscanLink>
       </td>
-      <td
-        css={`
-
-        `}
-      >
+      <td>
         <input
           ref={clapInput}
           type="text"

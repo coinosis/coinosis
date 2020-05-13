@@ -17,6 +17,7 @@ const Meet = ({
 
   const participantChanged = useCallback((jitster, change) => {
     setAttendees(oldAttendees => {
+      if (!oldAttendees) return oldAttendees;
       const attendees = [ ...oldAttendees ];
       let index = attendees.findIndex(a => a.id === jitster.id);
       if (index === -1) {
@@ -30,12 +31,17 @@ const Meet = ({
         );
       }
       if (index === -1) {
-        console.error('jitster not found');
-        console.error(jitster);
-        console.error(attendees);
-        return;
+        jitster.name = jitster.displayName;
+        jitster.address = '0x000';
+        jitster.present = true;
+        attendees.push(jitster);
+        attendees.sort((a, b) => a.name.localeCompare(b.name));
+        return attendees;
       }
-      const joinedAttendee = {...attendees[index], ...jitster, ...change};
+      let joinedAttendee = {...attendees[index], ...jitster, ...change};
+      if (joinedAttendee.address === '0x000' && jitster.displayname) {
+        joinedAttendee.name = jitster.displayname;
+      }
       attendees[index] = joinedAttendee;
       return attendees;
     });
