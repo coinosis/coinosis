@@ -27,7 +27,7 @@ const Assessment = ({
 
   useEffect(() => {
     if (!name) return;
-    fetch(`${backendURL}/assessment/${event}/${account}`)
+    fetch(`${backendURL}/assessment/${event}/${account}`) // TODO: this doesn't need to happen every time attendees is reloaded
       .then(response => {
         if (!response.ok) {
           throw new Error(response.status);
@@ -40,9 +40,11 @@ const Assessment = ({
       }).catch(error => {
         if (error.toString().includes('404')) {
           setSent(false);
-          const assessment = {};
+          // const assessment = {}; // TODO: but this part does
           for (const key in attendees) {
+            if (!attendees[key].address in assessment) {
             assessment[attendees[key].address] = 0;
+            }
           }
           setAssessment(assessment);
           setTotalClaps((attendees.length - 1) * 3);
