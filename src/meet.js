@@ -20,22 +20,22 @@ const Meet = ({
       if (!oldAttendees) return oldAttendees;
       const attendees = [ ...oldAttendees ];
       let index = attendees.findIndex(a => a.id === jitster.id);
-      if (index === -1) {
+      if (index === -1 && jitster.displayName) {
         index = attendees.findIndex(a =>
           a.name === jitster.displayName
         );
       }
-      if (index === -1) {
+      if (index === -1 && jitster.displayName) {
         index = attendees.findIndex(a =>
           a.displayname === jitster.displayName
         );
       }
       if (index === -1) {
-        jitster.name = jitster.displayName;
-        jitster.address = '0x000';
-        jitster.present = true;
-        attendees.push(jitster);
-        attendees.sort((a, b) => a.name.localeCompare(b.name));
+        // jitster.name = jitster.displayName || 'anónimo';
+        // jitster.address = '0x000';
+        // jitster.present = true;
+        // attendees.push(jitster);
+        // attendees.sort((a, b) => a.name.localeCompare(b.name));
         return attendees;
       }
       let joinedAttendee = {...attendees[index], ...jitster, ...change};
