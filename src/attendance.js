@@ -21,6 +21,7 @@ const Attendance = ({
   const [now] = useState(new Date());
 
   useEffect(() => {
+    if (!fee) return;
     const feeUSDWei = web3.utils.toWei(String(fee));
     setFeeUSDWei(feeUSDWei);
   }, [fee]);
