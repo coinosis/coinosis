@@ -27,7 +27,6 @@ const Attendance = ({
   fee,
   organizer,
   attendees,
-  setAttendees,
   beforeStart,
   afterEnd,
 }) => {

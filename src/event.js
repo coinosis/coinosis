@@ -110,7 +110,6 @@ const Event = () => {
             fee={fee}
             organizer={organizer}
             attendees={attendees}
-            setAttendees={setAttendees}
             beforeStart={beforeStart}
             afterEnd={afterEnd}
           />
