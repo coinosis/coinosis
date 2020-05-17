@@ -38,6 +38,8 @@ const Attendance = ({
   const [feeUSDWei, setFeeUSDWei] = useState();
   const [now] = useState(new Date());
   const [paymentList, setPaymentList] = useState();
+  const [referenceCode, setReferenceCode] = useState();
+  const [formWindow, setFormWindow] = useState();
 
   const fetchPayments = useCallback(() => {
     fetch(`${backendURL}/payu/${event}/${account}`)
@@ -48,12 +50,28 @@ const Attendance = ({
           return response.json();
         }
       }).then(data => {
-        console.log(data);
         setPaymentList(data);
        }).catch(err => {
         console.error(err);
        });
   }, [ backendURL, event, account ]);
+
+  useEffect(() => {
+    if (referenceCode && formWindow && paymentList.length) {
+      for (let i = 0; i < paymentList.length; i++) {
+        const payment = paymentList[i];
+        if (
+          payment.referenceCode === referenceCode
+            && payment.pull.status.indexOf('PENDING') === -1
+        ) {
+          formWindow.close();
+          setFormWindow();
+          setReferenceCode();
+          return;
+        }
+      }
+    }
+  }, [paymentList, referenceCode, formWindow]);
 
   useEffect(() => {
     if (!backendURL || !event || !account) return;
@@ -84,14 +102,17 @@ const Attendance = ({
     const formWindow = window.open('', 'formWindow', 'width=1000,height=800');
     formWindow.document.body.appendChild(form);
     formWindow.document.forms[0].submit();
-  }, []);
+    setFormWindow(formWindow);
+  }, [formWindow, setFormWindow]);
 
   const attend = useCallback(() => {
     const url = 'https://sandbox.checkout.payulatam.com/ppp-web-gateway-payu/';
     const counter = paymentList.length + 1;
+    const referenceCode = `${event}:${account}:${counter}`;
+    setReferenceCode(referenceCode);
     const object = {
       merchantId: 508029,
-      referenceCode: `${event}:${account}:${counter}`,
+      referenceCode,
       description: eventName,
       amount: fee,
       tax: 0,
@@ -132,46 +153,50 @@ const Attendance = ({
     return <Account/>
   }
 
-  if (account === organizer) {
-    return (
-      <div
-        css={`
-          display: flex;
-          justify-content: center;
-        `}
-      >
-        <div>
-          tú creaste este evento.
-        </div>
-      </div>
-    );
-  }
-
-  if (!attendees.map(a => a.address).includes(account)) {
-    return (
-      <div
-        css={`
+  return (
+    <div
+      css={`
           display: flex;
           flex-direction: column;
           align-items: center;
         `}
+    >
+      <div
+        css={`
+            display: flex;
+          `}
       >
+        <div>
+          este evento tiene un costo de
+        </div>
+        <div
+          css={`
+              margin: 0 5px 10px;
+            `}
+        >
+          <Amount usd={feeUSDWei} />
+        </div>
+      </div>
+      { attendees.map(a => a.address).includes(account) ? (
         <div
           css={`
             display: flex;
+            flex-direction: column;
+            align-items: center;
           `}
         >
-          <div>
-            este evento tiene un costo de
-          </div>
-          <div
-            css={`
-              margin: 0 5px;
-            `}
-          >
-            <Amount usd={feeUSDWei} />
-          </div>
+        <SectionTitle>
+          te inscribiste exitosamente
+        </SectionTitle>
+          {now >= beforeStart && now <= afterEnd && (
+            <div>
+              dirígete a
+              <Link to={`${ASSESSMENT}`}>{ASSESSMENT}</Link>
+              para participar.
+            </div>
+          )}
         </div>
+      ) : (
         <div>
           <div>
             <button
@@ -182,77 +207,47 @@ const Attendance = ({
             </button>
           </div>
         </div>
-        { !!paymentList && !!paymentList.length && (
-          <div>
-            <table
-              css={`
+      )}
+      { !!paymentList && !!paymentList.length && (
+        <div>
+          <table
+            css={`
                 border-collapse: collapse;
                 td {
                   border: 1px solid black;
                   padding: 10px;
                 };
               `}
-            >
-              <caption>
-                <SectionTitle>
-                  historial de transacciones
-                </SectionTitle>
-              </caption>
-              <thead>
-                <tr>
-                  <th>referencia</th>
-                  <th>fecha</th>
-                  <th>respuesta</th>
-                  <th>error</th>
-                </tr>
-              </thead>
-              <tbody>
-                { paymentList.map(payment => {
-                  const { pull, push } = payment;
-                  return (
-                    <tr key={payment.referenceCode}>
-                      <td>{payment.referenceCode}</td>
-                      <td>{formatDate(new Date(pull.requestDate))}</td>
-                      <td>{pull.status}</td>
-                      <td>{pull.error === '0' ? '' : pull.error}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-    );
-  }
-
-  if (now >= beforeStart && now <= afterEnd) {
-    return (
-      <div
-        css={`
-          display: flex;
-          justify-content: center;
-        `}
-      >
-        <div>
-          dirígete a
-          <Link to={`${ASSESSMENT}`}>{ASSESSMENT}</Link>
-          para participar.
+          >
+            <caption>
+              <SectionTitle>
+                historial de transacciones
+              </SectionTitle>
+            </caption>
+            <thead>
+              <tr>
+                <th>referencia</th>
+                <th>fecha</th>
+                <th>respuesta</th>
+                <th>mensaje</th>
+              </tr>
+            </thead>
+            <tbody>
+              { paymentList.map(payment => {
+                const { pull, push } = payment;
+                return (
+                  <tr key={payment.referenceCode}>
+                    <td>{payment.referenceCode}</td>
+                    <td>{formatDate(new Date(pull.requestDate))}</td>
+                    <td>{pull.status}</td>
+                    <td>{pull.error === '0' ? '' : pull.error}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
-      </div>
-    );
-  }
-
-  return (
-    <div
-      css={`
-        display: flex;
-        justify-content: center;
-      `}
-    >
-      <div>
-        vas a asistir a este evento.
-      </div>
+      )}
     </div>
   );
 }
