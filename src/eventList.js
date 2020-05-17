@@ -1,7 +1,6 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import styled from 'styled-components';
 import { AccountContext, BackendContext } from './coinosis';
-import { Link, formatDate } from './helpers';
+import { Link, formatDate, SectionTitle } from './helpers';
 import AddEvent from './addEvent';
 
 const privilegedAccounts = [
@@ -147,11 +146,5 @@ const EventSection = ({ title, events }) => {
     </div>
   );
 }
-
-const SectionTitle = styled.div`
-  font-size: 30px;
-  margin-top: 70px;
-  margin-bottom: 15px;
-`
 
 export default EventList;

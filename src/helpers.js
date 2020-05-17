@@ -1,5 +1,6 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
+import styled from 'styled-components';
 import {
   Web3Context,
   AccountContext,
@@ -243,3 +244,9 @@ export const Amount = ({ usd: usdWei, eth: wei, rate: rateWei, ...props }) => {
 export const formatDate = date => (
   date.toLocaleString('es-CO', {dateStyle: 'full', timeStyle: 'long'})
 );
+
+export const SectionTitle = styled.div`
+  font-size: 30px;
+  margin-top: 70px;
+  margin-bottom: 15px;
+`
