@@ -105,7 +105,8 @@ const Event = () => {
       <Switch>
         <Route path={`${match.path}/${ATTENDANCE}`}>
           <Attendance
-            url={url}
+            eventName={name}
+            event={url}
             fee={fee}
             organizer={organizer}
             attendees={attendees}

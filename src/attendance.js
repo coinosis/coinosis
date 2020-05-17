@@ -1,7 +1,14 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { Web3Context, AccountContext } from './coinosis';
+import { Web3Context, AccountContext, BackendContext } from './coinosis';
 import { ASSESSMENT } from './event';
-import { Amount, Link, Loading, usePost } from './helpers';
+import {
+  Amount,
+  formatDate,
+  Link,
+  Loading,
+  SectionTitle,
+  usePost,
+} from './helpers';
 import Account from './account';
 
 // taken from https://stackoverflow.com/a/48161723/2430274
@@ -15,20 +22,48 @@ const sha256 = (message, callback) => {
 }
 
 const Attendance = ({
-  url,
+  eventName,
+  event,
   fee,
   organizer,
   attendees,
   setAttendees,
   beforeStart,
-  afterEnd
+  afterEnd,
 }) => {
 
   const web3 = useContext(Web3Context);
-  const { account, name } = useContext(AccountContext);
+  const { account, name: user } = useContext(AccountContext);
+  const backendURL = useContext(BackendContext);
   const post = usePost();
   const [feeUSDWei, setFeeUSDWei] = useState();
   const [now] = useState(new Date());
+  const [paymentList, setPaymentList] = useState();
+
+  const fetchPayments = useCallback(() => {
+    fetch(`${backendURL}/payu/${event}/${account}`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(response.status);
+        } else {
+          return response.json();
+        }
+      }).then(data => {
+        console.log(data);
+        setPaymentList(data);
+       }).catch(err => {
+        console.error(err);
+       });
+  }, [ backendURL, event, account ]);
+
+  useEffect(() => {
+    if (!backendURL || !event || !account) return;
+    fetchPayments();
+    const paymentsFetcher = setInterval(fetchPayments, 10000);
+    return () => {
+      clearInterval(paymentsFetcher);
+    };
+  }, [ backendURL, event, account ]);
 
   useEffect(() => {
     if (!fee) return;
@@ -54,36 +89,30 @@ const Attendance = ({
 
   const attend = useCallback(() => {
     const url = 'https://sandbox.checkout.payulatam.com/ppp-web-gateway-payu/';
+    const counter = paymentList.length + 1;
     const object = {
       merchantId: 508029,
-      referenceCode: `papi ${Math.random()}`,
-      description: 'inscripción a Introducción a la Blockchain para Artistas para Sandro Suárez',
-      amount: 5,
+      referenceCode: `${event}:${account}:${counter}`,
+      description: eventName,
+      amount: fee,
       tax: 0,
       taxReturnBase: 0,
       accountId: 512321,
       currency: 'USD',
-      buyerFullName: 'Sandro Suárez',
-      buyerEmail: 'e18r@disroot.org',
+      buyerFullName: user,
+      buyerEmail: '',
       algorithmSignature: 'SHA256',
-      confirmationUrl: 'https://coinosis-test.herokuapp.com/payu',
+      confirmationUrl: `https://coinosis-test.herokuapp.com/payu`,
       test: 1,
     };
     const apiKey = '4Vj8eK4rloUd272L48hsrarnUA'; // this is a test apiKey. Real one can't go to source control
-    const payload = `${apiKey}~${object.merchantId}~${object.referenceCode}~${object.amount}~${object.currency}`;
+    const payload = `${apiKey}~${object.merchantId}~${object.referenceCode}`
+    + `~${object.amount}~${object.currency}`;
     sha256(payload, signature => {
       object.signature = signature;
       formSubmit(url, object);
     });
-  }, []);
-
-  const checkOrder = useCallback(() => {
-    // TODO: get backend/payu/:referenceCode/{pull|push}
-  }, []);
-
-  useEffect(() => {
-    checkOrder();
-  }, []);
+  }, [eventName, event, fee, account, user, paymentList]);
 
   if (account === null) {
     return (
@@ -98,9 +127,9 @@ const Attendance = ({
     );
   }
 
-  if (name === undefined) return <Loading/>
+  if (user === undefined) return <Loading/>
 
-  if (name === null) {
+  if (user === null) {
     return <Account/>
   }
 
@@ -148,11 +177,52 @@ const Attendance = ({
           <div>
             <button
               onClick={attend}
+              disabled={paymentList === undefined}
             >
               inscríbete
             </button>
           </div>
         </div>
+        { !!paymentList && !!paymentList.length && (
+          <div>
+            <table
+              css={`
+                border-collapse: collapse;
+                td {
+                  border: 1px solid black;
+                  padding: 10px;
+                };
+              `}
+            >
+              <caption>
+                <SectionTitle>
+                  historial de transacciones
+                </SectionTitle>
+              </caption>
+              <thead>
+                <tr>
+                  <th>referencia</th>
+                  <th>fecha</th>
+                  <th>respuesta</th>
+                  <th>error</th>
+                </tr>
+              </thead>
+              <tbody>
+                { paymentList.map(payment => {
+                  const { pull, push } = payment;
+                  return (
+                    <tr key={payment.referenceCode}>
+                      <td>{payment.referenceCode}</td>
+                      <td>{formatDate(new Date(pull.requestDate))}</td>
+                      <td>{pull.status}</td>
+                      <td>{pull.error === '0' ? '' : pull.error}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     );
   }
