@@ -1,11 +1,14 @@
 {
   "development": {
-    "backend": "http://localhost:3000"
+    "backend": "http://localhost:3000",
+    "etherscanKey": "2RU78DJDPVG9G2VK3AHE8QVTAN65CP9MBI"
   },
   "testing": {
-    "backend": "https://coinosis-test.herokuapp.com"
+    "backend": "https://coinosis-test.herokuapp.com",
+    "etherscanKey": "K33HJVG46X7392MMEVXXYCFERNVK77I13T"
   },
   "production": {
-    "backend": "https://coinosis.herokuapp.com"
+    "backend": "https://coinosis.herokuapp.com",
+    "etherscanKey": "NAVRNVJWI4D72RX8Z5C5FAHZ8BCNC1DCVN"
   }
 }

@@ -6,7 +6,7 @@ const settings = require('../src/settings.json');
 const environment = process.env.ENVIRONMENT || 'development';
 const backend = settings[environment].backend;
 const etherscanAPI = 'https://api.etherscan.io/api';
-const etherscanKey = '2RU78DJDPVG9G2VK3AHE8QVTAN65CP9MBI';
+const etherscanKey = settings[environment].etherscanKey;
 const gasTracker = `${etherscanAPI}?module=gastracker&action=gasoracle`
       + `&apikey=${etherscanKey}`;
 const ETHPrice =
