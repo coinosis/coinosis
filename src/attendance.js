@@ -226,10 +226,10 @@ const Attendance = ({
             </caption>
             <thead>
               <tr>
-                <th>referencia</th>
                 <th>fecha</th>
-                <th>respuesta</th>
-                <th>mensaje</th>
+                <th>monto</th>
+                <th>resultado</th>
+                <th>referencia</th>
               </tr>
             </thead>
             <tbody>
@@ -237,10 +237,10 @@ const Attendance = ({
                 const { pull, push } = payment;
                 return (
                   <tr key={payment.referenceCode}>
-                    <td>{payment.referenceCode}</td>
                     <td>{formatDate(new Date(pull.requestDate))}</td>
+                    <td>{pull.value} {pull.currency}</td>
                     <td>{pull.status}</td>
-                    <td>{pull.error === '0' ? '' : pull.error}</td>
+                    <td>{payment.referenceCode}</td>
                   </tr>
                 );
               })}
