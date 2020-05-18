@@ -1,8 +1,8 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { Web3Context, AccountContext, BackendContext } from './coinosis';
 import { ASSESSMENT } from './event';
+import Amount from './amount';
 import {
-  Amount,
   formatDate,
   Link,
   Loading,

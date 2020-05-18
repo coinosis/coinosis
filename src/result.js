@@ -8,7 +8,8 @@ import React, {
 } from 'react';
 
 import { ContractContext, Web3Context } from './coinosis';
-import { Amount, Loading, ToolTip, Hash, EtherscanLink } from './helpers';
+import Amount from './amount';
+import { Loading, ToolTip, Hash, EtherscanLink } from './helpers';
 
 const Result = ({ url: eventURL }) => {
   return <Assessments eventURL={eventURL} />
