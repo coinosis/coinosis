@@ -5,7 +5,8 @@
     "payU": {
       "gateway": "https://sandbox.checkout.payulatam.com/ppp-web-gateway-payu/",
       "merchantId": 508029,
-      "accountId": 512321
+      "accountId": 512321,
+      "test": 1
     }
   },
   "testing": {
@@ -14,7 +15,8 @@
     "payU": {
       "gateway": "https://sandbox.checkout.payulatam.com/ppp-web-gateway-payu/",
       "merchantId": 508029,
-      "accountId": 512321
+      "accountId": 512321,
+      "test": 1
     }
   },
   "production": {
@@ -23,7 +25,8 @@
     "payU": {
       "gateway": "https://checkout.payulatam.com/ppp-web-gateway-payu",
       "merchantId": 845239,
-      "accountId": 852741
+      "accountId": 852741,
+      "test": 0
     }
   }
 }

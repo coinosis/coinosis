@@ -106,7 +106,7 @@ const Attendance = ({
     const counter = paymentList.length + 1;
     const referenceCode = `${event}:${account}:${counter}`;
     setReferenceCode(referenceCode);
-    const test = environment === 'production' ? 0 : 1;
+    const test = settings[environment].payU.test;
     const object = {
       merchantId: settings[environment].payU.merchantId,
       referenceCode,
