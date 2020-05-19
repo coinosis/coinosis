@@ -10,11 +10,11 @@
   },
   "testing": {
     "backend": "https://coinosis-test.herokuapp.com",
-    "etherscanKey": "NAVRNVJWI4D72RX8Z5C5FAHZ8BCNC1DCVN",
+    "etherscanKey": "K33HJVG46X7392MMEVXXYCFERNVK77I13T",
     "payU": {
-      "gateway": "https://checkout.payulatam.com/ppp-web-gateway-payu",
-      "merchantId": 845239,
-      "accountId": 852741
+      "gateway": "https://sandbox.checkout.payulatam.com/ppp-web-gateway-payu/",
+      "merchantId": 508029,
+      "accountId": 512321
     }
   },
   "production": {
