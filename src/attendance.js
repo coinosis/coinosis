@@ -3,23 +3,15 @@ import { Web3Context, AccountContext, BackendContext } from './coinosis';
 import { ASSESSMENT } from './event';
 import Amount from './amount';
 import {
+  environment,
   formatDate,
   Link,
   Loading,
   SectionTitle,
   usePost,
 } from './helpers';
+import settings from './settings.json';
 import Account from './account';
-
-// taken from https://stackoverflow.com/a/48161723/2430274
-const sha256 = (message, callback) => {
-  const msgBuffer = new TextEncoder('utf-8').encode(message);
-  crypto.subtle.digest('SHA-256', msgBuffer).then(hashBuffer => {
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const hashHex = hashArray.map(b => ('00' + b.toString(16)).slice(-2)).join('');
-    callback(hashHex);
-  });
-}
 
 const Attendance = ({
   eventName,
@@ -110,33 +102,50 @@ const Attendance = ({
   }, [formWindow, setFormWindow]);
 
   const attend = useCallback(() => {
-    const url = 'https://sandbox.checkout.payulatam.com/ppp-web-gateway-payu/';
+    const payUGateway = settings[environment].payU.gateway;
     const counter = paymentList.length + 1;
     const referenceCode = `${event}:${account}:${counter}`;
     setReferenceCode(referenceCode);
+    const test = environment === 'production' ? 0 : 1;
     const object = {
-      merchantId: 508029,
+      merchantId: settings[environment].payU.merchantId,
       referenceCode,
       description: eventName,
       amount: fee,
       tax: 0,
       taxReturnBase: 0,
-      accountId: 512321,
+      accountId: settings[environment].payU.accountId,
       currency: 'USD',
       buyerFullName: user,
       buyerEmail: '',
       algorithmSignature: 'SHA256',
-      confirmationUrl: `https://coinosis-test.herokuapp.com/payu`,
-      test: 1,
+      confirmationUrl: `${backendURL}/payu`,
+      test,
     };
-    const apiKey = '4Vj8eK4rloUd272L48hsrarnUA'; // this is a test apiKey. Real one can't go to source control
-    const payload = `${apiKey}~${object.merchantId}~${object.referenceCode}`
-    + `~${object.amount}~${object.currency}`;
-    sha256(payload, signature => {
-      object.signature = signature;
-      formSubmit(url, object);
+    fetch(
+      `${backendURL}/payu/hash`,
+      {
+        method: 'post',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          merchantId: object.merchantId,
+          referenceCode: object.referenceCode,
+          amount: object.amount,
+          currency: object.currency,
+        }),
+      }
+    ).then(response => {
+      if (!response.ok) {
+        throw new Error(response.status);
+      }
+      return response.json();
+    }).then(hash => {
+      object.signature = hash;
+      formSubmit(payUGateway, object);
+    }).catch(err => {
+      console.error(err);
     });
-  }, [eventName, event, fee, account, user, paymentList]);
+  }, [eventName, event, fee, account, user, paymentList, backendURL]);
 
   if (account === null) {
     return (
