@@ -40,6 +40,8 @@ const Attendance = ({
   const [paymentList, setPaymentList] = useState();
   const [referenceCode, setReferenceCode] = useState();
   const [formWindow, setFormWindow] = useState();
+  const [approved, setApproved] = useState();
+  const [pending, setPending] = useState();
 
   const fetchPayments = useCallback(() => {
     fetch(`${backendURL}/payu/${event}/${account}`)
@@ -50,6 +52,8 @@ const Attendance = ({
           return response.json();
         }
       }).then(data => {
+        setApproved(data.some(d => d.pull.status === 'APPROVED'));
+        setPending(data.some(d => d.pull.status === 'PENDING'));
         setPaymentList(data);
        }).catch(err => {
         console.error(err);
@@ -62,7 +66,7 @@ const Attendance = ({
         const payment = paymentList[i];
         if (
           payment.referenceCode === referenceCode
-            && payment.pull.status.indexOf('PENDING') === -1
+            && payment.pull.status !== 'PENDING'
         ) {
           formWindow.close();
           setFormWindow();
@@ -196,16 +200,64 @@ const Attendance = ({
             </div>
           )}
         </div>
+      ) : paymentList === undefined ? (
+        <Loading/>
       ) : (
-        <div>
-          <div>
+        <div
+          css={`
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+          `}
+        >
+          { !paymentList.length ? (
             <button
               onClick={attend}
-              disabled={paymentList === undefined}
             >
               inscríbete
             </button>
-          </div>
+          ) : approved ? (
+            <div>
+              <SectionTitle>
+                tu pago fue aceptado
+              </SectionTitle>
+              <div>
+                esperando confirmación por parte de PayU...
+              </div>
+            </div>
+          ) : pending ? (
+            <div
+              css={`
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+              `}
+            >
+              <SectionTitle>
+                tu pago está pendiente
+              </SectionTitle>
+              <button onClick={attend}>
+                usa otro medio de pago
+              </button>
+            </div>
+          ) : (
+            <div
+              css={`
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+              `}
+            >
+              <SectionTitle>
+                tu pago fue rechazado
+              </SectionTitle>
+              <button
+                onClick={attend}
+              >
+                intenta de nuevo
+              </button>
+            </div>
+          )}
         </div>
       )}
       { !!paymentList && !!paymentList.length && (
@@ -239,8 +291,26 @@ const Attendance = ({
                   <tr key={payment.referenceCode}>
                     <td>{formatDate(new Date(pull.requestDate))}</td>
                     <td>{pull.value} {pull.currency}</td>
-                    <td>{pull.status}</td>
-                    <td>{payment.referenceCode}</td>
+                    <td>{pull.response}</td>
+                    <td>
+                      { pull.receipt ? (
+                        <a
+                          onClick={() => window.open(
+                            pull.receipt,
+                            'receiptWindow',
+                            'width=1000,height=800'
+                          )}
+                          css={`
+                            text-decoration: underline;
+                            cursor: pointer;
+                          `}
+                        >
+                          {payment.referenceCode}
+                        </a>
+                      ) : (
+                        <div>{payment.referenceCode}</div>
+                      ) }
+                    </td>
                   </tr>
                 );
               })}
