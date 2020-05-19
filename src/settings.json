@@ -9,7 +9,7 @@
     }
   },
   "testing": {
-    "backend": "https://coinosis.herokuapp.com",
+    "backend": "https://coinosis-test.herokuapp.com",
     "etherscanKey": "NAVRNVJWI4D72RX8Z5C5FAHZ8BCNC1DCVN",
     "payU": {
       "gateway": "https://checkout.payulatam.com/ppp-web-gateway-payu",
