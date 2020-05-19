@@ -181,7 +181,7 @@ const Attendance = ({
           `}
       >
         <div>
-          este evento tiene un costo de
+          haz un depósito de
         </div>
         <div
           css={`
@@ -189,6 +189,9 @@ const Attendance = ({
             `}
         >
           <Amount usd={feeUSDWei} />
+        </div>
+        <div>
+          para participar.
         </div>
       </div>
       { attendees.map(a => a.address).includes(account) ? (
@@ -221,13 +224,31 @@ const Attendance = ({
           `}
         >
           { !paymentList.length ? (
-            <button
-              onClick={attend}
+            <div
+              css={`
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+              `}
             >
-              inscríbete
-            </button>
+              <button
+                onClick={attend}
+              >
+                inscríbete
+              </button>
+              <div css="margin: 10px">
+                el dinero depositado se repartirá entre los asistentes por
+                votación.
+              </div>
+            </div>
           ) : approved ? (
-            <div>
+            <div
+              css={`
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+              `}
+            >
               <SectionTitle>
                 tu pago fue aceptado
               </SectionTitle>
