@@ -23,15 +23,21 @@ const Amount = ({ usd: usdWei, eth: wei, rate: rateWei, ...props }) => {
         const etherscanKey = settings[environment].etherscanKey;
         const ETHPrice = `${etherscanAPI}?module=stats&action=ethprice`
               + `&apikey=${etherscanKey}`;
-        const response = await fetch(ETHPrice);
-        if (!response.ok) {
-          throw new Error(response.status);
+        let rate;
+        let response;
+        try {
+          response = await fetch(ETHPrice);
+          if (!response.ok) {
+            throw new Error(response.status);
+          }
+          const data = await response.json();
+          if (data.status != 1) {
+            throw new Error(data);
+          }
+          rate = data.result.ethusd;
+        } catch (err) {
+          rate = '200';
         }
-        const data = await response.json();
-        if (data.status != 1) {
-          throw new Error(data);
-        }
-        const rate = data.result.ethusd;
         rateWei = web3.utils.toWei(rate);
       }
       if (!usdWei) {
