@@ -103,8 +103,9 @@ const Attendance = ({
 
   const attend = useCallback(() => {
     const payUGateway = settings[environment].payU.gateway;
+    const environmentId = settings[environment].id
     const counter = paymentList.length + 1;
-    const referenceCode = `${event}:${account}:${counter}`;
+    const referenceCode = `${event}:${account}:${counter}:${environmentId}`;
     setReferenceCode(referenceCode);
     const test = settings[environment].payU.test;
     const object = {
