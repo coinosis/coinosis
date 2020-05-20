@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { Web3Context, AccountContext, BackendContext } from './coinosis.js';
-import { environment, Loading, EtherscanLink, usePost } from './helpers.js';
+import { environment, Loading, Link, usePost } from './helpers.js';
 
 const Account = () => {
 
@@ -110,13 +110,11 @@ const Account = () => {
   }
 
   return (
-    <EtherscanLink
-      type="address"
-      value={account}
-      toolTipPosition="bottomRight"
+    <Link
+      to={account}
     >
       {name}
-    </EtherscanLink>
+    </Link>
   );
 
 }
