@@ -74,7 +74,7 @@ const Coinosis = () => {
               <HashRouter>
                 <Header/>
                 <Switch>
-                  <Route path="/:eventURL">
+                  <Route path="/:eventURL([a-z1-9-]{1}[a-z0-9-]{0,59})">
                     <Event/>
                   </Route>
                   <Route path="/">

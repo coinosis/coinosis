@@ -62,7 +62,7 @@ const AddEvent = ({ setEvents }) => {
 
   const preSetUrl = useCallback(e => {
     const value = e.target.value;
-    if(/^[a-z0-9-]{1,60}$/.test(value)) {
+    if(/^$|^[a-z1-9-]{1}[a-z0-9-]{0,59}$/.test(value)) {
       setUrl(value);
     }
   }, []);
