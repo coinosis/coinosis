@@ -79,7 +79,7 @@ const Attendance = ({
   }, [ backendURL, event, account ]);
 
   useEffect(() => {
-    if (!fee) return;
+    if (fee === undefined) return;
     const feeUSDWei = web3.utils.toWei(String(fee));
     setFeeUSDWei(feeUSDWei);
   }, [fee]);
@@ -101,7 +101,7 @@ const Attendance = ({
     setFormWindow(formWindow);
   }, [formWindow, setFormWindow]);
 
-  const attend = useCallback(() => {
+  const payU = useCallback(() => {
     const payUGateway = settings[environment].payU.gateway;
     const environmentId = settings[environment].id
     const counter = paymentList.length + 1;
@@ -147,6 +147,24 @@ const Attendance = ({
       console.error(err);
     });
   }, [eventName, event, fee, account, user, paymentList, backendURL]);
+
+  const attendFree = useCallback(() => {
+    const object = { attendee: account, event };
+    post('attend', object, (err, data) => {
+      if (err) {
+        console.error(err);
+      }
+    });
+  }, [event, account]);
+
+  const attend = useCallback(() => {
+    if (fee == 0) {
+      attendFree();
+    }
+    else {
+      payU();
+    }
+  }, [fee]);
 
   if (account === null) {
     return (
