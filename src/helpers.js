@@ -50,7 +50,6 @@ export const ToolTip = ({ value, show, position="top" }) => {
 export const Hash = ({ type, value, toolTipPosition="top" }) => {
 
   const [short, setShort] = useState();
-  const [showFull, setShowFull] = useState(false);
 
   useEffect(() => {
     const length = value.length;
@@ -63,8 +62,6 @@ export const Hash = ({ type, value, toolTipPosition="top" }) => {
       <EtherscanLink
         type={type}
         value={value}
-        onMouseOver={() => setShowFull(true)}
-        onMouseOut={() => setShowFull(false)}
         toolTipPosition={toolTipPosition}
       >
         {short}
