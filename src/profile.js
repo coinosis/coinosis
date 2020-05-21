@@ -15,7 +15,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { faEthereum, faTelegram } from '@fortawesome/free-brands-svg-icons';
 import { AccountContext } from './coinosis';
-import { Hash, Loading, SectionTitle, usePost } from './helpers';
+import { Hash, Link, Loading, SectionTitle, usePost } from './helpers';
 import { isEmail, isTelegram } from './common';
 import Account from './account';
 
@@ -116,7 +116,9 @@ const Profile = () => {
         css={`
           width: 40%;
         `}
-      />
+      >
+        <Link to="/" css="width: 60px">← atrás</Link>
+      </div>
       <div
         css={`
           display: flex;
