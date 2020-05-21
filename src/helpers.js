@@ -31,7 +31,7 @@ export const ToolTip = ({ value, show, position="top" }) => {
           display: ${show ? 'block' : 'none'};
           position: absolute;
           ${ position !== 'top' ? 'top: 25px;' : 'bottom: 7px'};
-          ${ position === 'bottomRight' ? 'right: 0' 
+          ${ position === 'bottomRight' ? 'right: 0'
              : position === 'bottomLeft' ? 'left: 0' : '' };
           background: black;
           color: #f0f0f0;
@@ -52,6 +52,7 @@ export const Hash = ({ type, value, toolTipPosition="top" }) => {
   const [short, setShort] = useState();
 
   useEffect(() => {
+    if (!value) return;
     const length = value.length;
     const short = value.substring(0, 6) + '...' + value.substring(length - 4);
     setShort(short);
@@ -143,14 +144,14 @@ export const usePost = () => {
   const backendURL = useContext(BackendContext);
   const web3 = useContext(Web3Context);
 
-  return useCallback((endpoint, object, callback) => {
+  return useCallback((endpoint, object, callback, method='POST') => {
     const payload = JSON.stringify(object);
     const hex = web3.utils.utf8ToHex(payload);
     web3.eth.personal.sign(hex, account).then(signature => {
       object.signature = signature;
       const body = JSON.stringify(object);
       fetch(`${backendURL}/${endpoint}`, {
-        method: 'POST',
+        method,
         headers: { 'Content-Type': 'application/json' },
         body,
       }).then(response => {

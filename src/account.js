@@ -6,7 +6,14 @@ const Account = () => {
 
   const web3 = useContext(Web3Context);
   const backendURL = useContext(BackendContext);
-  const { account, setAccount, name, setName } = useContext(AccountContext);
+  const {
+    account,
+    setAccount,
+    name,
+    setName,
+    email,
+    setEmail,
+  } = useContext(AccountContext);
   const [unsavedName, setUnsavedName] = useState('');
   const [message, setMessage] = useState('');
   const post = usePost();
@@ -42,8 +49,14 @@ const Account = () => {
         }
       }).then(data => {
         setName(data.name);
+        if (data.email) {
+          setEmail(data.email);
+        } else {
+          setEmail(null);
+        }
       }).catch(err => {
         setName(null);
+        setEmail(null);
       });
   }, [account, backendURL]);
 
@@ -111,7 +124,7 @@ const Account = () => {
 
   return (
     <Link
-      to={account}
+      to={`/${account}`}
     >
       {name}
     </Link>

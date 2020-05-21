@@ -26,6 +26,7 @@ const Coinosis = () => {
   const [contract, setContract] = useState();
   const [account, setAccount] = useState();
   const [name, setName] = useState();
+  const [email, setEmail] = useState();
   const [backendURL, setBackendURL] = useState();
   const [currencyType, setCurrencyType] = useState(ETH);
 
@@ -68,7 +69,14 @@ const Coinosis = () => {
   return (
     <Web3Context.Provider value={web3}>
       <ContractContext.Provider value={contract}>
-        <AccountContext.Provider value={{ account, setAccount, name, setName }}>
+        <AccountContext.Provider value={{
+          account,
+          setAccount,
+          name,
+          setName,
+          email,
+          setEmail,
+        }}>
           <BackendContext.Provider value={backendURL}>
             <CurrencyContext.Provider value={[currencyType, setCurrencyType]}>
               <GlobalStyle/>
