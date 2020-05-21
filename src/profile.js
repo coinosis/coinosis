@@ -171,6 +171,8 @@ const EmailForm = ({ email: current, onSubmit, onCancel }) => {
   const keyPressed = useCallback(({ key }) => {
     if (key === 'Enter' && valid) {
       onSubmit(email);
+    } else if (key === 'Escape') {
+      onCancel();
     }
   }, [ valid, email ]);
 
@@ -191,7 +193,7 @@ const EmailForm = ({ email: current, onSubmit, onCancel }) => {
         ref={field}
         value={email}
         onChange={setEmailRaw}
-        onKeyPress={keyPressed}
+        onKeyUp={keyPressed}
         placeholder={ `${firstName}@ejemplo.com` }
         css="margin-right: 10px"
       />
