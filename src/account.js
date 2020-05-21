@@ -11,8 +11,8 @@ const Account = () => {
     setAccount,
     name,
     setName,
-    email,
-    setEmail,
+    data,
+    setData,
   } = useContext(AccountContext);
   const [unsavedName, setUnsavedName] = useState('');
   const [message, setMessage] = useState('');
@@ -26,7 +26,7 @@ const Account = () => {
       } else if (accounts[0] !== account) {
         setAccount(accounts[0]);
       }
-    });    
+    });
   }, [web3, account]);
 
   useEffect(() => {
@@ -49,14 +49,10 @@ const Account = () => {
         }
       }).then(data => {
         setName(data.name);
-        if (data.email) {
-          setEmail(data.email);
-        } else {
-          setEmail(null);
-        }
+        setData(data);
       }).catch(err => {
         setName(null);
-        setEmail(null);
+        setData(null);
       });
   }, [account, backendURL]);
 
@@ -73,6 +69,7 @@ const Account = () => {
         return;
       }
       setName(data.name);
+      setData(data);
     });
   }, [account, unsavedName]);
 

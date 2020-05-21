@@ -26,7 +26,7 @@ const Coinosis = () => {
   const [contract, setContract] = useState();
   const [account, setAccount] = useState();
   const [name, setName] = useState();
-  const [email, setEmail] = useState();
+  const [data, setData] = useState();
   const [backendURL, setBackendURL] = useState();
   const [currencyType, setCurrencyType] = useState(ETH);
 
@@ -74,8 +74,8 @@ const Coinosis = () => {
           setAccount,
           name,
           setName,
-          email,
-          setEmail,
+          data,
+          setData,
         }}>
           <BackendContext.Provider value={backendURL}>
             <CurrencyContext.Provider value={[currencyType, setCurrencyType]}>

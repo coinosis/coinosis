@@ -5,6 +5,7 @@ import React, {
   useEffect,
   useState,
 } from 'react';
+import styled from 'styled-components';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import {
   faAt,
@@ -12,23 +13,45 @@ import {
   faEdit,
   faTimesCircle,
 } from '@fortawesome/free-solid-svg-icons';
+import { faEthereum, faTelegram } from '@fortawesome/free-brands-svg-icons';
 import { AccountContext } from './coinosis';
 import { Hash, Loading, SectionTitle, usePost } from './helpers';
-import { isEmail } from './common';
+import { isEmail, isTelegram } from './common';
 import Account from './account';
 
 const Profile = () => {
 
   const post = usePost();
-  const { name, account, email: savedEmail } = useContext(AccountContext);
+  const { name, account, data, setData } = useContext(AccountContext);
   const [email, setEmail] = useState();
   const [editingEmail, setEditingEmail] = useState();
+  const [telegram, setTelegram] = useState();
+  const [editingTelegram, setEditingTelegram] = useState();
 
   useEffect(() => {
-    if (savedEmail === undefined) return;
-    setEmail(savedEmail);
-    setEditingEmail(savedEmail === null);
-  }, [savedEmail]);
+    if (data === undefined) return;
+    if (data === null) {
+      setEmail(null);
+      setEditingEmail(true);
+      setTelegram(null);
+      setEditingTelegram(true);
+      return;
+    }
+    if ('email' in data) {
+      setEmail(data.email);
+      setEditingEmail(false);
+    } else {
+      setEmail(null);
+      setEditingEmail(true);
+    }
+    if ('telegram' in data) {
+      setTelegram(data.telegram);
+      setEditingTelegram(false);
+    } else {
+      setTelegram(null);
+      setEditingTelegram(true);
+    }
+  }, [ data ]);
 
   const registerEmail = useCallback(newEmail => {
     if (email === newEmail) {
@@ -45,10 +68,35 @@ const Profile = () => {
         }
         setEditingEmail(false);
         setEmail(data.email);
+        setData(data);
       },
       'PUT'
     );
   }, [ account, email ]);
+
+  const registerTelegram = useCallback(newTelegram => {
+    if (!newTelegram.startsWith('@')) {
+      newTelegram = `@${newTelegram}`;
+    }
+    if (telegram === newTelegram) {
+      setEditingTelegram(false);
+      return;
+    }
+    post(
+      `user/${account}`,
+      { telegram: newTelegram },
+      (err, data) => {
+        if (err) {
+          console.error(err);
+          return;
+        }
+        setEditingTelegram(false);
+        setTelegram(data.telegram);
+        setData(data);
+      },
+      'PUT'
+    );
+  }, [ account, telegram ]);
 
   if (name === undefined || account === undefined) return <Loading/>
 
@@ -62,43 +110,110 @@ const Profile = () => {
     <div
       css={`
         display: flex;
-        flex-direction: column;
-        align-items: center;
       `}
     >
-      <SectionTitle>
-        {name}
-      </SectionTitle>
+      <div
+        css={`
+          width: 40%;
+        `}
+      />
       <div
         css={`
           display: flex;
-          margin-bottom: 20px;
+          flex-direction: column;
+          align-items: flex-start;
+          width: 50%;
         `}
       >
-        <Hash
-          type="address"
-          value={account}
-          toolTipPosition="top"
-        />
+        <SectionTitle>
+          {name}
+        </SectionTitle>
+        <div
+          css={`
+            display: flex;
+            margin-bottom: 10px;
+          `}
+        >
+          <IconBox>
+            <Icon
+              icon={faEthereum}
+            />
+          </IconBox>
+          <Hash
+            type="address"
+            value={account}
+            toolTipPosition="top"
+          />
+        </div>
+        <div
+          css={`
+            display: flex;
+            flex-direction: column-reverse;
+          `}
+        >
+          <Field
+            icon={faTelegram}
+            value={telegram}
+            register={registerTelegram}
+            editing={editingTelegram}
+            setEditing={setEditingTelegram}
+            placeholder={firstName => `@${firstName}`}
+            validator={isTelegram}
+            tabIndex="2"
+          />
+          <Field
+            icon={faAt}
+            value={email}
+            register={registerEmail}
+            editing={editingEmail}
+            setEditing={setEditingEmail}
+            placeholder={firstName => `${firstName}@ejemplo.com`}
+            validator={isEmail}
+            tabIndex="1"
+          />
+        </div>
       </div>
-      <div
-        css={`
-          display: flex;
-          align-items: center;
-        `}
-      >
+    </div>
+  );
+}
 
-        { editingEmail ? (
-          <EmailForm
-            email={email}
-            onSubmit={registerEmail}
-            onCancel={() => { setEditingEmail(false); }}
+const Field = ({
+  icon,
+  value,
+  register,
+  editing,
+  setEditing,
+  placeholder,
+  validator,
+  tabIndex,
+}) => {
+  return (
+    <div
+      css={`
+        display: flex;
+      `}
+    >
+      <IconBox>
+        <Icon
+          icon={icon}
+        />
+      </IconBox>
+      <div>
+        { editing ? (
+          <Form
+            icon={icon}
+            current={value}
+            onSubmit={register}
+            onCancel={() => { setEditing(false); }}
+            placeholder={placeholder}
+            validator={validator}
+            tabIndex={tabIndex}
           />
         ) : (
           <EditableField
-            onEdit={() => { setEditingEmail(true); }}
+            onEdit={() => { setEditing(true); }}
           >
-            {email}
+            {value}
           </EditableField>
         )}
       </div>
@@ -112,6 +227,7 @@ const EditableField = ({ children, onEdit }) => {
       css={`
         display: flex;
         align-items: center;
+        margin-bottom: 10px;
       `}
     >
       <div>
@@ -130,18 +246,26 @@ const EditableField = ({ children, onEdit }) => {
   );
 }
 
-const EmailForm = ({ email: current, onSubmit, onCancel }) => {
+const Form = ({
+  icon,
+  current,
+  onSubmit,
+  onCancel,
+  placeholder,
+  validator,
+  tabIndex,
+}) => {
 
   const field = createRef();
-  const { account, name } = useContext(AccountContext);
-  const [email, setEmail] = useState('');
+  const { name } = useContext(AccountContext);
+  const [value, setValue] = useState('');
   const [valid, setValid] = useState(false);
   const [firstName, setFirstName] = useState();
   const [edited, setEdited] = useState(false);
 
   useEffect(() => {
     if (current) {
-      setEmail(current);
+      setValue(current);
       setValid(true);
     }
   }, [ current ]);
@@ -162,44 +286,40 @@ const EmailForm = ({ email: current, onSubmit, onCancel }) => {
     }
   }, [ field, edited ]);
 
-  const setEmailRaw = useCallback(({ target: { value } }) => {
+  const setValueRaw = useCallback(({ target: { value } }) => {
     setEdited(true);
-    setEmail(value);
-    setValid(isEmail(value));
-  }, []);
+    setValue(value);
+    setValid(validator(value));
+  }, [ validator ]);
 
   const keyPressed = useCallback(({ key }) => {
     if (key === 'Enter' && valid) {
-      onSubmit(email);
-    } else if (key === 'Escape') {
+      onSubmit(value);
+    } else if (key === 'Escape' && current) {
       onCancel();
     }
-  }, [ valid, email ]);
+  }, [ valid, value ]);
 
   return (
     <div
       css={`
         display: flex;
         align-items: center;
+        margin-bottom: 10px;
       `}
     >
-      <Icon
-        icon={faAt}
-        css={`
-          margin-right: 10px;
-        `}
-      />
       <input
         ref={field}
-        value={email}
-        onChange={setEmailRaw}
+        value={value}
+        onChange={setValueRaw}
         onKeyUp={keyPressed}
-        placeholder={ `${firstName}@ejemplo.com` }
+        placeholder={ placeholder(firstName) }
         css="margin-right: 10px"
+        tabIndex={tabIndex}
       />
       <Icon
         icon={faCheckCircle}
-        onClick={() => { onSubmit(email) }}
+        onClick={() => { onSubmit(value) }}
         css={`
           cursor: ${valid ? 'pointer' : 'initial'};
           pointer-events: ${valid ? 'initial' : 'none'};
@@ -219,5 +339,13 @@ const EmailForm = ({ email: current, onSubmit, onCancel }) => {
     </div>
   );
 }
+
+const IconBox = styled.div`
+  width: 30px;
+  height: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`
 
 export default Profile;
