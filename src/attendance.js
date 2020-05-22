@@ -104,7 +104,7 @@ const Attendance = ({
   const payU = useCallback(() => {
     const payUGateway = settings[environment].payU.gateway;
     const environmentId = settings[environment].id
-    const counter = paymentList.length + 1;
+    const counter = paymentList ? paymentList.length + 1 : 1; // HOTFIX
     const referenceCode = `${event}:${account}:${counter}:${environmentId}`;
     setReferenceCode(referenceCode);
     const test = settings[environment].payU.test;
