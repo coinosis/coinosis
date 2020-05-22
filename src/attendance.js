@@ -104,7 +104,7 @@ const Attendance = ({
   const payU = useCallback(() => {
     const payUGateway = settings[environment].payU.gateway;
     const environmentId = settings[environment].id
-    const counter = paymentList ? paymentList.length + 1 : 1; // HOTFIX
+    const counter = paymentList.length + 1;
     const referenceCode = `${event}:${account}:${counter}:${environmentId}`;
     setReferenceCode(referenceCode);
     const test = settings[environment].payU.test;
@@ -157,14 +157,14 @@ const Attendance = ({
     });
   }, [event, account]);
 
-  const attend = useCallback(() => {
+  const attend = () => {
     if (fee == 0) {
       attendFree();
     }
     else {
       payU();
     }
-  }, [fee]);
+  }
 
   if (account === null) {
     return (
