@@ -36,7 +36,6 @@ const Attendance = ({
   const [pending, setPending] = useState();
 
   const fetchPayments = useCallback(() => {
-    console.log(backendURL, event, account);
     fetch(`${backendURL}/payu/${event}/${account}`)
       .then(response => {
         if (!response.ok) {
