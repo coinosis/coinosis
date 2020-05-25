@@ -337,6 +337,19 @@ const Attendance = ({
                 esperando confirmación por parte de PayU...
               </div>
             </div>
+          ) : ethState ? (
+            <div
+              css={`
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+              `}
+            >
+              <SectionTitle>
+                { ethState }
+              </SectionTitle>
+              { ethMessage }
+            </div>
           ) : pending ? (
             <div
               css={`
@@ -351,19 +364,11 @@ const Attendance = ({
               <button onClick={attend}>
                 usa otro medio de pago
               </button>
-            </div>
-          ) : ethState ? (
-            <div
-              css={`
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-              `}
-            >
-              <SectionTitle>
-                { ethState }
-              </SectionTitle>
-              { ethMessage }
+              <button
+                onClick={sendEther}
+              >
+                envía ether
+              </button>
             </div>
           ) : (
             <div
