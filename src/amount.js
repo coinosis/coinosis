@@ -1,12 +1,19 @@
 import "regenerator-runtime/runtime";
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { Web3Context, CurrencyContext, ETH, USD } from './coinosis';
+import {
+  Web3Context,
+  BackendContext,
+  CurrencyContext,
+  ETH,
+  USD,
+} from './coinosis';
 import settings from './settings.json';
 import { environment, ToolTip } from './helpers.js';
 
 const Amount = ({ usd: usdWei, eth: wei, rate: rateWei, ...props }) => {
 
   const web3 = useContext(Web3Context);
+  const backendURL = useContext(BackendContext);
   const [currencyType, setCurrencyType] = useContext(CurrencyContext);
 
   const [usd, setUSD] = useState();
@@ -19,22 +26,15 @@ const Amount = ({ usd: usdWei, eth: wei, rate: rateWei, ...props }) => {
     const setValues = async () => {
       if (!usdWei && !wei) return;
       if (!rateWei) {
-        const etherscanAPI = 'https://api.etherscan.io/api';
-        const etherscanKey = settings[environment].etherscanKey;
-        const ETHPrice = `${etherscanAPI}?module=stats&action=ethprice`
-              + `&apikey=${etherscanKey}`;
         let rate;
         let response;
         try {
-          response = await fetch(ETHPrice);
+          response = await fetch(`${backendURL}/eth/price`);
           if (!response.ok) {
             throw new Error(response.status);
           }
           const data = await response.json();
-          if (data.status != 1) {
-            throw new Error(data);
-          }
-          rate = data.result.ethusd;
+          rate = data;
         } catch (err) {
           rate = '200';
         }

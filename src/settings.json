@@ -2,7 +2,6 @@
   "development": {
     "id": "development",
     "backend": "http://localhost:3000",
-    "etherscanKey": "2RU78DJDPVG9G2VK3AHE8QVTAN65CP9MBI",
     "payU": {
       "gateway": "https://sandbox.checkout.payulatam.com/ppp-web-gateway-payu/",
       "merchantId": 508029,
@@ -13,7 +12,6 @@
   "testing": {
     "id": "testing",
     "backend": "https://coinosis-test.herokuapp.com",
-    "etherscanKey": "K33HJVG46X7392MMEVXXYCFERNVK77I13T",
     "payU": {
       "gateway": "https://sandbox.checkout.payulatam.com/ppp-web-gateway-payu/",
       "merchantId": 508029,
@@ -24,7 +22,6 @@
   "production": {
     "id": "",
     "backend": "https://coinosis.herokuapp.com",
-    "etherscanKey": "NAVRNVJWI4D72RX8Z5C5FAHZ8BCNC1DCVN",
     "payU": {
       "gateway": "https://checkout.payulatam.com/ppp-web-gateway-payu",
       "merchantId": 845239,
