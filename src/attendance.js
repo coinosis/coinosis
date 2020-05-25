@@ -386,6 +386,11 @@ const Attendance = ({
               >
                 intenta de nuevo
               </button>
+              <button
+                onClick={sendEther}
+              >
+                envía ether
+              </button>
             </div>
           )}
         </div>
