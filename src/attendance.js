@@ -40,6 +40,8 @@ const Attendance = ({
   const [formWindow, setFormWindow] = useState();
   const [approved, setApproved] = useState();
   const [pending, setPending] = useState();
+  const [ethState, setEthState] = useState();
+  const [ethMessage, setEthMessage] = useState();
 
   const fetchPayments = useCallback(() => {
     fetch(`${backendURL}/payu/${event}/${account}`)
@@ -89,6 +91,10 @@ const Attendance = ({
     const feeUSDWei = web3.utils.toWei(String(fee));
     setFeeUSDWei(feeUSDWei);
   }, [fee]);
+
+  useEffect(() => {
+    setEthState();
+  }, [ account ]);
 
   const formSubmit = useCallback((url, object) => {
     const form = document.createElement('form');
@@ -201,6 +207,12 @@ const Attendance = ({
       to: contract._address,
       value: valueWei,
       gasPrice: gasPriceWei,
+    }).on('transactionHash', hash => {
+      setEthState('transacción creada');
+      setEthMessage('esperando a que sea incluida en la blockchain...');
+    }).on('receipt', hash => {
+      setEthState('transacción aceptada');
+      setEthMessage('registrando tu pago...');
     });
   }, [ web3, contract, account, getEthPrice, getGasPrice, fee ]);
 
@@ -279,7 +291,7 @@ const Attendance = ({
             align-items: center;
           `}
         >
-          { !paymentList.length ? (
+          { !paymentList.length && !ethState ? (
             <div
               css={`
                 display: flex;
@@ -339,6 +351,19 @@ const Attendance = ({
               <button onClick={attend}>
                 usa otro medio de pago
               </button>
+            </div>
+          ) : ethState ? (
+            <div
+              css={`
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+              `}
+            >
+              <SectionTitle>
+                { ethState }
+              </SectionTitle>
+              { ethMessage }
             </div>
           ) : (
             <div
