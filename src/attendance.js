@@ -1,5 +1,10 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { Web3Context, AccountContext, BackendContext } from './coinosis';
+import {
+  Web3Context,
+  AccountContext,
+  BackendContext,
+  ContractContext
+} from './coinosis';
 import { ASSESSMENT } from './event';
 import Amount from './amount';
 import {
@@ -26,6 +31,7 @@ const Attendance = ({
   const web3 = useContext(Web3Context);
   const { account, name: user } = useContext(AccountContext);
   const backendURL = useContext(BackendContext);
+  const contract = useContext(ContractContext);
   const post = usePost();
   const [feeUSDWei, setFeeUSDWei] = useState();
   const [now] = useState(new Date());
@@ -166,6 +172,38 @@ const Attendance = ({
     }
   }
 
+  const getEthPrice = useCallback(async () => {
+    const response = await fetch(`${backendURL}/eth/price`);
+    if (!response.ok) return null;
+    const ethPrice = await response.json();
+    return ethPrice;
+  });
+
+  const getGasPrice = useCallback(async () => {
+    const response = await fetch(`${backendURL}/eth/gas`);
+    if (!response.ok) return null;
+    const { safe, propose } = await response.json();
+    const index = 0.3 * safe + 0.7 * propose;
+    const rounded = String(index.toFixed(3));
+    return rounded;
+  });
+
+  const sendEther = useCallback(async () => {
+    const ethPrice = await getEthPrice();
+    if (ethPrice === null) return;
+    const gasPrice = await getGasPrice();
+    if (gasPrice === null) return;
+    const value = String(fee / ethPrice);
+    const valueWei = web3.utils.toWei(value);
+    const gasPriceWei = web3.utils.toWei(gasPrice, 'gwei');
+    web3.eth.sendTransaction({
+      from: account,
+      to: contract._address,
+      value: valueWei,
+      gasPrice: gasPriceWei,
+    });
+  }, [ web3, contract, account, getEthPrice, getGasPrice, fee ]);
+
   if (account === null) {
     return (
       <div
@@ -249,11 +287,24 @@ const Attendance = ({
                 align-items: center;
               `}
             >
-              <button
-                onClick={attend}
+              <div
+                css={`
+                  display: flex;
+                  width: 50%;
+                  justify-content: space-around;
+                `}
               >
-                inscríbete
-              </button>
+                <button
+                  onClick={sendEther}
+                >
+                  envía ether
+                </button>
+                <button
+                  onClick={attend}
+                >
+                  paga con PayU
+                </button>
+              </div>
               <div css="margin: 10px">
                 el dinero depositado se repartirá entre los asistentes por
                 votación.
