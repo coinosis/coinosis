@@ -894,12 +894,12 @@
     "1337": {
       "events": {},
       "links": {},
-      "address": "0xBf0735c153d696aB85F52c1E377afEcA1260a188",
-      "transactionHash": "0x185a7b7fd629f34b4e7c9a16b9a2f098dadb49d218110ab994ab055c5b487db1"
+      "address": "0x259809616b676B4f8c97661B57a40f6a7A58e629",
+      "transactionHash": "0xe7819c988f94baec62df4ece351ae25b686815b6d51b78c063e6fab3fce37066"
     }
   },
   "schemaVersion": "3.1.0",
-  "updatedAt": "2020-05-29T17:30:28.349Z",
+  "updatedAt": "2020-05-29T17:49:30.824Z",
   "networkType": "ethereum",
   "devdoc": {
     "methods": {}

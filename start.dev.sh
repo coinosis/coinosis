@@ -1,5 +1,5 @@
 #! /bin/bash
 
-ganache-cli -i 1337 &
+ganache-cli --networkId 1337 --seed coinosis &
 truffle migrate
 webpack-dev-server
