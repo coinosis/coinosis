@@ -45,6 +45,8 @@ truffle exec scripts/decommission.js --network development
 
 ```
 
+Note: the ENVIRONMENT env var determines the owl instance where the data is going to be extracted from. If you set it to development, such as in this example, you have to be running owl locally.
+
 ## Contract Deployment
 
 ### Deploy the contract to a testnet or to mainnet
