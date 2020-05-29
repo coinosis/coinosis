@@ -1,0 +1,14 @@
+{
+  "development": {
+    "id": "development",
+    "backend": "http://localhost:3000"
+  },
+  "testing": {
+    "id": "testing",
+    "backend": "https://testing-owl.herokuapp.com"
+  },
+  "production": {
+    "id": "",
+    "backend": "https://coinosis.herokuapp.com"
+  }
+}

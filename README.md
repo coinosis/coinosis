@@ -1,30 +1,27 @@
-## Prerequisites
+## Using the contract for front-end development
 
-Install and run [owl](https://github.com/coinosis/owl), the centralized back-end of coinosis.
+```bash
 
-## Development: clone & install the repo
+git clone https://github.com/coinosis/coinosis.git -b master
+cd coinosis
+npm install
+npm start
+
+```
+
+## Contract Development
+
+### Clone & install the repo
 
 ```bash
 
 git clone https://github.com/coinosis/coinosis.git -b dev
 cd coinosis
-npm i
+npm install
 
 ```
 
-### Front-end development: deploy the contract on a local blockchain and run the front-end
-
-```bash
-
-npm run start:dev
-
-```
-
-Point your browser to `http://localhost:9000`, point Metamask to `localhost:8545` and start developing with hot module replacement.
-
-### Contract development
-
-#### Create and run the tests, and deploy the contract to the local blockchain
+### Run the tests and deploy the contract to the local blockchain
 
 ```bash
 
@@ -36,23 +33,26 @@ truffle migrate
 
 You might need to specify the `--reset` flag to `truffle migrate`.
 
-#### Customize and execute the different scripts that call contract functions
+### Customize and execute the different scripts that call contract functions
 
 ```bash
 
 ganache-cli
 truffle migrate
-truffle exec scripts/fundContract.js
-truffle exec scripts/assess.js
+truffle exec scripts/fundContract.js --network development
+ENVIRONMENT=development truffle exec scripts/assess.js event-name dollar-amount --network development
+truffle exec scripts/decommission.js --network development
 
 ```
 
-#### Deploy the contract to a testnet or to mainnet
+## Contract Deployment
+
+### Deploy the contract to a testnet or to mainnet
 
 1. create a new Ethereum account
 2. fund that account on the desired network
 3. store its 12-word mnemonic in `.secret`
-4. run `truffle migrate --reset --network ropsten`
+4. run `truffle migrate --reset --network ropsten # or the network of your choosing`
 
 ### Flatten the contract in order to verify it on Etherscan
 
@@ -64,21 +64,15 @@ truffle exec scripts/assess.js
 
 1. Commit & push to the `dev` branch
 2. Create a pull request targeting the `test` branch
-3. Once accepted, check everything is working in [the test deployment](https://coinosis-front.herokuapp.com)
-4. Create a pull request targeting the `master` branch
-5. Once accepted the code will be running live in [the production deployment](https://coinosis.github.io)
 
-## Production
+## Execute the scripts in a non-development context
 
-### Build the front-end for production
+```bash
 
-1. Make sure you're in the `master` branch and it is synced with GitHub
-2. Run `webpack -p`
-3. Copy the contents of the `dist/` folder to your webserver
+ENVIRONMENT=testing truffle exec scripts/assess.js --network ropsten
+truffle exec scripts/decommission.js --network ropsten
 
-### Execute the assess() function in a non-development context
-
-`ENVIRONMENT=testing truffle exec scripts/assess.js --network ropsten`
+```
 
 * set the ENVIRONMENT environment variable to `production` if you want to get data from that database
 * set the --network flag to `mainnet` if you want to execute the contract on that network

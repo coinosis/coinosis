@@ -1,7 +1,7 @@
 const fetch = require('node-fetch');
 const web3 = require('web3');
 const Coinosis = artifacts.require('Coinosis');
-const settings = require('../src/settings.json');
+const settings = require('../settings.json');
 
 const environment = process.env.ENVIRONMENT || 'development';
 const backend = settings[environment].backend;
