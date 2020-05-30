@@ -4,7 +4,7 @@ import "@openzeppelin/contracts/math/SafeMath.sol";
 
 contract Event {
 
-    using SafeMath for uint16;
+    using SafeMath for uint256;
 
     string constant private version = "2.0.0";
     string constant private WRONG_FEE = "wrong-fee";
@@ -16,28 +16,28 @@ contract Event {
     uint64 public fee;
     address payable[] public attendees;
     mapping(address => uint8) public states;
-    mapping(address => uint16) public claps;
+    mapping(address => uint256) public claps;
 
     constructor (string memory _id, uint64 _fee) public {
         id = _id;
         fee = _fee;
     }
 
-    function register() external payable {
+    function register() public payable {
         require(msg.value == fee, WRONG_FEE);
         require(states[msg.sender] == 0, ALREADY_REGISTERED);
         states[msg.sender] = 1;
         attendees.push(msg.sender);
     }
 
-    function clap(address[] calldata _attendees, uint16[] calldata _claps)
-        external {
+    function clap(address[] memory _attendees, uint256[] memory _claps)
+        public {
         require(states[msg.sender] == 1, UNAUTHORIZED);
         require(_attendees.length == _claps.length, WRONG_CLAPS);
         states[msg.sender] = 2;
-        for (uint16 i = 0; i < _attendees.length; i = uint16(i.add(1))) {
+        for (uint256 i = 0; i < _attendees.length; i = i.add(1)) {
             if (_attendees[i] == msg.sender) continue;
-            claps[_attendees[i]] = uint16(claps[_attendees[i]].add(_claps[i])); // does this uint16 conversion defeat the purpose of SafeMath?
+            claps[_attendees[i]] = claps[_attendees[i]].add(_claps[i]);
         }
     }
 }
