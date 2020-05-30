@@ -5,7 +5,7 @@
 git clone https://github.com/coinosis/coinosis.git -b master
 cd coinosis
 npm install
-npm start
+npm start:local
 
 ```
 
@@ -25,7 +25,7 @@ npm install
 
 ```bash
 
-ganache-cli
+ganache-cli -i 1337 -s coinosis
 truffle test
 truffle migrate
 
