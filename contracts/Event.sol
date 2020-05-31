@@ -7,16 +7,20 @@ contract Event {
     using SafeMath for uint256;
 
     string constant private version = "2.0.0";
+    uint8 constant public CLAPS_PER_ATTENDEE = 3;
+
     uint8 constant private ATTENDEE_UNREGISTERED = 0;
     uint8 constant private ATTENDEE_REGISTERED = 1;
     uint8 constant private ATTENDEE_CLAPPED = 2;
-    uint256 constant public CLAPS_PER_ATTENDEE = 3;
+    uint8 constant private ATTENDEE_REWARDED = 3;
+
     string constant private WRONG_FEE = "wrong-fee";
     string constant private ALREADY_REGISTERED = "already-registered";
     string constant private UNAUTHORIZED = "unauthorized";
     string constant private DIFFERENT_LENGTHS = "different-lengths";
     string constant private TOO_MANY_ATTENDEES = "too-many-attendees";
     string constant private TOO_MANY_CLAPS = "too-many-claps";
+    string constant private NO_CLAPS = "no-claps";
 
     string public id;
     uint64 public fee;
@@ -24,6 +28,10 @@ contract Event {
     mapping(address => uint8) public states;
     mapping(address => uint256) public claps;
     uint256 public allowedClaps;
+    uint256 public totalClaps;
+
+    event Distribution (uint256 totalReward);
+    event Transfer (address indexed attendee, uint256 reward);
 
     constructor (string memory _id, uint64 _fee) public {
         id = _id;
@@ -31,7 +39,7 @@ contract Event {
         allowedClaps = 0;
     }
 
-    function register() public payable {
+    function register () public payable {
         require(msg.value == fee, WRONG_FEE);
         require(
             states[msg.sender] == ATTENDEE_UNREGISTERED,
@@ -43,18 +51,37 @@ contract Event {
         allowedClaps = allowedClaps.add(CLAPS_PER_ATTENDEE);
     }
 
-    function clap(address[] memory _attendees, uint256[] memory _claps)
+    function clap (address[] memory _attendees, uint256[] memory _claps)
         public {
         require(states[msg.sender] == ATTENDEE_REGISTERED, UNAUTHORIZED);
         require(_attendees.length == _claps.length, DIFFERENT_LENGTHS);
         states[msg.sender] = ATTENDEE_CLAPPED;
-        uint256 totalClaps = 0;
+        uint256 givenClaps = 0;
         for (uint256 i = 0; i < _attendees.length; i = i.add(1)) {
-            totalClaps = totalClaps.add(_claps[i]);
+            givenClaps = givenClaps.add(_claps[i]);
             if (_attendees[i] == msg.sender) continue;
             if (states[_attendees[i]] == ATTENDEE_UNREGISTERED) continue;
             claps[_attendees[i]] = claps[_attendees[i]].add(_claps[i]);
         }
-        require(totalClaps <= allowedClaps, TOO_MANY_CLAPS);
+        require(givenClaps <= allowedClaps, TOO_MANY_CLAPS);
+        totalClaps = totalClaps.add(givenClaps);
+    }
+
+    function distribute () external {
+        require(totalClaps > 0, NO_CLAPS);
+        uint256 totalReward = address(this).balance;
+        emit Distribution(totalReward);
+        for (uint256 i = 0; i < attendees.length; i = i.add(1)) {
+            if (states[attendees[i]] == ATTENDEE_REWARDED) continue;
+            if (claps[attendees[i]] == 0) continue;
+            uint256 reward = claps[attendees[i]]
+                .mul(totalReward)
+                .div(totalClaps);
+            states[attendees[i]] = ATTENDEE_REWARDED;
+            (bool success, ) = attendees[i].call.value(reward)("");
+            if (success) {
+                emit Transfer(attendees[i], reward);
+            }
+        }
     }
 }
