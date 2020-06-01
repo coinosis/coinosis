@@ -39,6 +39,10 @@ contract Event {
         allowedClaps = 0;
     }
 
+    function getAttendees () external view returns (address payable[] memory) {
+        return attendees;
+    }
+
     function register () public payable {
         require(msg.value == fee, WRONG_FEE);
         require(

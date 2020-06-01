@@ -33,6 +33,19 @@ contract('Event', accounts => {
 
   });
 
+  describe('getting the attendees', () => {
+
+    it('succeeds', async () => {
+      const instance = await Event.new(id, fee);
+      await instance.register({from: accounts[0], value: fee});
+      await instance.register({from: accounts[1], value: fee});
+      await instance.register({from: accounts[2], value: fee});
+      const attendees = await instance.getAttendees();
+      assert.equal(3, attendees.length);
+    });
+
+  });
+
   describe('registering', () => {
 
     it('succeeds', async () => {
