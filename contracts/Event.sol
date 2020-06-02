@@ -36,7 +36,6 @@ contract Event {
     constructor (string memory _id, uint64 _fee) public {
         id = _id;
         fee = _fee;
-        allowedClaps = 0;
     }
 
     function getAttendees () external view returns (address payable[] memory) {
