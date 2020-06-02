@@ -1,5 +1,6 @@
 module.exports = async callback => {
-  const recipient = '0xe1fF19182deb2058016Ae0627c1E4660A895196a';
+  const recipient = (process.argv.length > 4 && process.argv[4])
+        || '0xe1fF19182deb2058016Ae0627c1E4660A895196a';
   const accounts = await web3.eth.getAccounts();
   const txObject = {
     from: accounts[0],
