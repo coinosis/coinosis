@@ -21,9 +21,12 @@ contract Event {
     string constant private TOO_MANY_ATTENDEES = "too-many-attendees";
     string constant private TOO_MANY_CLAPS = "too-many-claps";
     string constant private NO_CLAPS = "no-claps";
+    string constant private EVENT_FINISHED = "event-finished";
+    string constant private EVENT_NOT_FINISHED = "event-not-finished";
 
     string public id;
     uint64 public fee;
+    uint32 public end;
     address payable[] public attendees;
     mapping(address => uint8) public states;
     mapping(address => uint256) public claps;
@@ -33,9 +36,11 @@ contract Event {
     event Distribution (uint256 totalReward);
     event Transfer (address indexed attendee, uint256 reward);
 
-    constructor (string memory _id, uint64 _fee) public {
+    constructor (string memory _id, uint64 _fee, uint32 _end) public {
+        require(block.timestamp < _end, EVENT_FINISHED);
         id = _id;
         fee = _fee;
+        end = _end;
     }
 
     function getAttendees () external view returns (address payable[] memory) {
@@ -49,6 +54,7 @@ contract Event {
             ALREADY_REGISTERED
         );
         require(attendees.length < 100, TOO_MANY_ATTENDEES);
+        require(block.timestamp < end, EVENT_FINISHED);
         states[msg.sender] = ATTENDEE_REGISTERED;
         attendees.push(msg.sender);
         allowedClaps = allowedClaps.add(CLAPS_PER_ATTENDEE);
@@ -71,6 +77,7 @@ contract Event {
     }
 
     function distribute () external {
+        require(block.timestamp >= end, EVENT_NOT_FINISHED);
         require(totalClaps > 0, NO_CLAPS);
         uint256 totalReward = address(this).balance;
         emit Distribution(totalReward);
