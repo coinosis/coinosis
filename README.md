@@ -5,7 +5,8 @@
 git clone https://github.com/coinosis/coinosis.git -b master
 cd coinosis
 npm install
-npm start:local
+npm run start:local
+truffle exec scripts/fundAccount.js <your metamask account>
 
 ```
 
