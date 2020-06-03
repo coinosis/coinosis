@@ -8,13 +8,17 @@ module.exports = async callback => {
     '0x43Db4728D5607F710DfC062b3c7dD8eE942eF858',
     '0x9d4Aef8EC71E181932c67148e7459084034cA1F5',
     '0x4c28293e79CfBD8C36A84FA23DEb7Bb2515C09c3',
+    '0x613e7398e4a14903d340a8BcB629E3EFdb2aF8b0',
+    '0x42635E76953a938095AaD51B126c3332808F2FA1',
+    '0x8Cfd0dE4eac46AbF1211D2077EEE59fc3FbE1BD8',
+    '0xDcdAE484F8B68894103e68fA4c6F90b2a0E71E6c',
   ];
   const accounts = await web3.eth.getAccounts();
   for (const i in recipients) {
     const txObject = {
       from: accounts[0],
       to: recipients[i],
-      value: web3.utils.toWei('10'),
+      value: web3.utils.toWei('1'),
       gasPrice: web3.utils.toWei('100', 'gwei'),
     }
     const result = await web3.eth.sendTransaction(txObject);
