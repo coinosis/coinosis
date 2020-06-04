@@ -133,6 +133,12 @@ contract('Event', accounts => {
       assert.equal(6, claps2.toNumber());
       const totalClaps = await instance.totalClaps();
       assert.equal(19, totalClaps.toNumber());
+      const state0 = await instance.states(accounts[0]);
+      assert.equal(2, state0.toNumber());
+      const state1 = await instance.states(accounts[1]);
+      assert.equal(2, state1.toNumber());
+      const state2 = await instance.states(accounts[2]);
+      assert.equal(2, state2.toNumber());
     });
 
     it('fails due to not having registered', async () => {
@@ -267,6 +273,12 @@ contract('Event', accounts => {
           && expectedRewardETH == actualRewardETH;
       });
       assert.equal(3, transferCount);
+      const state0 = await instance.states(accounts[0]);
+      assert.equal(3, state0.toNumber());
+      const state1 = await instance.states(accounts[0]);
+      assert.equal(3, state1.toNumber());
+      const state2 = await instance.states(accounts[0]);
+      assert.equal(3, state2.toNumber());
 
     });
 
