@@ -6,7 +6,7 @@ contract Event {
 
     using SafeMath for uint256;
 
-    string constant private version = "2.0.0";
+    string constant public version = "2.0.0";
     uint8 constant public CLAPS_PER_ATTENDEE = 3;
 
     uint8 constant private ATTENDEE_UNREGISTERED = 0;
