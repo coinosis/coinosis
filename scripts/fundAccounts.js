@@ -23,7 +23,8 @@ module.exports = async callback => {
     }
     const result = await web3.eth.sendTransaction(txObject);
     const balance = await web3.eth.getBalance(recipients[i]);
-    console.log(web3.utils.fromWei(balance), 'ETH');
+    const balanceETH = web3.utils.fromWei(balance);
+    console.log(`${recipients[i]}: ${balanceETH} ETH`);
   }
   callback();
 }
