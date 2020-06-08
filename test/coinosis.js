@@ -1,7 +1,7 @@
 const Coinosis = artifacts.require('Coinosis');
 const truffleAssert = require('truffle-assertions');
 
-contract('Coinosis', async accounts => {
+contract.skip('Coinosis', async accounts => {
 
   const getBalances = async accounts => {
     const balances = [];

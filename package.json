@@ -1,7 +1,6 @@
 {
   "name": "coinosis",
   "private": true,
-  "version": "1.3.1",
   "description": "coinosis is a knowledge-sharing dapp",
   "author": "@e18r",
   "license": "GPL-3.0-or-later",

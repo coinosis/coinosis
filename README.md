@@ -9,10 +9,12 @@ npm run start:local
 truffle exec scripts/fundAccount.js <your metamask account>
 
 ```
+Reset your browser's metamask account (settings > advanced > reset account).
+If you need support for events created with older contracts (<2.0.0), run `truffle migrate`.
 
 ## Contract Development
 
-### Clone & install the repo
+### Clone & install
 
 ```bash
 
@@ -22,60 +24,31 @@ npm install
 
 ```
 
-### Run the tests and deploy the contract to the local blockchain
+### Run the local blockchain and the tests
 
 ```bash
 
 ganache-cli -i 1337 -s coinosis
 truffle test
-truffle migrate
 
 ```
 
-You might need to specify the `--reset` flag to `truffle migrate`.
+`Coinosis.sol` is a deprecated contract retained for backwards-compatibility reasons. It used to be a global contract deployed as part of the app inner workings. If you want to deploy that contract, use `truffle migrate`.
 
-### Customize and execute the different scripts that call contract functions
-
-```bash
-
-ganache-cli
-truffle migrate
-truffle exec scripts/fundContract.js --network development
-ENVIRONMENT=development truffle exec scripts/assess.js event-name dollar-amount --network development
-truffle exec scripts/decommission.js --network development
-
-```
-
-Note: the ENVIRONMENT env var determines the owl instance where the data is going to be extracted from. If you set it to development, such as in this example, you have to be running owl locally.
+The `Event.sol` contract is the current (v2.0.0 onwards) contract. It is deployed every time a user creates a new event and holds the funds for that event only. If you want to deploy it and interact with it, you can do it with `truffle console`. See the tests for examples of how to do this.
 
 ## Contract Deployment
 
-### Deploy the contract to a testnet or to mainnet
+1. Run `truffle compile`
+2. Copy the generated file `build/contracts/Event.json` to the root directory of [cow](https://github.com/coinosis/cow), the front-end for coinosis. You can use `scripts/migrate.sh` for that.
 
-1. create a new Ethereum account
-2. fund that account on the desired network
-3. store its 12-word mnemonic in `.secret`
-4. run `truffle migrate --reset --network ropsten # or the network of your choosing`
+### Verify the contract on Etherscan
 
-### Flatten the contract in order to verify it on Etherscan
-
-1. Make sure you're in the `master` branch and it is synced with GitHub
-2. `truffle-flattener contracts/Coinosis.sol > build/contracts/Coinosis.sol`
-3. Copy the contents of `build/contracts/Coinosis.sol` into the Etherscan source verifier
+1. Run `truffle-flattener contracts/Event.sol > build/flattened/Event.sol`
+2. Copy the contents of `build/flattened/Event.sol` into the Etherscan source verifier
+3. Copy the ABI hex encoded initialization parameters into Etherscan
 
 ## Submit your changes
 
 1. Commit & push to the `dev` branch
 2. Create a pull request targeting the `test` branch
-
-## Execute the scripts in a non-development context
-
-```bash
-
-ENVIRONMENT=testing truffle exec scripts/assess.js --network ropsten
-truffle exec scripts/decommission.js --network ropsten
-
-```
-
-* set the ENVIRONMENT environment variable to `production` if you want to get data from that database
-* set the --network flag to `mainnet` if you want to execute the contract on that network
