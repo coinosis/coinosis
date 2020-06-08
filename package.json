@@ -5,7 +5,7 @@
   "author": "@e18r",
   "license": "GPL-3.0-or-later",
   "scripts": {
-    "start:local": "./start.local.sh"
+    "start:dev": "./start.dev.sh"
   },
   "devDependencies": {
     "ganache-cli": "^6.9.1",

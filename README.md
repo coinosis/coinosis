@@ -16,7 +16,7 @@ create a `.secret` file at the root of your repo with the 12-word mnemonic of yo
 
 ```bash
 
-npm run start:local
+npm run start:dev
 
 ```
 
