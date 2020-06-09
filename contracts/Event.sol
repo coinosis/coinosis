@@ -63,7 +63,7 @@ contract Event {
         require(_attendees.length == _claps.length, DIFFERENT_LENGTHS);
         states[msg.sender] = ATTENDEE_CLAPPED;
         uint256 givenClaps;
-        for (uint256 i = 0; i < _attendees.length; i = i.add(1)) {
+        for (uint256 i; i < _attendees.length; i = i.add(1)) {
             givenClaps = givenClaps.add(_claps[i]);
             if (_attendees[i] == msg.sender) continue;
             if (states[_attendees[i]] == ATTENDEE_UNREGISTERED) continue;
@@ -81,7 +81,7 @@ contract Event {
         require(totalClaps > 0, NO_CLAPS);
         uint256 totalReward = address(this).balance;
         emit Distribution(totalReward);
-        for (uint256 i = 0; i < attendees.length; i = i.add(1)) {
+        for (uint256 i; i < attendees.length; i = i.add(1)) {
             if (states[attendees[i]] == ATTENDEE_REWARDED) continue;
             if (claps[attendees[i]] == 0) continue;
             uint256 reward = claps[attendees[i]]
