@@ -167,8 +167,9 @@ contract Event {
 
     using SafeMath for uint256;
 
-    string constant public version = "2.0.0";
-    uint8 constant public CLAPS_PER_ATTENDEE = 3;
+    bytes5 constant public version = "2.0.0";
+    uint8 constant private CLAPS_PER_ATTENDEE = 3;
+    uint8 constant private MAX_ATTENDEES = 100;
 
     uint8 constant private ATTENDEE_UNREGISTERED = 0;
     uint8 constant private ATTENDEE_REGISTERED = 1;
@@ -185,21 +186,18 @@ contract Event {
     string constant private EVENT_FINISHED = "event-finished";
     string constant private EVENT_NOT_FINISHED = "event-not-finished";
 
-    string public id;
     uint64 public fee;
     uint32 public end;
     address payable[] public attendees;
     mapping(address => uint8) public states;
     mapping(address => uint256) public claps;
-    uint256 public allowedClaps;
     uint256 public totalClaps;
 
     event Distribution (uint256 totalReward);
     event Transfer (address indexed attendee, uint256 reward);
 
-    constructor (string memory _id, uint64 _fee, uint32 _end) public {
+    constructor (uint64 _fee, uint32 _end) public {
         require(block.timestamp < _end, EVENT_FINISHED);
-        id = _id;
         fee = _fee;
         end = _end;
     }
@@ -214,11 +212,10 @@ contract Event {
             states[msg.sender] == ATTENDEE_UNREGISTERED,
             ALREADY_REGISTERED
         );
-        require(attendees.length < 100, TOO_MANY_ATTENDEES);
+        require(attendees.length < MAX_ATTENDEES, TOO_MANY_ATTENDEES);
         require(block.timestamp < end, EVENT_FINISHED);
         states[msg.sender] = ATTENDEE_REGISTERED;
         attendees.push(msg.sender);
-        allowedClaps = allowedClaps.add(CLAPS_PER_ATTENDEE);
     }
 
     function clap (address[] memory _attendees, uint256[] memory _claps)
@@ -226,14 +223,17 @@ contract Event {
         require(states[msg.sender] == ATTENDEE_REGISTERED, UNAUTHORIZED);
         require(_attendees.length == _claps.length, DIFFERENT_LENGTHS);
         states[msg.sender] = ATTENDEE_CLAPPED;
-        uint256 givenClaps = 0;
+        uint256 givenClaps;
         for (uint256 i = 0; i < _attendees.length; i = i.add(1)) {
             givenClaps = givenClaps.add(_claps[i]);
             if (_attendees[i] == msg.sender) continue;
             if (states[_attendees[i]] == ATTENDEE_UNREGISTERED) continue;
             claps[_attendees[i]] = claps[_attendees[i]].add(_claps[i]);
         }
-        require(givenClaps <= allowedClaps, TOO_MANY_CLAPS);
+        require(
+            givenClaps <= attendees.length * CLAPS_PER_ATTENDEE,
+            TOO_MANY_CLAPS
+        );
         totalClaps = totalClaps.add(givenClaps);
     }
 
