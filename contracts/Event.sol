@@ -63,7 +63,7 @@ contract Event {
         require(_attendees.length == _claps.length, DIFFERENT_LENGTHS);
         states[msg.sender] = ATTENDEE_CLAPPED;
         uint256 givenClaps;
-        for (uint256 i; i < _attendees.length; i = i.add(1)) {
+        for (uint8 i; i < _attendees.length; i += 1) {
             givenClaps = givenClaps.add(_claps[i]);
             if (_attendees[i] == msg.sender) continue;
             if (states[_attendees[i]] == ATTENDEE_UNREGISTERED) continue;
