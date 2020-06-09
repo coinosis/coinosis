@@ -6,8 +6,9 @@ contract Event {
 
     using SafeMath for uint256;
 
-    string constant public version = "2.0.0";
-    uint8 constant public CLAPS_PER_ATTENDEE = 3;
+    bytes5 constant public version = "2.0.0";
+    uint8 constant private CLAPS_PER_ATTENDEE = 3;
+    uint8 constant private MAX_ATTENDEES = 100;
 
     uint8 constant private ATTENDEE_UNREGISTERED = 0;
     uint8 constant private ATTENDEE_REGISTERED = 1;
@@ -29,7 +30,6 @@ contract Event {
     address payable[] public attendees;
     mapping(address => uint8) public states;
     mapping(address => uint256) public claps;
-    uint256 public allowedClaps;
     uint256 public totalClaps;
 
     event Distribution (uint256 totalReward);
@@ -51,11 +51,10 @@ contract Event {
             states[msg.sender] == ATTENDEE_UNREGISTERED,
             ALREADY_REGISTERED
         );
-        require(attendees.length < 100, TOO_MANY_ATTENDEES);
+        require(attendees.length < MAX_ATTENDEES, TOO_MANY_ATTENDEES);
         require(block.timestamp < end, EVENT_FINISHED);
         states[msg.sender] = ATTENDEE_REGISTERED;
         attendees.push(msg.sender);
-        allowedClaps = allowedClaps.add(CLAPS_PER_ATTENDEE);
     }
 
     function clap (address[] memory _attendees, uint256[] memory _claps)
@@ -63,14 +62,17 @@ contract Event {
         require(states[msg.sender] == ATTENDEE_REGISTERED, UNAUTHORIZED);
         require(_attendees.length == _claps.length, DIFFERENT_LENGTHS);
         states[msg.sender] = ATTENDEE_CLAPPED;
-        uint256 givenClaps = 0;
+        uint256 givenClaps;
         for (uint256 i = 0; i < _attendees.length; i = i.add(1)) {
             givenClaps = givenClaps.add(_claps[i]);
             if (_attendees[i] == msg.sender) continue;
             if (states[_attendees[i]] == ATTENDEE_UNREGISTERED) continue;
             claps[_attendees[i]] = claps[_attendees[i]].add(_claps[i]);
         }
-        require(givenClaps <= allowedClaps, TOO_MANY_CLAPS);
+        require(
+            givenClaps <= attendees.length * CLAPS_PER_ATTENDEE,
+            TOO_MANY_CLAPS
+        );
         totalClaps = totalClaps.add(givenClaps);
     }
 
