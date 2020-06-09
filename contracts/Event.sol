@@ -24,7 +24,6 @@ contract Event {
     string constant private EVENT_FINISHED = "event-finished";
     string constant private EVENT_NOT_FINISHED = "event-not-finished";
 
-    string public id;
     uint64 public fee;
     uint32 public end;
     address payable[] public attendees;
@@ -36,9 +35,8 @@ contract Event {
     event Distribution (uint256 totalReward);
     event Transfer (address indexed attendee, uint256 reward);
 
-    constructor (string memory _id, uint64 _fee, uint32 _end) public {
+    constructor (uint64 _fee, uint32 _end) public {
         require(block.timestamp < _end, EVENT_FINISHED);
-        id = _id;
         fee = _fee;
         end = _end;
     }

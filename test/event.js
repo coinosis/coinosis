@@ -3,7 +3,6 @@ const truffleAssert = require('truffle-assertions');
 
 contract('Event', accounts => {
 
-  const id = 'comunicaciones-seguras';
   const fee = web3.utils.toWei('0.02');
   const endDate = new Date();
   endDate.setFullYear(endDate.getFullYear() + 1);
@@ -12,25 +11,24 @@ contract('Event', accounts => {
   describe('deployment', () => {
 
     it('succeeds', async () => {
-      const instance = await Event.new(id, fee, end);
+      const instance = await Event.new(fee, end);
       assert.ok(instance.address);
-      assert.equal(id, await instance.id());
       assert.equal(fee, await instance.fee());
     });
 
     it('fails due to wrong number of arguments', async () => {
       await truffleAssert.fails(
-        Event.new(id),
+        Event.new(fee),
         '',
-        'Invalid number of parameters for "undefined". Got 1 expected 3!'
+        'Invalid number of parameters for "undefined". Got 1 expected 2!'
       );
     });
 
     it('fails due to wrong argument types', async () => {
       await truffleAssert.fails(
-        Event.new(34, fee, end),
+        Event.new("hey", end),
         '',
-        'invalid string value (arg="_id", coderType="string", value=34)'
+        'invalid number value (arg="_fee", coderType="uint64", value="hey")'
       );
     });
 
@@ -39,7 +37,7 @@ contract('Event', accounts => {
       endDate.setFullYear(endDate.getFullYear() - 1);
       const end = Math.floor(endDate.getTime() / 1000);
       await truffleAssert.reverts(
-        Event.new(id, fee, end),
+        Event.new(fee, end),
         'event-finished'
       );
     });
@@ -49,7 +47,7 @@ contract('Event', accounts => {
   describe('getting the attendees', () => {
 
     it('succeeds', async () => {
-      const instance = await Event.new(id, fee, end);
+      const instance = await Event.new(fee, end);
       await instance.register({from: accounts[0], value: fee});
       await instance.register({from: accounts[1], value: fee});
       await instance.register({from: accounts[2], value: fee});
@@ -62,7 +60,7 @@ contract('Event', accounts => {
   describe('registering', () => {
 
     it('succeeds', async () => {
-      const instance = await Event.new(id, fee, end);
+      const instance = await Event.new(fee, end);
       await instance.register({from: accounts[0], value: fee});
       await instance.register({from: accounts[1], value: fee});
       await instance.register({from: accounts[2], value: fee});
@@ -73,7 +71,7 @@ contract('Event', accounts => {
 
     it('fails due to wrong fee', async () => {
       const wrongFee = web3.utils.toWei('0.01');
-      const instance = await Event.new(id, fee, end);
+      const instance = await Event.new(fee, end);
       await truffleAssert.reverts(
         instance.register({from: accounts[0], value: wrongFee}),
         'wrong-fee'
@@ -81,7 +79,7 @@ contract('Event', accounts => {
     });
 
     it('fails due to being already registered', async () => {
-      const instance = await Event.new(id, fee, end);
+      const instance = await Event.new(fee, end);
       instance.register({from: accounts[0], value: fee})
       await truffleAssert.reverts(
         instance.register({from: accounts[0], value: fee}),
@@ -93,7 +91,7 @@ contract('Event', accounts => {
       const endDate = new Date();
       let end = Math.floor(endDate.getTime() / 1000);
       end += 2;
-      const instance = await Event.new(id, fee, end);
+      const instance = await Event.new(fee, end);
       await new Promise(resolve => setTimeout(resolve, 2001));
       await truffleAssert.reverts(
         instance.register({from: accounts[0], value: fee}),
@@ -106,7 +104,7 @@ contract('Event', accounts => {
   describe('clapping', () => {
 
     it('succeeds', async () => {
-      const instance = await Event.new(id, fee, end);
+      const instance = await Event.new(fee, end);
       await instance.register({from: accounts[0], value: fee});
       await instance.register({from: accounts[1], value: fee});
       await instance.register({from: accounts[2], value: fee});
@@ -142,7 +140,7 @@ contract('Event', accounts => {
     });
 
     it('fails due to not having registered', async () => {
-      const instance = await Event.new(id, fee, end);
+      const instance = await Event.new(fee, end);
       await truffleAssert.reverts(
         instance.clap([accounts[1]], [3], {from: accounts[0]}),
         'unauthorized'
@@ -150,7 +148,7 @@ contract('Event', accounts => {
     });
 
     it('fails due to having already clapped', async () => {
-      const instance = await Event.new(id, fee, end);
+      const instance = await Event.new(fee, end);
       await instance.register({from: accounts[0], value: fee});
       await instance.register({from: accounts[1], value: fee});
       await instance.clap([accounts[1]], [3], {from: accounts[0]});
@@ -161,7 +159,7 @@ contract('Event', accounts => {
     });
 
     it('fails due to different lengths', async () => {
-      const instance = await Event.new(id, fee, end);
+      const instance = await Event.new(fee, end);
       await instance.register({from: accounts[0], value: fee});
       await instance.register({from: accounts[1], value: fee});
       await truffleAssert.reverts(
@@ -171,7 +169,7 @@ contract('Event', accounts => {
     });
 
     it('silently disallows clapping for oneself', async () => {
-      const instance = await Event.new(id, fee, end);
+      const instance = await Event.new(fee, end);
       await instance.register({from: accounts[0], value: fee});
       await instance.clap([accounts[0]], [3], {from: accounts[0]});
       const claps = await instance.claps(accounts[0]);
@@ -179,7 +177,7 @@ contract('Event', accounts => {
     });
 
     it('silently disallows clapping for unregistered attendees', async () => {
-      const instance = await Event.new(id, fee, end);
+      const instance = await Event.new(fee, end);
       await instance.register({from: accounts[0], value: fee});
       await instance.clap([accounts[1]], [3], {from: accounts[0]});
       const claps = await instance.claps(accounts[1]);
@@ -187,7 +185,7 @@ contract('Event', accounts => {
     });
 
     it('fails due to too many claps', async () => {
-      const instance = await Event.new(id, fee, end);
+      const instance = await Event.new(fee, end);
       await instance.register({from: accounts[0], value: fee});
       await instance.register({from: accounts[1], value: fee});
       await instance.register({from: accounts[2], value: fee});
@@ -198,7 +196,7 @@ contract('Event', accounts => {
     });
 
     it('fails due to negative claps underflow', async () => {
-      const instance = await Event.new(id, fee, end);
+      const instance = await Event.new(fee, end);
       await instance.register({from: accounts[0], value: fee});
       await instance.register({from: accounts[1], value: fee});
       await truffleAssert.reverts(
@@ -210,7 +208,7 @@ contract('Event', accounts => {
     // use `ganache-cli -a 100` to stress test it
     it('many attendees clapping at the same time', async () => {
       const fee = 1;
-      const instance = await Event.new(id, fee, end);
+      const instance = await Event.new(fee, end);
       for (let i = 0; i < accounts.length; i++) {
         await instance.register({from: accounts[i], value: fee});
       }
@@ -231,7 +229,7 @@ contract('Event', accounts => {
       const endDate = new Date();
       let end = Math.floor(endDate.getTime() / 1000);
       end += 2;
-      const instance = await Event.new(id, fee, end);
+      const instance = await Event.new(fee, end);
       await instance.register({from: accounts[0], value: fee});
       await instance.register({from: accounts[1], value: fee});
       await instance.register({from: accounts[2], value: fee});
@@ -286,7 +284,7 @@ contract('Event', accounts => {
       const endDate = new Date();
       let end = Math.floor(endDate.getTime() / 1000);
       end += 2;
-      const instance = await Event.new(id, fee, end);
+      const instance = await Event.new(fee, end);
       await instance.register({from: accounts[0], value: fee});
       await instance.register({from: accounts[1], value: fee});
       await instance.register({from: accounts[2], value: fee});
@@ -335,7 +333,7 @@ contract('Event', accounts => {
       const endDate = new Date();
       let end = Math.floor(endDate.getTime() / 1000);
       end += 2;
-      const instance = await Event.new(id, fee, end);
+      const instance = await Event.new(fee, end);
       await instance.register({from: accounts[0], value: fee});
       await instance.register({from: accounts[1], value: fee});
       await instance.register({from: accounts[2], value: fee});
@@ -365,7 +363,7 @@ contract('Event', accounts => {
       const endDate = new Date();
       let end = Math.floor(endDate.getTime() / 1000);
       end += 2;
-      const instance = await Event.new(id, fee, end);
+      const instance = await Event.new(fee, end);
       await instance.register({from: accounts[0], value: fee});
       await instance.register({from: accounts[1], value: fee});
       await instance.register({from: accounts[2], value: fee});
@@ -396,7 +394,7 @@ contract('Event', accounts => {
       const endDate = new Date();
       let end = Math.floor(endDate.getTime() / 1000);
       end += 2;
-      const instance = await Event.new(id, fee, end);
+      const instance = await Event.new(fee, end);
       await instance.register({from: accounts[0], value: fee});
       await instance.register({from: accounts[1], value: fee});
       await instance.register({from: accounts[2], value: fee});
@@ -425,7 +423,7 @@ contract('Event', accounts => {
     it(
       'fails due to attempting to distribute before the event finished',
       async () => {
-        const instance = await Event.new(id, fee, end);
+        const instance = await Event.new(fee, end);
         await instance.register({from: accounts[0], value: fee});
         await instance.register({from: accounts[1], value: fee});
         await instance.register({from: accounts[2], value: fee});
