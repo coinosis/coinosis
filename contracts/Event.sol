@@ -35,29 +35,41 @@ contract Event {
         return attendees;
     }
 
-    function register () public payable {
-        require(msg.value == fee);
-        require(states[msg.sender] == ATTENDEE_UNREGISTERED);
+    function register (address payable _attendee, uint256 _fee) internal {
+        require(_fee == fee);
+        require(states[_attendee] == ATTENDEE_UNREGISTERED);
         require(attendees.length < MAX_ATTENDEES);
         require(block.timestamp < end);
-        states[msg.sender] = ATTENDEE_REGISTERED;
-        attendees.push(msg.sender);
+        states[_attendee] = ATTENDEE_REGISTERED;
+        attendees.push(_attendee);
     }
 
-    function clap (address[] memory _attendees, uint256[] memory _claps)
-        public {
-        require(states[msg.sender] == ATTENDEE_REGISTERED);
+    function register () public payable {
+        register(msg.sender, msg.value);
+    }
+
+    function clap (
+        address _clapper,
+        address[] memory _attendees,
+        uint256[] memory _claps
+    ) internal {
+        require(states[_clapper] == ATTENDEE_REGISTERED);
         require(_attendees.length == _claps.length);
-        states[msg.sender] = ATTENDEE_CLAPPED;
+        states[_clapper] = ATTENDEE_CLAPPED;
         uint256 givenClaps;
         for (uint256 i; i < _attendees.length; i = i.add(1)) {
             givenClaps = givenClaps.add(_claps[i]);
-            if (_attendees[i] == msg.sender) continue;
+            if (_attendees[i] == _clapper) continue;
             if (states[_attendees[i]] == ATTENDEE_UNREGISTERED) continue;
             claps[_attendees[i]] = claps[_attendees[i]].add(_claps[i]);
         }
         require(givenClaps <= attendees.length.mul(CLAPS_PER_ATTENDEE));
         totalClaps = totalClaps.add(givenClaps);
+    }
+
+    function clap (address[] memory _attendees, uint256[] memory _claps)
+        public {
+        clap(msg.sender, _attendees, _claps);
     }
 
     function distribute () external {
