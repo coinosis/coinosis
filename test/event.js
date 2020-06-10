@@ -64,7 +64,6 @@ contract('Event', accounts => {
       await instance.register({from: accounts[1], value: fee});
       await instance.register({from: accounts[2], value: fee});
       assert.equal(1, await instance.states(accounts[0]));
-      assert.equal(accounts[0], await instance.attendees(0));
       assert.equal(3, (await instance.getAttendees()).length);
     });
 

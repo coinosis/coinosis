@@ -17,7 +17,7 @@ contract Event {
 
     uint64 public fee;
     uint32 public end;
-    address payable[] public attendees;
+    address payable[] private attendees;
     mapping(address => uint8) public states;
     mapping(address => uint256) public claps;
     uint256 public totalClaps;
