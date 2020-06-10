@@ -1,4 +1,7 @@
 #! /bin/bash
 
-cp build/contracts/Event.json ../cow/
+cp build/contracts/Event.json ../cow/contracts/
 cp build/contracts/Event.json ../owl/contracts/
+
+cp build/contracts/ProxyEvent.json ../cow/contracts/
+cp build/contracts/ProxyEvent.json ../owl/contracts/
