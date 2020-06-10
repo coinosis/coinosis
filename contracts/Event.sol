@@ -44,7 +44,7 @@ contract Event {
         attendees.push(_attendee);
     }
 
-    function register () public payable {
+    function register () external payable {
         register(msg.sender, msg.value);
     }
 
@@ -67,8 +67,8 @@ contract Event {
         totalClaps = totalClaps.add(givenClaps);
     }
 
-    function clap (address[] memory _attendees, uint256[] memory _claps)
-        public {
+    function clap (address[] calldata _attendees, uint256[] calldata _claps)
+        external {
         clap(msg.sender, _attendees, _claps);
     }
 

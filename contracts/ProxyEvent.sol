@@ -9,16 +9,16 @@ contract ProxyEvent is Event {
 
     constructor(uint64 _fee, uint32 _end) Event(_fee, _end) public {}
 
-    function registerFor (address payable _attendee) public payable {
+    function registerFor (address payable _attendee) external payable {
         register(_attendee, msg.value);
         proxy[_attendee] = msg.sender;
     }
 
     function clapFor (
         address _clapper,
-        address[] memory _attendees,
-        uint256[] memory _claps
-    ) public {
+        address[] calldata _attendees,
+        uint256[] calldata _claps
+    ) external {
         require(proxy[_clapper] == msg.sender);
         clap(_clapper, _attendees, _claps);
     }
