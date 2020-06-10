@@ -37,10 +37,7 @@ contract('Event', accounts => {
       const endDate = new Date();
       endDate.setFullYear(endDate.getFullYear() - 1);
       const end = Math.floor(endDate.getTime() / 1000);
-      await truffleAssert.reverts(
-        Event.new(fee, end),
-        'event-finished'
-      );
+      await truffleAssert.reverts(Event.new(fee, end));
     });
 
   });
@@ -74,8 +71,7 @@ contract('Event', accounts => {
       const wrongFee = web3.utils.toWei('0.01');
       const instance = await Event.new(fee, end);
       await truffleAssert.reverts(
-        instance.register({from: accounts[0], value: wrongFee}),
-        'wrong-fee'
+        instance.register({from: accounts[0], value: wrongFee})
       );
     });
 
@@ -83,8 +79,7 @@ contract('Event', accounts => {
       const instance = await Event.new(fee, end);
       instance.register({from: accounts[0], value: fee})
       await truffleAssert.reverts(
-        instance.register({from: accounts[0], value: fee}),
-        'already-registered'
+        instance.register({from: accounts[0], value: fee})
       );
     });
 
@@ -95,8 +90,7 @@ contract('Event', accounts => {
       const instance = await Event.new(fee, end);
       await new Promise(resolve => setTimeout(resolve, 2001));
       await truffleAssert.reverts(
-        instance.register({from: accounts[0], value: fee}),
-        'event-finished'
+        instance.register({from: accounts[0], value: fee})
       );
     });
 
@@ -143,8 +137,7 @@ contract('Event', accounts => {
     it('fails due to not having registered', async () => {
       const instance = await Event.new(fee, end);
       await truffleAssert.reverts(
-        instance.clap([accounts[1]], [3], {from: accounts[0]}),
-        'unauthorized'
+        instance.clap([accounts[1]], [3], {from: accounts[0]})
       );
     });
 
@@ -154,8 +147,7 @@ contract('Event', accounts => {
       await instance.register({from: accounts[1], value: fee});
       await instance.clap([accounts[1]], [3], {from: accounts[0]});
       await truffleAssert.reverts(
-        instance.clap([accounts[1]], [3], {from: accounts[0]}),
-        'unauthorized'
+        instance.clap([accounts[1]], [3], {from: accounts[0]})
       );
     });
 
@@ -164,8 +156,7 @@ contract('Event', accounts => {
       await instance.register({from: accounts[0], value: fee});
       await instance.register({from: accounts[1], value: fee});
       await truffleAssert.reverts(
-        instance.clap([accounts[1]], [3, 2], {from: accounts[0]}),
-        'different-lengths'
+        instance.clap([accounts[1]], [3, 2], {from: accounts[0]})
       );
     });
 
@@ -191,8 +182,7 @@ contract('Event', accounts => {
       await instance.register({from: accounts[1], value: fee});
       await instance.register({from: accounts[2], value: fee});
       await truffleAssert.reverts(
-        instance.clap([accounts[1], accounts[2]], [7, 3], {from: accounts[0]}),
-        'too-many-claps'
+        instance.clap([accounts[1], accounts[2]], [7, 3], {from: accounts[0]})
       );
     });
 
@@ -201,8 +191,7 @@ contract('Event', accounts => {
       await instance.register({from: accounts[0], value: fee});
       await instance.register({from: accounts[1], value: fee});
       await truffleAssert.reverts(
-        instance.clap([accounts[1]], [-3], {from: accounts[0]}),
-        'too-many-claps'
+        instance.clap([accounts[1]], [-3], {from: accounts[0]})
       );
     });
 
@@ -354,10 +343,7 @@ contract('Event', accounts => {
         {from: accounts[2]}
       );
       await new Promise(resolve => setTimeout(resolve, 2001));
-      await truffleAssert.reverts(
-        instance.distribute(),
-        'no-claps'
-      );
+      await truffleAssert.reverts(instance.distribute());
     });
 
     it('doesn\'t reward twice', async () => {
@@ -446,10 +432,7 @@ contract('Event', accounts => {
         const claps = [10, 3, 6];
         const totalReward = 3 * fee;
         const totalClaps = 19;
-        await truffleAssert.reverts(
-          instance.distribute({from: accounts[2]}),
-          'event-not-finished'
-        );
+        await truffleAssert.reverts(instance.distribute({from: accounts[2]}));
       });
 
   });

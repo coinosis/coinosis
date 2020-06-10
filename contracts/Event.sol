@@ -15,16 +15,6 @@ contract Event {
     uint8 constant private ATTENDEE_CLAPPED = 2;
     uint8 constant private ATTENDEE_REWARDED = 3;
 
-    string constant private WRONG_FEE = "wrong-fee";
-    string constant private ALREADY_REGISTERED = "already-registered";
-    string constant private UNAUTHORIZED = "unauthorized";
-    string constant private DIFFERENT_LENGTHS = "different-lengths";
-    string constant private TOO_MANY_ATTENDEES = "too-many-attendees";
-    string constant private TOO_MANY_CLAPS = "too-many-claps";
-    string constant private NO_CLAPS = "no-claps";
-    string constant private EVENT_FINISHED = "event-finished";
-    string constant private EVENT_NOT_FINISHED = "event-not-finished";
-
     uint64 public fee;
     uint32 public end;
     address payable[] public attendees;
@@ -36,7 +26,7 @@ contract Event {
     event Transfer (address indexed attendee, uint256 reward);
 
     constructor (uint64 _fee, uint32 _end) public {
-        require(block.timestamp < _end, EVENT_FINISHED);
+        require(block.timestamp < _end);
         fee = _fee;
         end = _end;
     }
@@ -46,39 +36,33 @@ contract Event {
     }
 
     function register () public payable {
-        require(msg.value == fee, WRONG_FEE);
-        require(
-            states[msg.sender] == ATTENDEE_UNREGISTERED,
-            ALREADY_REGISTERED
-        );
-        require(attendees.length < MAX_ATTENDEES, TOO_MANY_ATTENDEES);
-        require(block.timestamp < end, EVENT_FINISHED);
+        require(msg.value == fee);
+        require(states[msg.sender] == ATTENDEE_UNREGISTERED);
+        require(attendees.length < MAX_ATTENDEES);
+        require(block.timestamp < end);
         states[msg.sender] = ATTENDEE_REGISTERED;
         attendees.push(msg.sender);
     }
 
     function clap (address[] memory _attendees, uint256[] memory _claps)
         public {
-        require(states[msg.sender] == ATTENDEE_REGISTERED, UNAUTHORIZED);
-        require(_attendees.length == _claps.length, DIFFERENT_LENGTHS);
+        require(states[msg.sender] == ATTENDEE_REGISTERED);
+        require(_attendees.length == _claps.length);
         states[msg.sender] = ATTENDEE_CLAPPED;
         uint256 givenClaps;
-        for (uint8 i; i < _attendees.length; i += 1) {
+        for (uint256 i; i < _attendees.length; i = i.add(1)) {
             givenClaps = givenClaps.add(_claps[i]);
             if (_attendees[i] == msg.sender) continue;
             if (states[_attendees[i]] == ATTENDEE_UNREGISTERED) continue;
             claps[_attendees[i]] = claps[_attendees[i]].add(_claps[i]);
         }
-        require(
-            givenClaps <= attendees.length * CLAPS_PER_ATTENDEE,
-            TOO_MANY_CLAPS
-        );
+        require(givenClaps <= attendees.length.mul(CLAPS_PER_ATTENDEE));
         totalClaps = totalClaps.add(givenClaps);
     }
 
     function distribute () external {
-        require(block.timestamp >= end, EVENT_NOT_FINISHED);
-        require(totalClaps > 0, NO_CLAPS);
+        require(block.timestamp >= end);
+        require(totalClaps > 0);
         uint256 totalReward = address(this).balance;
         emit Distribution(totalReward);
         for (uint256 i; i < attendees.length; i = i.add(1)) {
