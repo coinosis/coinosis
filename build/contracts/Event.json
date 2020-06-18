@@ -4016,7 +4016,7 @@
                           "name": "this",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 1541,
+                          "referencedDeclaration": 1547,
                           "src": "2562:4:2",
                           "typeDescriptions": {
                             "typeIdentifier": "t_contract$_Event_$1215",
@@ -9022,7 +9022,7 @@
                           "name": "this",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 1541,
+                          "referencedDeclaration": 1547,
                           "src": "2562:4:2",
                           "typeDescriptions": {
                             "typeIdentifier": "t_contract$_Event_$1215",
@@ -10231,7 +10231,7 @@
   },
   "networks": {},
   "schemaVersion": "3.2.0",
-  "updatedAt": "2020-06-10T21:21:50.989Z",
+  "updatedAt": "2020-06-18T16:56:34.032Z",
   "devdoc": {
     "methods": {}
   },
