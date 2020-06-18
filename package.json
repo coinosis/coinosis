@@ -1,11 +1,13 @@
 {
   "name": "coinosis",
   "private": true,
-  "description": "coinosis is a knowledge-sharing dapp",
-  "author": "@e18r",
+  "description": "coinosis is a knowledge-sharing dApp",
   "license": "GPL-3.0-or-later",
   "scripts": {
-    "start:dev": "./start.dev.sh"
+    "start:dev": "./start.dev.sh",
+    "flatten": "./scripts/flatten.sh",
+    "compile": "./scripts/compile.sh",
+    "copy": "./scripts/copy.sh"
   },
   "devDependencies": {
     "ganache-cli": "^6.9.1",

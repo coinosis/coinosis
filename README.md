@@ -20,8 +20,7 @@ npm run start:dev
 
 ```
 
-* You might need to reset your browser's metamask account (settings > advanced > reset account).
-* If you need support for events created with older contracts (<2.0.0), run `truffle migrate`.
+* You might need to reset your browser's metamask account's transaction history (settings > advanced > reset account).
 
 ## run the tests
 
@@ -31,7 +30,7 @@ truffle test
 
 ```
 
-## on the available contracts
+## about the different contracts
 
 * `Coinosis.sol` is a deprecated contract retained for backwards-compatibility reasons. It used to be a global contract deployed as part of the app inner workings. If you want to deploy that contract, use `truffle migrate`.
 
@@ -41,8 +40,9 @@ truffle test
 
 ## contract deployment
 
-1. Run `truffle compile`
-2. Assuming both [cow](https://github.com/coinosis/cow) and [owl](https://github.com/coinosis/owl) are installed in the same folder as this repo, run `scripts/migrate.sh` to copy the JSON files to both projects.
+1. Run `npm run flatten`
+2. Run `npm run compile`
+3. Assuming both [cow](https://github.com/coinosis/cow) and [owl](https://github.com/coinosis/owl) are installed in the same folder as this repo, run `npm run copy` to copy the ABI files to both projects, and the BIN files to cow.
 
 ## verify the contracts on Etherscan
 
@@ -57,3 +57,16 @@ Note that you don't need to do this for every contract deployed. Etherscan will 
 
 1. Commit & push to the `dev` branch
 2. Create a pull request targeting the `test` branch
+
+## deploying older contracts
+
+* In order to create local distributions for events created with v1 contracts, you need to do the following:
+
+```bash
+
+npm run start:dev
+truffle migrate
+truffle exec scripts/fundContracts
+ENVIRONMENT=development truffle exec scripts/assess.js <event-name> <dollar-amount-per-person> --network development
+
+```
