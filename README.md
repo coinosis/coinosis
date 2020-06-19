@@ -1,3 +1,19 @@
+# coinosis
+
+Coinosis is a dApp that empowers people to share their knowledge and earn money by doing so. To know more, check out our [blog](https://medium.com/coinosis).
+
+## repository structure
+
+Coinosis is organized into three different repositories:
+
+* coinosis, the current repo, is where all our smart contracts live,
+* [cow](https://github.com/coinosis/cow) is our front-end, and
+* [owl](https://github.com/coinosis/owl) is our back-end.
+
+In order to set up your local development environment, install these three repos.
+
+# Install coinosis
+
 ## clone & install
 
 ```bash
@@ -20,7 +36,9 @@ npm run start:dev
 
 ```
 
-* You might need to reset your browser's metamask account's transaction history (settings > advanced > reset account).
+Before using Metamask, you need need to reset its transaction history (settings > advanced > reset account).
+
+# Contribute to this repo
 
 ## run the tests
 
@@ -32,7 +50,7 @@ truffle test
 
 ## about the different contracts
 
-* `Coinosis.sol` is a deprecated contract retained for backwards-compatibility reasons. It used to be a global contract deployed as part of the app inner workings. If you want to deploy that contract, use `truffle migrate`.
+* `Coinosis.sol` is a deprecated contract retained for backwards-compatibility reasons. It used to be a global contract deployed as part of the app inner workings. If you're interested in deploy that contract, refer to [deploying older contracts](#deploying-older-contracts);
 
 * The `Event.sol` contract is the current (v2.0.0 onwards) contract. It is deployed every time a user creates a new event and holds the funds for that event only. If you want to deploy it and interact with it, you can do it with `truffle console`. See the tests for examples of how to do this.
 
@@ -55,8 +73,7 @@ Note that you don't need to do this for every contract deployed. Etherscan will 
 
 ## submit your changes
 
-1. Commit & push to the `dev` branch
-2. Create a pull request targeting the `test` branch
+Create a pull request targeting the `dev` branch.
 
 ## deploying older contracts
 

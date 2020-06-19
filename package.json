@@ -11,6 +11,7 @@
   },
   "devDependencies": {
     "ganache-cli": "^6.9.1",
+    "greadme": "^1.0.0",
     "node-fetch": "^2.6.0",
     "truffle": "^5.1.29",
     "truffle-assertions": "^0.9.2",
