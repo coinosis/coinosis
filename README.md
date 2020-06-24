@@ -18,7 +18,7 @@ In order to set up your local development environment, install these three repos
 
 ```bash
 
-git clone https://github.com/coinosis/coinosis.git -b master
+git clone https://github.com/coinosis/coinosis.git -b dev
 cd coinosis
 npm install
 
