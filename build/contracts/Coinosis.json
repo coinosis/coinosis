@@ -9588,6 +9588,12 @@
     "version": "0.5.16+commit.9c3226ce.Emscripten.clang"
   },
   "networks": {
+    "1": {
+      "address": "0xBA77007e5745f7e6F80F78904c7628e30909F828"
+    },
+    "3": {
+      "address": "0xF1d060bCA9177885d217Fc766984639Ef28A0eb9"
+    },
     "1337": {
       "events": {
         "0x5e59a8025184c1608567a405f6ce99185bf136419d33deb04d2d822957d294c5": {
