@@ -24,9 +24,17 @@ npm install
 
 ```
 
-## connect to your metamask account
+## Add your development accounts to the `.accounts` file
 
-create a `.secret` file at the root of your repo with the 12-word mnemonic of your metamask development account.
+Create a file called `.accounts` and add your dev accounts' private keys using the following format:
+
+```
+
+--account <0x-prefixed private key>,100000000000000000000 --account <0x-prefixed private key>,100000000000000000000 --account <0x-prefixed private-key>,100000000000000000000
+
+```
+
+You can add as many accounts as you wish.
 
 ## run
 
@@ -78,6 +86,8 @@ Create a pull request targeting the `dev` branch.
 ## deploying older contracts
 
 * In order to create local distributions for events created with v1 contracts, you need to do the following:
+
+* create a `.secret` file at the root of your repo with the 12-word mnemonic of your metamask development account.
 
 ```bash
 

@@ -1,6 +1,6 @@
 #! /bin/bash
 
-ganache-cli --networkId 1337 --mnemonic "$(cat .secret)" --blockTime 30 &
+ganache-cli --networkId 1337 --blockTime 30 $(cat .accounts) &
 GANACHE_PID=$!
 truffle exec scripts/fundAccount.js
 wait $GANACHE_PID
