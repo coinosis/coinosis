@@ -4,6 +4,7 @@
   "description": "coinosis is a knowledge-sharing dApp",
   "license": "GPL-3.0-or-later",
   "scripts": {
+    "test": "./test.sh",
     "start:dev": "./start.dev.sh",
     "flatten": "./scripts/flatten.sh",
     "compile": "./scripts/compile.sh",
