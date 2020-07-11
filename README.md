@@ -44,7 +44,7 @@ npm run start:dev
 
 ```
 
-Before using Metamask, you need need to reset its transaction history (settings > advanced > reset account).
+Remember to reset Metamask's transaction history (settings > advanced > reset account) before terminating the process.
 
 # Contribute to this repo
 
