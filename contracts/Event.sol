@@ -42,6 +42,8 @@ contract Event {
         require(block.timestamp < end);
         states[_attendee] = ATTENDEE_REGISTERED;
         attendees.push(_attendee);
+        claps[_attendee] = 1;
+        totalClaps += 1;
     }
 
     function register () external payable {

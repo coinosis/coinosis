@@ -119,13 +119,13 @@ contract('Event', accounts => {
         {from: accounts[2]}
       );
       const claps0 = await instance.claps(accounts[0]);
-      assert.equal(10, claps0.toNumber());
+      assert.equal(11, claps0.toNumber());
       const claps1 = await instance.claps(accounts[1]);
-      assert.equal(3, claps1.toNumber());
+      assert.equal(4, claps1.toNumber());
       const claps2 = await instance.claps(accounts[2]);
-      assert.equal(6, claps2.toNumber());
+      assert.equal(7, claps2.toNumber());
       const totalClaps = await instance.totalClaps();
-      assert.equal(19, totalClaps.toNumber());
+      assert.equal(22, totalClaps.toNumber());
       const state0 = await instance.states(accounts[0]);
       assert.equal(2, state0.toNumber());
       const state1 = await instance.states(accounts[1]);
@@ -165,7 +165,7 @@ contract('Event', accounts => {
       await instance.register({from: accounts[0], value: fee});
       await instance.clap([accounts[0]], [3], {from: accounts[0]});
       const claps = await instance.claps(accounts[0]);
-      assert.equal(0, claps.toNumber());
+      assert.equal(1, claps.toNumber());
     });
 
     it('silently disallows clapping for unregistered attendees', async () => {
@@ -238,9 +238,9 @@ contract('Event', accounts => {
         [1, 0],
         {from: accounts[2]}
       );
-      const claps = [10, 3, 6];
+      const claps = [11, 4, 7];
       const totalReward = 3 * fee;
-      const totalClaps = 19;
+      const totalClaps = 22;
       await new Promise(resolve => setTimeout(resolve, 2001));
       const result = await instance.distribute({from: accounts[2]});
       truffleAssert.eventEmitted(result, 'Distribution', event => {
@@ -293,9 +293,9 @@ contract('Event', accounts => {
         [1, 0],
         {from: accounts[2]}
       );
-      const claps = [10, 3, 6];
+      const claps = [11, 4, 7];
       const totalReward = 3 * fee;
-      const totalClaps = 19;
+      const totalClaps = 22;
       const preBalances = [];
       for (let i = 0; i < claps.length; i++) {
         const balance = await web3.eth.getBalance(accounts[i]);
@@ -317,33 +317,6 @@ contract('Event', accounts => {
       }
       const finalBalance = await web3.eth.getBalance(instance.address);
       assert.ok(finalBalance < 3);
-    });
-
-    it('fails due to no claps', async () => {
-      const endDate = new Date();
-      let end = Math.floor(endDate.getTime() / 1000);
-      end += 2;
-      const instance = await Event.new(fee, end);
-      await instance.register({from: accounts[0], value: fee});
-      await instance.register({from: accounts[1], value: fee});
-      await instance.register({from: accounts[2], value: fee});
-      await instance.clap(
-        [accounts[1], accounts[2]],
-        [0, 0],
-        {from: accounts[0]}
-      );
-      await instance.clap(
-        [accounts[0], accounts[2]],
-        [0, 0],
-        {from: accounts[1]}
-      );
-      await instance.clap(
-        [accounts[0], accounts[1]],
-        [0, 0],
-        {from: accounts[2]}
-      );
-      await new Promise(resolve => setTimeout(resolve, 2001));
-      await truffleAssert.reverts(instance.distribute());
     });
 
     it('doesn\'t reward twice', async () => {
@@ -374,36 +347,6 @@ contract('Event', accounts => {
       const preBalance = await web3.eth.getBalance(accounts[0]);
       await instance.distribute({from: accounts[1]});
       const postBalance = await web3.eth.getBalance(accounts[0]);
-      assert.equal(preBalance, postBalance);
-    });
-
-    it('doesn\'t reward a user without claps', async () => {
-      const endDate = new Date();
-      let end = Math.floor(endDate.getTime() / 1000);
-      end += 2;
-      const instance = await Event.new(fee, end);
-      await instance.register({from: accounts[0], value: fee});
-      await instance.register({from: accounts[1], value: fee});
-      await instance.register({from: accounts[2], value: fee});
-      await instance.clap(
-        [accounts[1], accounts[2]],
-        [3, 0],
-        {from: accounts[0]}
-      );
-      await instance.clap(
-        [accounts[0], accounts[2]],
-        [9, 0],
-        {from: accounts[1]}
-      );
-      await instance.clap(
-        [accounts[0], accounts[1]],
-        [1, 0],
-        {from: accounts[2]}
-      );
-      const preBalance = await web3.eth.getBalance(accounts[2]);
-      await new Promise(resolve => setTimeout(resolve, 2001));
-      await instance.distribute();
-      const postBalance = await web3.eth.getBalance(accounts[2]);
       assert.equal(preBalance, postBalance);
     });
 
