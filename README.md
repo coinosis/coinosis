@@ -18,7 +18,7 @@ In order to set up your local development environment, install these three repos
 
 ```bash
 
-git clone https://github.com/coinosis/coinosis.git -b dev
+git clone https://github.com/coinosis/coinosis.git
 cd coinosis
 npm install
 
@@ -81,7 +81,7 @@ Note that you don't need to do this for every contract deployed. Etherscan will 
 
 ## submit your changes
 
-Create a pull request targeting the `dev` branch.
+Create a pull request targeting the `trunk` branch.
 
 ## deploying older contracts
 
