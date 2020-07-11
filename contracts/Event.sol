@@ -13,7 +13,7 @@ contract Event {
     uint8 constant private ATTENDEE_UNREGISTERED = 0;
     uint8 constant private ATTENDEE_REGISTERED = 1;
     uint8 constant private ATTENDEE_CLAPPED = 2;
-    uint8 constant private ATTENDEE_REWARDED = 3;
+    bool distributionMade;
 
     uint64 public fee;
     uint32 public end;
@@ -75,17 +75,16 @@ contract Event {
     }
 
     function distribute () external {
+        require(distributionMade == false);
         require(block.timestamp >= end);
         require(totalClaps > 0);
+        distributionMade = true;
         uint256 totalReward = address(this).balance;
         emit Distribution(totalReward);
         for (uint256 i; i < attendees.length; i = i.add(1)) {
-            if (states[attendees[i]] == ATTENDEE_REWARDED) continue;
-            if (claps[attendees[i]] == 0) continue;
             uint256 reward = claps[attendees[i]]
                 .mul(totalReward)
                 .div(totalClaps);
-            states[attendees[i]] = ATTENDEE_REWARDED;
             (bool success, ) = attendees[i].call.value(reward)("");
             if (success) {
                 emit Transfer(attendees[i], reward);

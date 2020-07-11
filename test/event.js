@@ -261,13 +261,6 @@ contract('Event', accounts => {
           && expectedRewardETH == actualRewardETH;
       });
       assert.equal(3, transferCount);
-      const state0 = await instance.states(accounts[0]);
-      assert.equal(3, state0.toNumber());
-      const state1 = await instance.states(accounts[0]);
-      assert.equal(3, state1.toNumber());
-      const state2 = await instance.states(accounts[0]);
-      assert.equal(3, state2.toNumber());
-
     });
 
     it('actual transfers are made', async () => {
@@ -344,10 +337,7 @@ contract('Event', accounts => {
       );
       await new Promise(resolve => setTimeout(resolve, 2001));
       await instance.distribute();
-      const preBalance = await web3.eth.getBalance(accounts[0]);
-      await instance.distribute({from: accounts[1]});
-      const postBalance = await web3.eth.getBalance(accounts[0]);
-      assert.equal(preBalance, postBalance);
+      await truffleAssert.reverts(instance.distribute({from: accounts[1]}));
     });
 
     it(

@@ -61,7 +61,7 @@ or, for more fine-grained control,
 ```bash
 
 ganache-cli -a <number-of-accounts>
-truffle test
+truffle test test/<file-to-test>
 
 ```
 
