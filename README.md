@@ -52,6 +52,15 @@ Before using Metamask, you need need to reset its transaction history (settings 
 
 ```bash
 
+npm test
+
+```
+
+or, for more fine-grained control,
+
+```bash
+
+ganache-cli -a <number-of-accounts>
 truffle test
 
 ```
