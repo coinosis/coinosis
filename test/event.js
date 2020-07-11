@@ -15,7 +15,7 @@ contract('Event', accounts => {
       assert.ok(instance.address);
       assert.equal(fee, await instance.fee());
       assert.equal(end, await instance.end());
-      assert.equal('2.0.0', web3.utils.hexToUtf8(await instance.version()));
+      assert.equal('2.1.0', web3.utils.hexToUtf8(await instance.version()));
     });
 
     it('fails due to wrong number of arguments', async () => {
