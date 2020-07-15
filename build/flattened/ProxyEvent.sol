@@ -167,7 +167,7 @@ contract Event {
 
     using SafeMath for uint256;
 
-    bytes5 constant public version = "2.1.1";
+    bytes5 constant public version = "2.1.0";
     uint8 constant private CLAPS_PER_ATTENDEE = 3;
     uint8 constant private MAX_ATTENDEES = 100;
 
@@ -183,7 +183,7 @@ contract Event {
     mapping(address => uint256) public claps;
     uint256 public totalClaps;
 
-    event Distribution (uint8 indexed topic, uint256 totalReward);
+    event Distribution (uint256 totalReward);
     event Transfer (address indexed attendee, uint256 reward);
 
     constructor (uint64 _fee, uint32 _end) public {
@@ -241,7 +241,7 @@ contract Event {
         require(totalClaps > 0);
         distributionMade = true;
         uint256 totalReward = address(this).balance;
-        emit Distribution(0, totalReward);
+        emit Distribution(totalReward);
         for (uint256 i; i < attendees.length; i = i.add(1)) {
             uint256 reward = claps[attendees[i]]
                 .mul(totalReward)
