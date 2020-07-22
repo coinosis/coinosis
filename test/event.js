@@ -15,7 +15,7 @@ contract('Event', accounts => {
       assert.ok(instance.address);
       assert.equal(fee, await instance.fee());
       assert.equal(end, await instance.end());
-      assert.equal('2.1.0', web3.utils.hexToUtf8(await instance.version()));
+      assert.equal('2.2.0', web3.utils.hexToUtf8(await instance.version()));
     });
 
     it('fails due to wrong number of arguments', async () => {
@@ -105,27 +105,27 @@ contract('Event', accounts => {
       await instance.register({from: accounts[2], value: fee});
       await instance.clap(
         [accounts[1], accounts[2]],
-        [3, 6],
+        [40, 60],
         {from: accounts[0]}
       );
       await instance.clap(
         [accounts[0], accounts[2]],
-        [9, 0],
+        [100, 0],
         {from: accounts[1]}
       );
       await instance.clap(
         [accounts[0], accounts[1]],
-        [1, 0],
+        [30, 0],
         {from: accounts[2]}
       );
       const claps0 = await instance.claps(accounts[0]);
-      assert.equal(11, claps0.toNumber());
+      assert.equal(131, claps0.toNumber());
       const claps1 = await instance.claps(accounts[1]);
-      assert.equal(4, claps1.toNumber());
+      assert.equal(41, claps1.toNumber());
       const claps2 = await instance.claps(accounts[2]);
-      assert.equal(7, claps2.toNumber());
+      assert.equal(61, claps2.toNumber());
       const totalClaps = await instance.totalClaps();
-      assert.equal(22, totalClaps.toNumber());
+      assert.equal(233, totalClaps.toNumber());
       const state0 = await instance.states(accounts[0]);
       assert.equal(2, state0.toNumber());
       const state1 = await instance.states(accounts[1]);
@@ -137,7 +137,7 @@ contract('Event', accounts => {
     it('fails due to not having registered', async () => {
       const instance = await Event.new(fee, end);
       await truffleAssert.reverts(
-        instance.clap([accounts[1]], [3], {from: accounts[0]})
+        instance.clap([accounts[1]], [100], {from: accounts[0]})
       );
     });
 
@@ -145,9 +145,9 @@ contract('Event', accounts => {
       const instance = await Event.new(fee, end);
       await instance.register({from: accounts[0], value: fee});
       await instance.register({from: accounts[1], value: fee});
-      await instance.clap([accounts[1]], [3], {from: accounts[0]});
+      await instance.clap([accounts[1]], [100], {from: accounts[0]});
       await truffleAssert.reverts(
-        instance.clap([accounts[1]], [3], {from: accounts[0]})
+        instance.clap([accounts[1]], [100], {from: accounts[0]})
       );
     });
 
@@ -156,14 +156,14 @@ contract('Event', accounts => {
       await instance.register({from: accounts[0], value: fee});
       await instance.register({from: accounts[1], value: fee});
       await truffleAssert.reverts(
-        instance.clap([accounts[1]], [3, 2], {from: accounts[0]})
+        instance.clap([accounts[1]], [60, 30], {from: accounts[0]})
       );
     });
 
     it('silently disallows clapping for oneself', async () => {
       const instance = await Event.new(fee, end);
       await instance.register({from: accounts[0], value: fee});
-      await instance.clap([accounts[0]], [3], {from: accounts[0]});
+      await instance.clap([accounts[0]], [100], {from: accounts[0]});
       const claps = await instance.claps(accounts[0]);
       assert.equal(1, claps.toNumber());
     });
@@ -171,7 +171,7 @@ contract('Event', accounts => {
     it('silently disallows clapping for unregistered attendees', async () => {
       const instance = await Event.new(fee, end);
       await instance.register({from: accounts[0], value: fee});
-      await instance.clap([accounts[1]], [3], {from: accounts[0]});
+      await instance.clap([accounts[1]], [100], {from: accounts[0]});
       const claps = await instance.claps(accounts[1]);
       assert.equal(0, claps.toNumber());
     });
@@ -182,7 +182,7 @@ contract('Event', accounts => {
       await instance.register({from: accounts[1], value: fee});
       await instance.register({from: accounts[2], value: fee});
       await truffleAssert.reverts(
-        instance.clap([accounts[1], accounts[2]], [7, 3], {from: accounts[0]})
+        instance.clap([accounts[1], accounts[2]], [70, 40], {from: accounts[0]})
       );
     });
 
@@ -191,7 +191,7 @@ contract('Event', accounts => {
       await instance.register({from: accounts[0], value: fee});
       await instance.register({from: accounts[1], value: fee});
       await truffleAssert.reverts(
-        instance.clap([accounts[1]], [-3], {from: accounts[0]})
+        instance.clap([accounts[1]], [-60], {from: accounts[0]})
       );
     });
 
@@ -205,7 +205,7 @@ contract('Event', accounts => {
       for (let i = 0; i < accounts.length; i++) {
         await instance.clap(
           accounts,
-          accounts.map(a => Math.floor(Math.random() * 4)),
+          accounts.map(a => Math.floor(Math.random() * 100 / accounts.length)),
           {from: accounts[i]}
         );
       }
@@ -225,22 +225,22 @@ contract('Event', accounts => {
       await instance.register({from: accounts[2], value: fee});
       await instance.clap(
         [accounts[1], accounts[2]],
-        [3, 6],
+        [40, 60],
         {from: accounts[0]}
       );
       await instance.clap(
         [accounts[0], accounts[2]],
-        [9, 0],
+        [100, 0],
         {from: accounts[1]}
       );
       await instance.clap(
         [accounts[0], accounts[1]],
-        [1, 0],
+        [30, 0],
         {from: accounts[2]}
       );
-      const claps = [11, 4, 7];
+      const claps = [131, 41, 61];
       const totalReward = 3 * fee;
-      const totalClaps = 22;
+      const totalClaps = 233;
       await new Promise(resolve => setTimeout(resolve, 2001));
       const result = await instance.distribute({from: accounts[2]});
       truffleAssert.eventEmitted(result, 'Distribution', event => {
@@ -273,22 +273,22 @@ contract('Event', accounts => {
       await instance.register({from: accounts[2], value: fee});
       await instance.clap(
         [accounts[1], accounts[2]],
-        [3, 6],
+        [40, 60],
         {from: accounts[0]}
       );
       await instance.clap(
         [accounts[0], accounts[2]],
-        [9, 0],
+        [100, 0],
         {from: accounts[1]}
       );
       await instance.clap(
         [accounts[0], accounts[1]],
-        [1, 0],
+        [30, 0],
         {from: accounts[2]}
       );
-      const claps = [11, 4, 7];
+      const claps = [131, 41, 61];
       const totalReward = 3 * fee;
-      const totalClaps = 22;
+      const totalClaps = 233;
       const preBalances = [];
       for (let i = 0; i < claps.length; i++) {
         const balance = await web3.eth.getBalance(accounts[i]);
@@ -322,17 +322,17 @@ contract('Event', accounts => {
       await instance.register({from: accounts[2], value: fee});
       await instance.clap(
         [accounts[1], accounts[2]],
-        [3, 6],
+        [40, 60],
         {from: accounts[0]}
       );
       await instance.clap(
         [accounts[0], accounts[2]],
-        [9, 0],
+        [100, 0],
         {from: accounts[1]}
       );
       await instance.clap(
         [accounts[0], accounts[1]],
-        [1, 0],
+        [30, 0],
         {from: accounts[2]}
       );
       await new Promise(resolve => setTimeout(resolve, 2001));
@@ -349,22 +349,19 @@ contract('Event', accounts => {
         await instance.register({from: accounts[2], value: fee});
         await instance.clap(
           [accounts[1], accounts[2]],
-          [3, 6],
+          [40, 60],
           {from: accounts[0]}
         );
         await instance.clap(
           [accounts[0], accounts[2]],
-          [9, 0],
+          [100, 0],
           {from: accounts[1]}
         );
         await instance.clap(
           [accounts[0], accounts[1]],
-          [1, 0],
+          [30, 0],
           {from: accounts[2]}
         );
-        const claps = [10, 3, 6];
-        const totalReward = 3 * fee;
-        const totalClaps = 19;
         await truffleAssert.reverts(instance.distribute({from: accounts[2]}));
       });
 

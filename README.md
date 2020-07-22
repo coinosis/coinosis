@@ -79,6 +79,8 @@ truffle test test/<file-to-test>
 2. Run `npm run compile`
 3. Assuming both [cow](https://github.com/coinosis/cow) and [owl](https://github.com/coinosis/owl) are installed in the same folder as this repo, run `npm run copy` to copy the ABI files to both projects, and the BIN files to cow.
 
+* You can also run `npm run export` to run the above three steps with one command.
+
 ## verify the contracts on Etherscan
 
 1. Run `scripts/flatten.sh`

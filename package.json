@@ -8,7 +8,8 @@
     "start:dev": "./start.dev.sh",
     "flatten": "./scripts/flatten.sh",
     "compile": "./scripts/compile.sh",
-    "copy": "./scripts/copy.sh"
+    "copy": "./scripts/copy.sh",
+    "export": "npm run flatten && npm run compile && npm run copy"
   },
   "devDependencies": {
     "ganache-cli": "^6.9.1",
