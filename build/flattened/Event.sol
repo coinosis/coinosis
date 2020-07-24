@@ -167,7 +167,7 @@ contract Event {
 
     using SafeMath for uint256;
 
-    bytes5 constant public version = "2.2.0";
+    bytes5 constant public version = "2.2.1";
     uint8 constant private CLAPS_PER_ATTENDEE = 100;
     uint8 constant private MAX_ATTENDEES = 50;
 
@@ -216,6 +216,7 @@ contract Event {
         address[] memory _attendees,
         uint256[] memory _claps
     ) internal {
+        require(distributionMade == false);
         require(states[_clapper] == ATTENDEE_REGISTERED);
         require(_attendees.length == _claps.length);
         states[_clapper] = ATTENDEE_CLAPPED;
