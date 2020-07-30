@@ -6,7 +6,7 @@ contract Event {
 
     using SafeMath for uint256;
 
-    bytes5 constant public version = "2.2.1";
+    bytes5 constant public version = "2.2.2";
     uint8 constant private CLAPS_PER_ATTENDEE = 100;
     uint8 constant private MAX_ATTENDEES = 50;
 

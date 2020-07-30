@@ -4,7 +4,6 @@ import "./Event.sol";
 
 contract ProxyEvent is Event {
 
-    bytes5 constant public version = "2.0.0";
     mapping(address => address) public proxy;
 
     constructor(uint64 _fee, uint32 _end) Event(_fee, _end) public {}
