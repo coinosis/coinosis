@@ -167,7 +167,7 @@ contract Event {
 
     using SafeMath for uint256;
 
-    bytes5 constant public version = "2.2.1";
+    bytes5 constant public version = "2.2.2";
     uint8 constant private CLAPS_PER_ATTENDEE = 100;
     uint8 constant private MAX_ATTENDEES = 50;
 
@@ -262,7 +262,6 @@ pragma solidity 0.5.16;
 
 contract ProxyEvent is Event {
 
-    bytes5 constant public version = "2.0.0";
     mapping(address => address) public proxy;
 
     constructor(uint64 _fee, uint32 _end) Event(_fee, _end) public {}
