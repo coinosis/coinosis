@@ -5,7 +5,7 @@
   "license": "GPL-3.0-or-later",
   "scripts": {
     "test": "./test.sh",
-    "start": "./start.dev.sh",
+    "start:dev": "./start.dev.sh",
     "flatten": "./scripts/flatten.sh",
     "compile": "./scripts/compile.sh",
     "copy": "./scripts/copy.sh",

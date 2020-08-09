@@ -40,9 +40,11 @@ You can add as many accounts as you wish.
 
 ```bash
 
-npm start
+npm run start:dev
 
 ```
+
+Remember to reset Metamask's transaction history (settings > advanced > reset account) before terminating the process.
 
 # Contribute to this repo
 
