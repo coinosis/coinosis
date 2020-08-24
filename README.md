@@ -36,7 +36,7 @@ Create a file called `.accounts` and add your dev accounts' private keys using t
 
 You can add as many accounts as you wish.
 
-## run
+## run locally
 
 ```bash
 
@@ -44,7 +44,18 @@ npm run start:dev
 
 ```
 
-Remember to reset Metamask's transaction history (settings > advanced > reset account) before terminating the process.
+## testing and staging environments
+
+Both testing and staging environments are automatically built from every push to the `test` branch. You can access these environments at the following URLs:
+
+* testing: https://testing-cow.netlify.app
+* staging: https://staging-cow.netlify.app
+
+The testing environment runs with fake money, whereas the staging environment runs with real money.
+
+The testing environment allows you to create events on the sokol testnet. [Here](https://www.poa.network/for-users/wallets/metamask) are some instructions on how to configure MetaMask for that testnet. Get testnet money from the [Sokol faucet](https://faucet.poa.network/). The fiat on-ramp with PayU uses the sandbox mode. It only works with specific test credit card numbers. You can get one such number [here](https://github.com/coinosis/cow/blob/test/autofill.csv).
+
+The staging environment, on the other hand, uses real money. You need to deploy contracts on the xDAI chain, just like in production. The fiat on-ramp uses real credit card numbers and bank information. But since it is intended for testing, please [ask us](mailto:e18r@disroot.org) for a refund of any test you make in this environment.
 
 # Contribute to this repo
 
