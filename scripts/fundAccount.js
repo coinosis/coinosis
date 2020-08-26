@@ -5,7 +5,7 @@ module.exports = async callback => {
   const txObject = {
     from: accounts[0],
     to: recipient,
-    value: web3.utils.toWei('10'),
+    value: web3.utils.toWei('1000'),
     gasPrice: web3.utils.toWei('100', 'gwei'),
   }
   const result = await web3.eth.sendTransaction(txObject);

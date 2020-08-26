@@ -7,12 +7,35 @@ Coinosis is a dApp that empowers people to share their knowledge and earn money 
 Coinosis is organized into three different repositories:
 
 * coinosis, the current repo, is where all our smart contracts live,
-* [cow](https://github.com/coinosis/cow) is our front-end, and
-* [owl](https://github.com/coinosis/owl) is our back-end.
+* [owl](https://github.com/coinosis/owl) is our centralized back-end, and
+* [cow](https://github.com/coinosis/cow) is our front-end.
 
-In order to set up your local development environment, install these three repos.
+## testing our latest features
 
-# Install coinosis
+We'd love your feedback on missing features, bugs and improvements. For that purpose, we have set up two live non-production environments, testing and staging. Both are automatically built from pushes to the `test` branch. You can access these environments at the following URLs:
+
+* testing: https://testing-cow.netlify.app
+* staging: https://staging-cow.netlify.app
+
+The testing environment runs with fake money, whereas the staging environment does not.
+
+The testing environment allows you to create events on the sokol testnet. [Here](https://www.poa.network/for-users/wallets/metamask) are some instructions on how to configure MetaMask for that testnet. Get testnet money from the [Sokol faucet](https://faucet.poa.network/). The fiat on-ramp with PayU uses the sandbox mode. It only works with specific test credit card numbers. You can get one such number [here](https://github.com/coinosis/cow/blob/test/autofill.csv).
+
+The staging environment, on the other hand, uses real money. You need to deploy contracts on the [xDAI chain](https://www.xdaichain.com/for-users/wallets/metamask/metamask-setup), just like in production. The fiat on-ramp uses real credit card numbers and bank information.
+
+## contributing to coinosis
+
+Thank you for your interest in contributing to coinosis. Depending on what you'd like to contribute to, you need to install different repositories.
+
+* If you only want to contribute to the front-end, you only need to install [cow](https://github.com/coinosis/cow) and use our testing environment back-end. Note that, in that case, you need to use the sokol testnet to deploy contracts to.
+
+* If you want to contribute to our centralized back-end, please install [owl](https://github.com/coinosis/owl) and [cow](https://github.com/coinosis/cow). You can configure owl to use any testnet or local blockchain.
+
+* In any of the above cases, if you want to use a local blockchain, you can install this repo in order to have one already configured.
+
+* If you want to contribute to our smart contract development, install this repo and, optionally, [owl](https://github.com/coinosis/owl) and [cow](https://github.com/coinosis/cow) to perform end-user tests.
+
+# Install this repo
 
 ## clone & install
 
@@ -34,7 +57,11 @@ Create a file called `.accounts` and add your dev accounts' private keys using t
 
 ```
 
-You can add as many accounts as you wish.
+You can add as many accounts as you wish. Note that this allows you to use accounts generated from different mnemonics.
+
+## Add owl's address to the `.owl` file
+
+Owl (our back-end) allows users to interact with our smart contracts without crypto. In other words, it's a fiat on-ramp. In order to test that functionality, you need to fund its account. To do so, add owl's address (which can be configured in owl's `settings.json`) to a `.owl` file in this repo's root folder.
 
 ## run locally
 
@@ -44,18 +71,7 @@ npm run start:dev
 
 ```
 
-## testing and staging environments
 
-Both testing and staging environments are automatically built from every push to the `test` branch. You can access these environments at the following URLs:
-
-* testing: https://testing-cow.netlify.app
-* staging: https://staging-cow.netlify.app
-
-The testing environment runs with fake money, whereas the staging environment runs with real money.
-
-The testing environment allows you to create events on the sokol testnet. [Here](https://www.poa.network/for-users/wallets/metamask) are some instructions on how to configure MetaMask for that testnet. Get testnet money from the [Sokol faucet](https://faucet.poa.network/). The fiat on-ramp with PayU uses the sandbox mode. It only works with specific test credit card numbers. You can get one such number [here](https://github.com/coinosis/cow/blob/test/autofill.csv).
-
-The staging environment, on the other hand, uses real money. You need to deploy contracts on the xDAI chain, just like in production. The fiat on-ramp uses real credit card numbers and bank information. But since it is intended for testing, please [ask us](mailto:e18r@disroot.org) for a refund of any test you make in this environment.
 
 # Contribute to this repo
 
