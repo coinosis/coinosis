@@ -6,7 +6,7 @@ contract ProxyEvent is Event {
 
     mapping(address => address) public proxy;
 
-    constructor(uint64 _fee, uint32 _end) Event(_fee, _end) public {}
+    constructor(uint128 _fee, uint32 _end) Event(_fee, _end) public {}
 
     function registerFor (address payable _attendee) external payable {
         register(_attendee, msg.value);
