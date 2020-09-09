@@ -167,7 +167,7 @@ contract Event {
 
     using SafeMath for uint256;
 
-    bytes5 constant public version = "2.2.2";
+    bytes5 constant public version = "2.2.3";
     uint8 constant private CLAPS_PER_ATTENDEE = 100;
     uint8 constant private MAX_ATTENDEES = 50;
 
@@ -176,7 +176,7 @@ contract Event {
     uint8 constant private ATTENDEE_CLAPPED = 2;
     bool distributionMade;
 
-    uint64 public fee;
+    uint128 public fee;
     uint32 public end;
     address payable[] private attendees;
     mapping(address => uint8) public states;
@@ -186,7 +186,7 @@ contract Event {
     event Distribution (uint256 totalReward);
     event Transfer (address indexed attendee, uint256 reward);
 
-    constructor (uint64 _fee, uint32 _end) public {
+    constructor (uint128 _fee, uint32 _end) public {
         require(block.timestamp < _end);
         fee = _fee;
         end = _end;
@@ -264,7 +264,7 @@ contract ProxyEvent is Event {
 
     mapping(address => address) public proxy;
 
-    constructor(uint64 _fee, uint32 _end) Event(_fee, _end) public {}
+    constructor(uint128 _fee, uint32 _end) Event(_fee, _end) public {}
 
     function registerFor (address payable _attendee) external payable {
         register(_attendee, msg.value);
