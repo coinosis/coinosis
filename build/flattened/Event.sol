@@ -167,7 +167,7 @@ contract Event {
 
     using SafeMath for uint256;
 
-    bytes5 constant public version = "2.2.3";
+    bytes5 constant public version = "2.2.4";
     uint8 constant private CLAPS_PER_ATTENDEE = 100;
     uint8 constant private MAX_ATTENDEES = 50;
 
@@ -222,9 +222,9 @@ contract Event {
         states[_clapper] = ATTENDEE_CLAPPED;
         uint256 givenClaps;
         for (uint256 i; i < _attendees.length; i = i.add(1)) {
-            givenClaps = givenClaps.add(_claps[i]);
             if (_attendees[i] == _clapper) continue;
             if (states[_attendees[i]] == ATTENDEE_UNREGISTERED) continue;
+            givenClaps = givenClaps.add(_claps[i]);
             claps[_attendees[i]] = claps[_attendees[i]].add(_claps[i]);
         }
         require(givenClaps <= CLAPS_PER_ATTENDEE);
