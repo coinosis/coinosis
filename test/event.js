@@ -15,7 +15,7 @@ contract('Event', accounts => {
       assert.ok(instance.address);
       assert.equal(fee, await instance.fee());
       assert.equal(end, await instance.end());
-      assert.equal('2.2.3', web3.utils.hexToUtf8(await instance.version()));
+      assert.equal('2.2.4', web3.utils.hexToUtf8(await instance.version()));
     });
 
     it('fails due to wrong number of arguments', async () => {
@@ -363,6 +363,23 @@ contract('Event', accounts => {
           {from: accounts[2]}
         );
         await truffleAssert.reverts(instance.distribute({from: accounts[2]}));
+      });
+
+    it(
+      'the contract doesn\'t retain any amount after self-clapping',
+      async () => {
+        const endDate = new Date();
+        let end = Math.floor(endDate.getTime() / 1000);
+        end += 2;
+        const instance = await Event.new(fee, end);
+        await instance.register({ from: accounts[0], value: fee, });
+        await instance.clap([ accounts[0] ], [ 100 ], { from: accounts[0], });
+        await new Promise(resolve => setTimeout(resolve, 2001));
+        const balancePre = BigInt(await web3.eth.getBalance(accounts[0]));
+        await instance.distribute({ from: accounts[1], });
+        const balancePost = BigInt(await web3.eth.getBalance(accounts[0]));
+        assert.equal(await web3.eth.getBalance(instance.address), 0);
+        assert.equal(String(balancePost), String(balancePre + BigInt(fee)));
       });
 
   });
