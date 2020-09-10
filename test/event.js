@@ -15,7 +15,7 @@ contract('Event', accounts => {
       assert.ok(instance.address);
       assert.equal(fee, await instance.fee());
       assert.equal(end, await instance.end());
-      assert.equal('2.2.1', web3.utils.hexToUtf8(await instance.version()));
+      assert.equal('2.2.3', web3.utils.hexToUtf8(await instance.version()));
     });
 
     it('fails due to wrong number of arguments', async () => {
@@ -30,7 +30,7 @@ contract('Event', accounts => {
       await truffleAssert.fails(
         Event.new('hey', end),
         '',
-        'invalid number value (arg="_fee", coderType="uint64", value="hey")'
+        'invalid number value (arg="_fee", coderType="uint128", value="hey")'
       );
     });
 
