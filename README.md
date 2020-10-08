@@ -53,7 +53,7 @@ Create a file called `.accounts` and add your dev accounts' private keys using t
 
 ```
 
---account <0x-prefixed private key>,100000000000000000000 --account <0x-prefixed private key>,100000000000000000000 --account <0x-prefixed private-key>,100000000000000000000
+--account <0x-prefixed private key>,100000000000000000000000 --account <0x-prefixed private key>,100000000000000000000 --account <0x-prefixed private-key>,100000000000000000000
 
 ```
 
